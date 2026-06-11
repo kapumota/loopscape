@@ -1,0 +1,29 @@
+# Rust
+/target
+
+# Trunk
+dist/
+.trunk/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Secretos
+.env
+*.key
+
+# Node para proxy local
+node_modules/
+package-lock.json
+
+# Artefactos temporales
+*.log
+*.tmp
+*.bak

@@ -1,0 +1,41 @@
+name: Validacion
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  rust:
+    name: Rust nativo y WebAssembly
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Instalar Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+          targets: wasm32-unknown-unknown
+
+      - name: Instalar dependencias del sistema
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libasound2-dev libudev-dev
+
+      - name: Instalar Trunk
+        run: cargo install trunk --locked
+
+      - name: Verificar formato
+        run: cargo fmt --all -- --check
+
+      - name: Verificar compilacion
+        run: cargo check --all-targets
+
+      - name: Ejecutar pruebas
+        run: cargo test --all-targets
+
+      - name: Compilar WebAssembly
+        run: trunk build --release

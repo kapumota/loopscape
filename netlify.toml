@@ -1,0 +1,11 @@
+[build]
+  command = "cargo install trunk --locked && trunk build --release"
+  publish = "dist"
+
+[build.environment]
+  RUST_VERSION = "1.80"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

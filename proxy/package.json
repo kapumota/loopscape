@@ -1,0 +1,13 @@
+{
+  "name": "loopscape-llm-proxy",
+  "version": "1.0.0",
+  "description": "LLM proxy for Loopscape WASM",
+  "scripts": {
+    "start": "node local.js",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

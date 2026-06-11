@@ -1,0 +1,6 @@
+name = "loopscape-llm-proxy"
+main = "worker.js"
+compatibility_date = "2026-06-01"
+
+[vars]
+# Set OPENAI_API_KEY as secret: wrangler secret put OPENAI_API_KEY

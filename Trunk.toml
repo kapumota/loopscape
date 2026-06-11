@@ -1,0 +1,14 @@
+[build]
+target = "index.html"
+dist = "dist"
+
+[serve]
+port = 8080
+open = false
+
+[watch]
+watch = ["src", "Cargo.toml", "index.html"]
+
+[tools]
+wasm_bindgen = "0.2"
+wasm_opt = "version_116"

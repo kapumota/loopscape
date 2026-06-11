@@ -1,0 +1,183 @@
+use bevy::prelude::*;
+
+mod components;
+mod resources;
+mod events;
+mod eras;
+mod systems;
+mod llm_integration;
+mod networking;
+
+use components::*;
+use resources::*;
+use events::*;
+use systems::*;
+use llm_integration::*;
+use networking::*;
+
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
+enum GameEra {
+    #[default]
+    Menu,
+    ReAct,
+    SelfPrompting,
+    RalphLoop,
+    ProductizedRalph,
+    MultiAgentOrchestration,
+}
+
+fn main() {
+    let mut app = App::new();
+
+    // Plugins base
+    app.add_plugins(DefaultPlugins.set(WindowPlugin {
+        primary_window: Some(Window {
+            title: "Loopscape - Sandbox visual de loops agenticos".to_string(),
+            resolution: (1280.0, 720.0).into(),
+            ..default()
+        }),
+        ..default()
+    }));
+
+    // Superposicion FPS solo en modo nativo
+    #[cfg(not(target_arch = "wasm32"))]
+    app.add_plugins(bevy::dev_tools::fps_overlay::FpsOverlayPlugin {
+        config: bevy::dev_tools::fps_overlay::FpsOverlayConfig {
+            text_config: TextFont::default().with_font_size(14.0),
+            ..default()
+        },
+    });
+
+    // Recursos
+    app.init_resource::<GlobalPrompt>()
+        .init_resource::<TaskQueue>()
+        .init_resource::<Metrics>()
+        .init_resource::<XRayMode>()
+        .init_resource::<EraConfig>()
+        .init_resource::<HTTPClient>()
+        .init_resource::<llm_integration::ReActContext>();
+
+    // Eventos
+    app.add_event::<EraTransitionEvent>()
+        .add_event::<SpawnSubLoopEvent>()
+        .add_event::<HeartbeatEvent>()
+        .add_event::<ByzantineFaultEvent>()
+        .add_event::<llm_integration::LLMRequestEvent>()
+        .add_event::<llm_integration::LLMResponseEvent>()
+        .add_event::<networking::HTTPRequestEvent>()
+        .add_event::<networking::HTTPResponseEvent>();
+
+    // Runtime nativo
+    #[cfg(not(target_arch = "wasm32"))]
+    app.init_resource::<networking::native::NativeRuntime>();
+
+    // Estados
+    app.init_state::<GameEra>();
+
+    // Inicializacion
+    app.add_systems(Startup, (
+        systems::camera::setup_camera,
+        systems::ui::setup_ui,
+    ));
+
+    // Entrada por era
+    app.add_systems(OnEnter(GameEra::ReAct), eras::react::setup_react_era)
+        .add_systems(OnEnter(GameEra::SelfPrompting), eras::self_prompting::setup_self_prompt_era)
+        .add_systems(OnEnter(GameEra::RalphLoop), eras::ralph::setup_ralph_era)
+        .add_systems(OnEnter(GameEra::ProductizedRalph), eras::productized::setup_productized_era)
+        .add_systems(OnEnter(GameEra::MultiAgentOrchestration), eras::orchestration::setup_orchestration_era);
+
+    // Actualizacion especifica por era
+    app.add_systems(Update, (
+        eras::react::react_cycle_system,
+        eras::react::tool_cooldown_system,
+    ).run_if(in_state(GameEra::ReAct)))
+    .add_systems(Update, (
+        eras::self_prompting::autonomous_decomposition,
+        eras::self_prompting::spawn_sub_loops,
+        eras::self_prompting::sub_loop_lifetime,
+    ).run_if(in_state(GameEra::SelfPrompting)))
+    .add_systems(Update, (
+        eras::ralph::shared_dna_propagation,
+        eras::ralph::swarm_sync_visuals,
+        eras::ralph::mutate_dna_system,
+    ).run_if(in_state(GameEra::RalphLoop)))
+    .add_systems(Update, (
+        eras::productized::command_execution_system,
+        eras::productized::auto_termination_cleanup,
+    ).run_if(in_state(GameEra::ProductizedRalph)))
+    .add_systems(Update, (
+        eras::orchestration::heartbeat_system,
+        eras::orchestration::consensus_voting,
+        eras::orchestration::byzantine_detection,
+        eras::orchestration::byzantine_visuals,
+    ).run_if(in_state(GameEra::MultiAgentOrchestration)));
+
+    // Sistemas LLM (corren en todas las eras donde hay LLMBrain)
+    app.add_systems(Update, (
+        llm_integration::detect_llm_needs,
+        llm_integration::visualize_react_trace,
+    ));
+
+    // Red
+    #[cfg(not(target_arch = "wasm32"))]
+    app.add_systems(Update, networking::handle_http_requests);
+
+    #[cfg(target_arch = "wasm32")]
+    app.add_systems(Update, networking::handle_http_requests_wasm_system);
+
+    // Sistemas globales
+    app.add_systems(Update, (
+        systems::camera::camera_controls,
+        systems::ui::update_ui,
+        era_transition_input,
+        llm_panel_toggle,
+    ));
+
+    // Renderizado
+    app.add_systems(PostUpdate, (
+        systems::rendering::loop_rendering,
+        systems::rendering::connection_line_rendering,
+        systems::rendering::ralph_monolith_rendering,
+    ));
+
+    app.run();
+}
+
+fn era_transition_input(
+    keyboard: Res<ButtonInput<KeyCode>>,
+    current_era: Res<State<GameEra>>,
+    mut next_era: ResMut<NextState<GameEra>>,
+) {
+    let target = if keyboard.just_pressed(KeyCode::Digit1) {
+        Some(GameEra::ReAct)
+    } else if keyboard.just_pressed(KeyCode::Digit2) {
+        Some(GameEra::SelfPrompting)
+    } else if keyboard.just_pressed(KeyCode::Digit3) {
+        Some(GameEra::RalphLoop)
+    } else if keyboard.just_pressed(KeyCode::Digit4) {
+        Some(GameEra::ProductizedRalph)
+    } else if keyboard.just_pressed(KeyCode::Digit5) {
+        Some(GameEra::MultiAgentOrchestration)
+    } else {
+        None
+    };
+
+    if let Some(new_era) = target {
+        if current_era.get() != &new_era {
+            next_era.set(new_era);
+        }
+    }
+}
+
+fn llm_panel_toggle(
+    keyboard: Res<ButtonInput<KeyCode>>,
+) {
+    if keyboard.just_pressed(KeyCode::KeyL) {
+        // En WASM, llamamos al bridge JS
+        #[cfg(target_arch = "wasm32")]
+        {
+            // Aqui iria la llamada a JS mediante web-sys
+        }
+    }
+}

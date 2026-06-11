@@ -1,0 +1,43 @@
+[package]
+name = "loopscape"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = "0.15"
+rand = "0.8"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# HTTP asincrono para WASM y nativo
+reqwest = { version = "0.12", default-features = false, features = ["json"] }
+
+# Async runtime compatible con WASM
+wasm-bindgen-futures = { version = "0.4", optional = true }
+web-sys = { version = "0.3", optional = true }
+js-sys = { version = "0.3", optional = true }
+
+# Aleatoriedad para WASM
+getrandom = { version = "0.2", features = ["js"], optional = true }
+
+# Solo nativo
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tokio = { version = "1.0", features = ["full"] }
+
+# Solo WASM
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+web-sys = { version = "0.3", features = ["console", "Window", "Document", "Element", "HtmlElement", "Headers", "Request", "RequestInit", "RequestMode", "Response"] }
+js-sys = "0.3"
+getrandom = { version = "0.2", features = ["js"] }
+
+[features]
+default = []
+wasm = ["wasm-bindgen-futures", "web-sys", "js-sys", "getrandom/js"]
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
