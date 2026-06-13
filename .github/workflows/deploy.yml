@@ -27,7 +27,7 @@ jobs:
         run: cargo install trunk --locked
 
       - name: Construir WebAssembly
-        run: trunk build --release
+        run: make web-build-release
 
       - name: Publicar en GitHub Pages
         if: github.ref == 'refs/heads/main'

@@ -1,3 +1,7 @@
+#![allow(dead_code)]
+
+// Tipos y utilidades del runtime LLM. La integracion completa pertenece a Fase 5.
+// En Fase 1 se conservan como API preparatoria y se cubre el parser ReAct con tests.
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -70,7 +74,7 @@ pub struct LLMResponseEvent {
     pub react_step: Option<ReActStep>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Resource, Debug, Clone)]
 pub struct ReActContext {
     pub previous_thoughts: Vec<String>,
     pub available_tools: Vec<String>,
@@ -99,28 +103,45 @@ pub fn detect_llm_needs(
     query: Query<(Entity, &crate::components::LoopState, &LLMBrain), Without<LLMResponsePending>>,
 ) {
     for (entity, state, brain) in query.iter() {
-        if *state == crate::components::LoopState::Thinking && !brain.is_processing {
-            if brain.pending_prompt.is_some() {
-                commands.entity(entity).insert(LLMResponsePending);
-                // En una implementacion real, aqui se lanzaria la peticion HTTP.
-                // Por ahora se mantiene como simulacion local.
-            }
+        if *state == crate::components::LoopState::Thinking
+            && !brain.is_processing
+            && brain.pending_prompt.is_some()
+        {
+            commands.entity(entity).insert(LLMResponsePending);
+            // En una implementacion real, aqui se lanzaria la peticion HTTP.
+            // Por ahora se mantiene como simulacion local.
         }
     }
 }
 
 /// Parsea una respuesta LLM en formato ReAct.
 pub fn parse_react_response(response: &str) -> Option<ReActStep> {
-    parse_react_response_with_labels(response, "Thought:", "Action:", "Entrada de accion:", "Observation:")
-        .or_else(|| {
-            parse_react_response_with_labels(
-                response,
-                "Pensamiento:",
-                "Accion:",
-                "Entrada de accion:",
-                "Observacion:",
-            )
-        })
+    let label_sets = [
+        (
+            "Pensamiento:",
+            "Accion:",
+            "Entrada de accion:",
+            "Observacion:",
+        ),
+        ("Thought:", "Action:", "Action Input:", "Observation:"),
+        ("Thought:", "Accion:", "Entrada de accion:", "Observation:"),
+        ("Thought:", "Action:", "Entrada de accion:", "Observation:"),
+        ("Pensamiento:", "Action:", "Action Input:", "Observacion:"),
+    ];
+
+    for (thought_label, action_label, action_input_label, observation_label) in label_sets {
+        if let Some(step) = parse_react_response_with_labels(
+            response,
+            thought_label,
+            action_label,
+            action_input_label,
+            observation_label,
+        ) {
+            return Some(step);
+        }
+    }
+
+    None
 }
 
 fn parse_react_response_with_labels(

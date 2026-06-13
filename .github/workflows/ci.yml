@@ -38,4 +38,4 @@ jobs:
         run: cargo test --all-targets
 
       - name: Compilar WebAssembly
-        run: trunk build --release
+        run: make web-build-release

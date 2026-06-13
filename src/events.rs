@@ -1,5 +1,9 @@
+#![allow(dead_code)]
+
+// Eventos reservados para transiciones, fallos y orquestacion avanzada.
+// En Fase 1 se validan compilacion y ejecucion; su uso completo queda para
+// las fases de simulacion, DSL y multiagente.
 use bevy::prelude::*;
-use crate::components::*;
 
 #[derive(Event)]
 pub struct EraTransitionEvent {
