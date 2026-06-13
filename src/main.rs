@@ -305,17 +305,12 @@ fn update_metrics_system(
 ) {
     metrics.era_timer += time.delta_secs();
 
-    metrics.active_loops = loop_states
-        .iter()
-        .filter(|state| **state != LoopState::Terminated)
-        .count();
+    let tick = crate::app::bevy_adapter::estimate_tick_from_seconds(metrics.era_timer);
+    let core_metrics =
+        crate::app::bevy_adapter::core_metrics_from_visual_states(tick, loop_states.iter());
 
-    metrics.throughput = if metrics.era_timer > 0.0 {
-        metrics.active_loops as f32 / metrics.era_timer
-    } else {
-        0.0
-    };
-
+    metrics.active_loops = core_metrics.active_loops;
+    metrics.throughput = core_metrics.throughput;
     metrics.consensus_term = voters.iter().map(|voter| voter.term).max().unwrap_or(0);
 }
 
