@@ -1,3 +1,8 @@
+#![allow(dead_code)]
+
+// Estos componentes forman parte del contrato visual y de simulacion de Loopscape.
+// Varias piezas se activaran en fases posteriores; se mantienen declaradas para
+// estabilizar la API interna sin ensuciar la validacion de Fase 1.
 use bevy::prelude::*;
 
 // --------- IDENTIDAD ---------

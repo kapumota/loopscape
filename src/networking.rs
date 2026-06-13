@@ -1,5 +1,9 @@
+#![allow(dead_code)]
+#![allow(clippy::upper_case_acronyms)]
+
+// Capa de red preparatoria para proxy y sandbox LLM.
+// La conexion real se endurecera en Fase 5 y Fase 8.
 use bevy::prelude::*;
-use serde::{Deserialize, Serialize};
 
 // --------- ABSTRACCIÓN DE HTTP ---------
 
@@ -47,7 +51,6 @@ pub enum HTTPMethod {
 #[cfg(not(target_arch = "wasm32"))]
 pub mod native {
     use super::*;
-    use reqwest;
     use std::sync::Arc;
     use tokio::runtime::Runtime;
 
@@ -67,16 +70,10 @@ pub mod native {
     pub fn handle_http_requests_native(
         mut requests: EventReader<HTTPRequestEvent>,
         mut responses: EventWriter<HTTPResponseEvent>,
-        runtime: Res<NativeRuntime>,
+        _runtime: Res<NativeRuntime>,
     ) {
         for req in requests.read() {
             let id = req.id;
-            let url = req.url.clone();
-            let method = req.method.clone();
-            let body = req.body.clone();
-            let headers = req.headers.clone();
-
-            let rt = runtime.rt.clone();
             // En un sistema real, usaríamos bevy_tasks::AsyncComputeTaskPool
             // Aquí simplificamos para el ejemplo
 
@@ -96,8 +93,7 @@ pub mod native {
 pub mod wasm {
     use super::*;
     use wasm_bindgen::prelude::*;
-    use wasm_bindgen_futures::spawn_local;
-    use web_sys::{Request, RequestInit, RequestMode, Response, Headers};
+    use web_sys::{Request, RequestInit, RequestMode, Response};
 
     #[wasm_bindgen]
     extern "C" {
@@ -111,14 +107,12 @@ pub mod wasm {
     ) {
         for req in requests.read() {
             let id = req.id;
-            let url = req.url.clone();
-            let method_str = match req.method {
+            let _method_str = match req.method {
                 HTTPMethod::GET => "GET",
                 HTTPMethod::POST => "POST",
                 HTTPMethod::PUT => "PUT",
                 HTTPMethod::DELETE => "DELETE",
             };
-            let body = req.body.clone();
 
             // En WASM, usamos spawn_local para async
             // Nota: en Bevy WASM, esto requiere manejo cuidadoso del event loop
@@ -134,19 +128,24 @@ pub mod wasm {
     }
 
     /// Función real de fetch para WASM (para uso futuro)
-    pub async fn wasm_fetch(url: &str, method: &str, body: Option<&str>) -> Result<String, JsValue> {
-        let mut opts = RequestInit::new();
-        opts.method(method);
-        opts.mode(RequestMode::Cors);
+    pub async fn wasm_fetch(
+        url: &str,
+        method: &str,
+        body: Option<&str>,
+    ) -> Result<String, JsValue> {
+        let opts = RequestInit::new();
+        opts.set_method(method);
+        opts.set_mode(RequestMode::Cors);
 
         if let Some(b) = body {
-            opts.body(Some(&JsValue::from_str(b)));
+            opts.set_body(&JsValue::from_str(b));
         }
 
         let request = Request::new_with_str_and_init(url, &opts)?;
 
         let window = web_sys::window().ok_or("No window")?;
-        let resp_value = wasm_bindgen_futures::JsFuture::from(window.fetch_with_request(&request)).await?;
+        let resp_value =
+            wasm_bindgen_futures::JsFuture::from(window.fetch_with_request(&request)).await?;
         let resp: Response = resp_value.dyn_into()?;
 
         let text = wasm_bindgen_futures::JsFuture::from(resp.text()?).await?;
@@ -156,12 +155,9 @@ pub mod wasm {
 
 // --------- SISTEMA UNIFICADO ---------
 pub fn handle_http_requests(
-    #[cfg(not(target_arch = "wasm32"))]
-    mut requests: EventReader<HTTPRequestEvent>,
-    #[cfg(not(target_arch = "wasm32"))]
-    mut responses: EventWriter<HTTPResponseEvent>,
-    #[cfg(not(target_arch = "wasm32"))]
-    runtime: Res<native::NativeRuntime>,
+    #[cfg(not(target_arch = "wasm32"))] requests: EventReader<HTTPRequestEvent>,
+    #[cfg(not(target_arch = "wasm32"))] responses: EventWriter<HTTPResponseEvent>,
+    #[cfg(not(target_arch = "wasm32"))] runtime: Res<native::NativeRuntime>,
 ) {
     #[cfg(not(target_arch = "wasm32"))]
     native::handle_http_requests_native(requests, responses, runtime);
@@ -169,8 +165,8 @@ pub fn handle_http_requests(
 
 #[cfg(target_arch = "wasm32")]
 pub fn handle_http_requests_wasm_system(
-    mut requests: EventReader<HTTPRequestEvent>,
-    mut responses: EventWriter<HTTPResponseEvent>,
+    requests: EventReader<HTTPRequestEvent>,
+    responses: EventWriter<HTTPResponseEvent>,
 ) {
     wasm::handle_http_requests_wasm(requests, responses);
 }

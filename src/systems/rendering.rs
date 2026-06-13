@@ -1,10 +1,12 @@
-use bevy::prelude::*;
 use crate::components::*;
+use crate::resources::XRayMode;
+use bevy::prelude::*;
 
 pub fn loop_rendering(
     mut gizmos: Gizmos,
     loops: Query<(&Transform, &LoopVisual, &LoopState), With<LoopAgent>>,
     time: Res<Time>,
+    xray: Res<XRayMode>,
 ) {
     for (transform, visual, state) in loops.iter() {
         let pulse = (time.elapsed_secs() * visual.pulse_speed).sin() * 0.3 + 1.0;
@@ -20,6 +22,13 @@ pub fn loop_rendering(
         };
 
         gizmos.circle_2d(transform.translation.truncate(), radius, color);
+        if xray.enabled {
+            gizmos.circle_2d(
+                transform.translation.truncate(),
+                radius + 8.0,
+                Color::srgb(1.0, 1.0, 1.0).with_alpha(0.35),
+            );
+        }
     }
 }
 
@@ -30,10 +39,9 @@ pub fn connection_line_rendering(
     time: Res<Time>,
 ) {
     for line in lines.iter() {
-        if let (Ok(from_transform), Ok(to_transform)) = (
-            transforms.get(line.from),
-            transforms.get(line.to),
-        ) {
+        if let (Ok(from_transform), Ok(to_transform)) =
+            (transforms.get(line.from), transforms.get(line.to))
+        {
             let pulse = (time.elapsed_secs() * 3.0).sin() * 0.3 + 0.7;
             let color = line.color.with_alpha(pulse);
             gizmos.line_2d(
@@ -52,7 +60,11 @@ pub fn ralph_monolith_rendering(
 ) {
     if era.get() == &crate::GameEra::RalphLoop {
         let pulse = (time.elapsed_secs() * 2.0).sin() * 5.0 + 30.0;
-        gizmos.circle_2d(Vec2::ZERO, pulse, Color::srgb(0.3, 0.7, 0.9).with_alpha(0.3));
+        gizmos.circle_2d(
+            Vec2::ZERO,
+            pulse,
+            Color::srgb(0.3, 0.7, 0.9).with_alpha(0.3),
+        );
         gizmos.circle_2d(Vec2::ZERO, 20.0, Color::srgb(0.3, 0.7, 0.9));
     }
 }

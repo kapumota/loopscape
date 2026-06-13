@@ -1,11 +1,8 @@
-use bevy::prelude::*;
 use crate::components::*;
 use crate::resources::*;
+use bevy::prelude::*;
 
-pub fn setup_react_era(
-    mut commands: Commands,
-    mut metrics: ResMut<Metrics>,
-) {
+pub fn setup_react_era(mut commands: Commands, mut metrics: ResMut<Metrics>) {
     metrics.active_loops = 0;
     metrics.era_timer = 0.0;
 
@@ -14,29 +11,33 @@ pub fn setup_react_era(
         let x = (i as f32 - 2.0) * 120.0;
         let y = 100.0;
 
-        let loop_entity = commands.spawn((
-            LoopAgent,
-            LoopState::Thinking,
-            ThinkTimer(Timer::from_seconds(2.0, TimerMode::Repeating)),
-            ActTimer(Timer::from_seconds(1.5, TimerMode::Repeating)),
-            ObserveTimer(Timer::from_seconds(1.0, TimerMode::Repeating)),
-            Transform::from_xyz(x, y, 0.0),
-            LoopVisual {
-                base_color: Color::srgb(0.2, 0.4, 1.0),
-                pulse_speed: 2.0,
-                radius: 20.0,
-            },
-        )).id();
+        let loop_entity = commands
+            .spawn((
+                LoopAgent,
+                LoopState::Thinking,
+                ThinkTimer(Timer::from_seconds(2.0, TimerMode::Repeating)),
+                ActTimer(Timer::from_seconds(1.5, TimerMode::Repeating)),
+                ObserveTimer(Timer::from_seconds(1.0, TimerMode::Repeating)),
+                Transform::from_xyz(x, y, 0.0),
+                LoopVisual {
+                    base_color: Color::srgb(0.2, 0.4, 1.0),
+                    pulse_speed: 2.0,
+                    radius: 20.0,
+                },
+            ))
+            .id();
 
         // Crea herramienta estatica
-        let tool_entity = commands.spawn((
-            Transform::from_xyz(x, y - 80.0, 0.0),
-            LoopVisual {
-                base_color: Color::srgb(0.5, 0.5, 0.5),
-                pulse_speed: 0.5,
-                radius: 12.0,
-            },
-        )).id();
+        let tool_entity = commands
+            .spawn((
+                Transform::from_xyz(x, y - 80.0, 0.0),
+                LoopVisual {
+                    base_color: Color::srgb(0.5, 0.5, 0.5),
+                    pulse_speed: 0.5,
+                    radius: 12.0,
+                },
+            ))
+            .id();
 
         commands.entity(loop_entity).insert(WiredTool {
             tool_id: tool_entity,
@@ -44,14 +45,12 @@ pub fn setup_react_era(
         });
 
         // Linea de conexion
-        commands.spawn((
-            ConnectionLine {
-                from: loop_entity,
-                to: tool_entity,
-                line_type: ConnectionType::ToolWire,
-                color: Color::srgb(0.3, 0.3, 0.3),
-            },
-        ));
+        commands.spawn((ConnectionLine {
+            from: loop_entity,
+            to: tool_entity,
+            line_type: ConnectionType::ToolWire,
+            color: Color::srgb(0.3, 0.3, 0.3),
+        },));
     }
 }
 
@@ -93,10 +92,7 @@ pub fn react_cycle_system(
     }
 }
 
-pub fn tool_cooldown_system(
-    mut query: Query<&mut WiredTool>,
-    time: Res<Time>,
-) {
+pub fn tool_cooldown_system(mut query: Query<&mut WiredTool>, time: Res<Time>) {
     for mut tool in query.iter_mut() {
         tool.cooldown.tick(time.delta());
     }

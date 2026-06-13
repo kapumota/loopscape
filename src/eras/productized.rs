@@ -1,19 +1,25 @@
-use bevy::prelude::*;
 use crate::components::*;
 use crate::resources::*;
+use bevy::prelude::*;
 
-pub fn setup_productized_era(
-    mut commands: Commands,
-    mut metrics: ResMut<Metrics>,
-) {
+pub fn setup_productized_era(mut commands: Commands, mut metrics: ResMut<Metrics>) {
     metrics.active_loops = 0;
     metrics.era_timer = 0.0;
 
     // Crea 5 loops con comandos formales
-    let commands_list = vec![
-        (CommandType::Goal, vec!["rescatar".to_string(), "victimas".to_string()]),
-        (CommandType::Plan, vec!["fase1".to_string(), "fase2".to_string()]),
-        (CommandType::Delegate, vec!["sector_a".to_string(), "sector_b".to_string()]),
+    let commands_list = [
+        (
+            CommandType::Goal,
+            vec!["rescatar".to_string(), "victimas".to_string()],
+        ),
+        (
+            CommandType::Plan,
+            vec!["fase1".to_string(), "fase2".to_string()],
+        ),
+        (
+            CommandType::Delegate,
+            vec!["sector_a".to_string(), "sector_b".to_string()],
+        ),
         (CommandType::Verify, vec!["finalizacion".to_string()]),
         (CommandType::Terminate, vec![]),
     ];
@@ -56,7 +62,13 @@ pub fn setup_productized_era(
 
 pub fn command_execution_system(
     mut commands: Commands,
-    mut query: Query<(Entity, &mut FormalCommand, &mut GoalTree, &mut LoopState, &Transform)>,
+    mut query: Query<(
+        Entity,
+        &mut FormalCommand,
+        &mut GoalTree,
+        &mut LoopState,
+        &Transform,
+    )>,
     time: Res<Time>,
 ) {
     for (entity, mut cmd, mut tree, mut state, transform) in query.iter_mut() {
@@ -73,7 +85,13 @@ pub fn command_execution_system(
             CommandType::Plan => {
                 if cmd.execution_timer.just_finished() && tree.completed_nodes.len() == 1 {
                     tree.completed_nodes.push("planificado".to_string());
-                    spawn_goal_node(&mut commands, entity, transform.translation + Vec3::new(0.0, 30.0, 0.0), "plan", 1);
+                    spawn_goal_node(
+                        &mut commands,
+                        entity,
+                        transform.translation + Vec3::new(0.0, 30.0, 0.0),
+                        "plan",
+                        1,
+                    );
                 }
             }
             CommandType::Delegate => {
@@ -96,13 +114,7 @@ pub fn command_execution_system(
     }
 }
 
-fn spawn_goal_node(
-    commands: &mut Commands,
-    _parent: Entity,
-    pos: Vec3,
-    label: &str,
-    depth: u32,
-) {
+fn spawn_goal_node(commands: &mut Commands, _parent: Entity, pos: Vec3, label: &str, depth: u32) {
     let color = match depth {
         0 => Color::srgb(1.0, 0.2, 0.2),
         1 => Color::srgb(1.0, 0.5, 0.2),
@@ -114,7 +126,10 @@ fn spawn_goal_node(
         TextColor(color),
         TextFont::default().with_font_size(14.0),
         Transform::from_translation(pos + Vec3::new(0.0, 25.0 + (depth as f32 * 20.0), 0.0)),
-        GoalNode { parent: _parent, depth },
+        GoalNode {
+            parent: _parent,
+            depth,
+        },
     ));
 }
 
@@ -123,7 +138,10 @@ pub fn auto_termination_cleanup(
     query: Query<(Entity, &LoopState), With<LoopAgent>>,
     mut metrics: ResMut<Metrics>,
 ) {
-    let terminated_count = query.iter().filter(|(_, s)| **s == LoopState::Terminated).count();
+    let terminated_count = query
+        .iter()
+        .filter(|(_, s)| **s == LoopState::Terminated)
+        .count();
     if terminated_count > 0 {
         metrics.active_loops = query.iter().count() - terminated_count;
         for (entity, state) in query.iter() {

@@ -18,7 +18,7 @@ web-sys = { version = "0.3", optional = true }
 js-sys = { version = "0.3", optional = true }
 
 # Aleatoriedad para WASM
-getrandom = { version = "0.2", features = ["js"], optional = true }
+getrandom = { version = "0.3", features = ["wasm_js"], optional = true }
 
 # Solo nativo
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
@@ -30,11 +30,11 @@ wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"
 web-sys = { version = "0.3", features = ["console", "Window", "Document", "Element", "HtmlElement", "Headers", "Request", "RequestInit", "RequestMode", "Response"] }
 js-sys = "0.3"
-getrandom = { version = "0.2", features = ["js"] }
+getrandom = { version = "0.3", features = ["wasm_js"] }
 
 [features]
 default = []
-wasm = ["wasm-bindgen-futures", "web-sys", "js-sys", "getrandom/js"]
+wasm = ["wasm-bindgen-futures", "web-sys", "js-sys", "getrandom/wasm_js"]
 
 [profile.release]
 opt-level = "z"

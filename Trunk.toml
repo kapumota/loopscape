@@ -1,7 +1,7 @@
 [build]
 target = "index.html"
 dist = "dist"
-
+release = false
 [serve]
 port = 8080
 open = false
@@ -10,5 +10,5 @@ open = false
 watch = ["src", "Cargo.toml", "index.html"]
 
 [tools]
-wasm_bindgen = "0.2"
-wasm_opt = "version_116"
+wasm_bindgen = "0.2.125"
+wasm_opt = "version_123"

@@ -1,19 +1,17 @@
 use bevy::prelude::*;
 
 mod components;
-mod resources;
-mod events;
 mod eras;
-mod systems;
+mod events;
 mod llm_integration;
 mod networking;
+mod resources;
+mod systems;
 
-use components::*;
-use resources::*;
+use components::{ConnectionLine, ConsensusVoter, GoalNode, LoopAgent, LoopState, LoopVisual};
 use events::*;
-use systems::*;
-use llm_integration::*;
 use networking::*;
+use resources::*;
 
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
 enum GameEra {
@@ -39,14 +37,7 @@ fn main() {
         ..default()
     }));
 
-    // Superposicion FPS solo en modo nativo
-    #[cfg(not(target_arch = "wasm32"))]
-    app.add_plugins(bevy::dev_tools::fps_overlay::FpsOverlayPlugin {
-        config: bevy::dev_tools::fps_overlay::FpsOverlayConfig {
-            text_config: TextFont::default().with_font_size(14.0),
-            ..default()
-        },
-    });
+    // FPS overlay deshabilitado en Fase 1 para compilar con Bevy 0.15 sin features extra.
 
     // Recursos
     app.init_resource::<GlobalPrompt>()
@@ -75,49 +66,91 @@ fn main() {
     app.init_state::<GameEra>();
 
     // Inicializacion
-    app.add_systems(Startup, (
-        systems::camera::setup_camera,
-        systems::ui::setup_ui,
-    ));
+    app.add_systems(
+        Startup,
+        (systems::camera::setup_camera, systems::ui::setup_ui),
+    );
 
     // Entrada por era
     app.add_systems(OnEnter(GameEra::ReAct), eras::react::setup_react_era)
-        .add_systems(OnEnter(GameEra::SelfPrompting), eras::self_prompting::setup_self_prompt_era)
+        .add_systems(
+            OnEnter(GameEra::SelfPrompting),
+            eras::self_prompting::setup_self_prompt_era,
+        )
         .add_systems(OnEnter(GameEra::RalphLoop), eras::ralph::setup_ralph_era)
-        .add_systems(OnEnter(GameEra::ProductizedRalph), eras::productized::setup_productized_era)
-        .add_systems(OnEnter(GameEra::MultiAgentOrchestration), eras::orchestration::setup_orchestration_era);
+        .add_systems(
+            OnEnter(GameEra::ProductizedRalph),
+            eras::productized::setup_productized_era,
+        )
+        .add_systems(
+            OnEnter(GameEra::MultiAgentOrchestration),
+            eras::orchestration::setup_orchestration_era,
+        );
+
+    // Limpieza al salir de cada era para evitar acumulacion de entidades visuales.
+    app.add_systems(OnExit(GameEra::ReAct), cleanup_era_entities)
+        .add_systems(OnExit(GameEra::SelfPrompting), cleanup_era_entities)
+        .add_systems(OnExit(GameEra::RalphLoop), cleanup_era_entities)
+        .add_systems(OnExit(GameEra::ProductizedRalph), cleanup_era_entities)
+        .add_systems(
+            OnExit(GameEra::MultiAgentOrchestration),
+            cleanup_era_entities,
+        );
 
     // Actualizacion especifica por era
-    app.add_systems(Update, (
-        eras::react::react_cycle_system,
-        eras::react::tool_cooldown_system,
-    ).run_if(in_state(GameEra::ReAct)))
-    .add_systems(Update, (
-        eras::self_prompting::autonomous_decomposition,
-        eras::self_prompting::spawn_sub_loops,
-        eras::self_prompting::sub_loop_lifetime,
-    ).run_if(in_state(GameEra::SelfPrompting)))
-    .add_systems(Update, (
-        eras::ralph::shared_dna_propagation,
-        eras::ralph::swarm_sync_visuals,
-        eras::ralph::mutate_dna_system,
-    ).run_if(in_state(GameEra::RalphLoop)))
-    .add_systems(Update, (
-        eras::productized::command_execution_system,
-        eras::productized::auto_termination_cleanup,
-    ).run_if(in_state(GameEra::ProductizedRalph)))
-    .add_systems(Update, (
-        eras::orchestration::heartbeat_system,
-        eras::orchestration::consensus_voting,
-        eras::orchestration::byzantine_detection,
-        eras::orchestration::byzantine_visuals,
-    ).run_if(in_state(GameEra::MultiAgentOrchestration)));
+    app.add_systems(
+        Update,
+        (
+            eras::react::react_cycle_system,
+            eras::react::tool_cooldown_system,
+        )
+            .run_if(in_state(GameEra::ReAct)),
+    )
+    .add_systems(
+        Update,
+        (
+            eras::self_prompting::autonomous_decomposition,
+            eras::self_prompting::spawn_sub_loops,
+            eras::self_prompting::sub_loop_lifetime,
+        )
+            .run_if(in_state(GameEra::SelfPrompting)),
+    )
+    .add_systems(
+        Update,
+        (
+            eras::ralph::shared_dna_propagation,
+            eras::ralph::swarm_sync_visuals,
+            eras::ralph::mutate_dna_system,
+        )
+            .run_if(in_state(GameEra::RalphLoop)),
+    )
+    .add_systems(
+        Update,
+        (
+            eras::productized::command_execution_system,
+            eras::productized::auto_termination_cleanup,
+        )
+            .run_if(in_state(GameEra::ProductizedRalph)),
+    )
+    .add_systems(
+        Update,
+        (
+            eras::orchestration::heartbeat_system,
+            eras::orchestration::consensus_voting,
+            eras::orchestration::byzantine_detection,
+            eras::orchestration::byzantine_visuals,
+        )
+            .run_if(in_state(GameEra::MultiAgentOrchestration)),
+    );
 
     // Sistemas LLM (corren en todas las eras donde hay LLMBrain)
-    app.add_systems(Update, (
-        llm_integration::detect_llm_needs,
-        llm_integration::visualize_react_trace,
-    ));
+    app.add_systems(
+        Update,
+        (
+            llm_integration::detect_llm_needs,
+            llm_integration::visualize_react_trace,
+        ),
+    );
 
     // Red
     #[cfg(not(target_arch = "wasm32"))]
@@ -127,19 +160,27 @@ fn main() {
     app.add_systems(Update, networking::handle_http_requests_wasm_system);
 
     // Sistemas globales
-    app.add_systems(Update, (
-        systems::camera::camera_controls,
-        systems::ui::update_ui,
-        era_transition_input,
-        llm_panel_toggle,
-    ));
+    app.add_systems(
+        Update,
+        (
+            systems::camera::camera_controls,
+            systems::ui::update_ui,
+            update_metrics_system,
+            era_transition_input,
+            xray_toggle,
+            llm_panel_toggle,
+        ),
+    );
 
     // Renderizado
-    app.add_systems(PostUpdate, (
-        systems::rendering::loop_rendering,
-        systems::rendering::connection_line_rendering,
-        systems::rendering::ralph_monolith_rendering,
-    ));
+    app.add_systems(
+        PostUpdate,
+        (
+            systems::rendering::loop_rendering,
+            systems::rendering::connection_line_rendering,
+            systems::rendering::ralph_monolith_rendering,
+        ),
+    );
 
     app.run();
 }
@@ -170,9 +211,54 @@ fn era_transition_input(
     }
 }
 
-fn llm_panel_toggle(
-    keyboard: Res<ButtonInput<KeyCode>>,
+fn cleanup_era_entities(
+    mut commands: Commands,
+    visual_entities: Query<Entity, With<LoopVisual>>,
+    connection_entities: Query<Entity, With<ConnectionLine>>,
+    goal_nodes: Query<Entity, With<GoalNode>>,
 ) {
+    for entity in visual_entities.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+
+    for entity in connection_entities.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+
+    for entity in goal_nodes.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+}
+
+fn update_metrics_system(
+    time: Res<Time>,
+    loop_states: Query<&LoopState, With<LoopAgent>>,
+    voters: Query<&ConsensusVoter>,
+    mut metrics: ResMut<Metrics>,
+) {
+    metrics.era_timer += time.delta_secs();
+
+    metrics.active_loops = loop_states
+        .iter()
+        .filter(|state| **state != LoopState::Terminated)
+        .count();
+
+    metrics.throughput = if metrics.era_timer > 0.0 {
+        metrics.active_loops as f32 / metrics.era_timer
+    } else {
+        0.0
+    };
+
+    metrics.consensus_term = voters.iter().map(|voter| voter.term).max().unwrap_or(0);
+}
+
+fn xray_toggle(keyboard: Res<ButtonInput<KeyCode>>, mut xray: ResMut<XRayMode>) {
+    if keyboard.just_pressed(KeyCode::KeyX) {
+        xray.enabled = !xray.enabled;
+    }
+}
+
+fn llm_panel_toggle(keyboard: Res<ButtonInput<KeyCode>>) {
     if keyboard.just_pressed(KeyCode::KeyL) {
         // En WASM, llamamos al bridge JS
         #[cfg(target_arch = "wasm32")]

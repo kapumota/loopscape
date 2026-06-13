@@ -1,6 +1,6 @@
-use bevy::prelude::*;
 use crate::components::*;
 use crate::resources::*;
+use bevy::prelude::*;
 
 pub fn setup_ralph_era(
     mut commands: Commands,
@@ -20,33 +20,33 @@ pub fn setup_ralph_era(
         let x = angle.cos() * radius;
         let y = angle.sin() * radius;
 
-        let entity = commands.spawn((
-            LoopAgent,
-            LoopState::Thinking,
-            RalphDna {
-                prompt_hash: global_prompt.hash,
-                sync_offset: i as f32 * 0.5,
-            },
-            ThinkTimer(Timer::from_seconds(1.5, TimerMode::Repeating)),
-            ActTimer(Timer::from_seconds(1.0, TimerMode::Repeating)),
-            ObserveTimer(Timer::from_seconds(0.5, TimerMode::Repeating)),
-            Transform::from_xyz(x, y, 0.0),
-            LoopVisual {
-                base_color: Color::srgb(0.3, 0.7, 0.9),
-                pulse_speed: 2.0,
-                radius: 16.0,
-            },
-        )).id();
+        let entity = commands
+            .spawn((
+                LoopAgent,
+                LoopState::Thinking,
+                RalphDna {
+                    prompt_hash: global_prompt.hash,
+                    sync_offset: i as f32 * 0.5,
+                },
+                ThinkTimer(Timer::from_seconds(1.5, TimerMode::Repeating)),
+                ActTimer(Timer::from_seconds(1.0, TimerMode::Repeating)),
+                ObserveTimer(Timer::from_seconds(0.5, TimerMode::Repeating)),
+                Transform::from_xyz(x, y, 0.0),
+                LoopVisual {
+                    base_color: Color::srgb(0.3, 0.7, 0.9),
+                    pulse_speed: 2.0,
+                    radius: 16.0,
+                },
+            ))
+            .id();
 
         // Linea al centro del monolito
-        commands.spawn((
-            ConnectionLine {
-                from: entity,
-                to: Entity::from_raw(0), // se actualizará en otro sistema o se ignora
-                line_type: ConnectionType::DnaSync,
-                color: Color::srgb(0.3, 0.7, 0.9).with_alpha(0.3),
-            },
-        ));
+        commands.spawn((ConnectionLine {
+            from: entity,
+            to: Entity::from_raw(0), // se actualizará en otro sistema o se ignora
+            line_type: ConnectionType::DnaSync,
+            color: Color::srgb(0.3, 0.7, 0.9).with_alpha(0.3),
+        },));
     }
 }
 

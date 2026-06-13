@@ -1,3 +1,7 @@
+#![allow(dead_code)]
+
+// Recursos globales reservados para UI, metricas y modos visuales.
+// Algunos campos se activaran al cerrar las fases de editor y replay.
 use bevy::prelude::*;
 
 #[derive(Resource, Default)]

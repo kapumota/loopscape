@@ -89,8 +89,8 @@
 </head>
 <body>
     <div id="loading">
-        <div>Inicializando Loopscape</div>
-        <div style="font-size: 12px; margin-top: 10px; opacity: 0.7;">Compilando WebAssembly</div>
+        <div>Loopscape listo</div>
+        <div style="font-size: 12px; margin-top: 10px; opacity: 0.7;"></div>
     </div>
 
     <div id="controls">
@@ -154,5 +154,37 @@
             }
         };
     </script>
+
+<script id="loopscape-loading-overlay-fix">
+(() => {
+  const loadingTexts = ["Inicializando Loopscape", "Compilando WebAssembly"];
+
+  function hideStaleLoadingLabels() {
+    const nodes = Array.from(document.querySelectorAll("body *"));
+    for (const node of nodes) {
+      if (node.tagName === "CANVAS") {
+        continue;
+      }
+
+      const ownText = Array.from(node.childNodes)
+        .filter((child) => child.nodeType === Node.TEXT_NODE)
+        .map((child) => child.textContent || "")
+        .join(" ")
+        .trim();
+
+      if (loadingTexts.some((text) => ownText.includes(text))) {
+        node.style.display = "none";
+      }
+    }
+  }
+
+  window.addEventListener("load", () => {
+    setTimeout(hideStaleLoadingLabels, 500);
+    setTimeout(hideStaleLoadingLabels, 1500);
+    setTimeout(hideStaleLoadingLabels, 3000);
+  });
+})();
+</script>
+
 </body>
 </html>

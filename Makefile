@@ -32,26 +32,20 @@ run:
 
 web-serve:
 	@echo "Ejecutando Loopscape en navegador"
-	trunk serve
+	RUSTFLAGS='--cfg getrandom_backend="wasm_js"' trunk serve
 
 web-build:
-	@echo "Compilando Loopscape para WebAssembly"
-	trunk build --release
+	RUSTFLAGS='--cfg getrandom_backend="wasm_js"' trunk build
 
-validate: style-check fmt-check check test web-build
-	@echo "Validacion completa"
+web-build-release:
+	RUSTFLAGS='--cfg getrandom_backend="wasm_js"' trunk build --release
 
-clean:
-	@bash scripts/clean.sh
+clippy:
+	cargo clippy --all-targets -- -D warnings
 
-clean-deep: clean
-	@echo "Eliminando dependencias locales del proxy"
-	rm -rf proxy/node_modules proxy/package-lock.json
-
-proxy-install:
-	@echo "Instalando dependencias del proxy local"
-	cd proxy && npm install
-
-proxy-run:
-	@echo "Ejecutando proxy local"
-	cd proxy && node local.js
+validate-local:
+	$(MAKE) fmt-check
+	$(MAKE) check
+	$(MAKE) test
+	$(MAKE) clippy
+	$(MAKE) web-build

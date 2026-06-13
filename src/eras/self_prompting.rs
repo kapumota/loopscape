@@ -1,12 +1,9 @@
-use bevy::prelude::*;
 use crate::components::*;
 use crate::events::*;
 use crate::resources::*;
+use bevy::prelude::*;
 
-pub fn setup_self_prompt_era(
-    mut commands: Commands,
-    mut metrics: ResMut<Metrics>,
-) {
+pub fn setup_self_prompt_era(mut commands: Commands, mut metrics: ResMut<Metrics>) {
     metrics.active_loops = 0;
     metrics.era_timer = 0.0;
 
@@ -35,7 +32,6 @@ pub fn setup_self_prompt_era(
 }
 
 pub fn autonomous_decomposition(
-    mut commands: Commands,
     mut parents: Query<(Entity, &mut TaskDecomposer, &Transform), Without<SubLoop>>,
     mut events: EventWriter<SpawnSubLoopEvent>,
 ) {
@@ -67,38 +63,38 @@ pub fn spawn_sub_loops(
     mut metrics: ResMut<Metrics>,
 ) {
     for ev in events.read() {
-        let sub_entity = commands.spawn((
-            LoopAgent,
-            LoopState::Thinking,
-            SubLoop {
-                parent: ev.parent,
-                lifetime: Timer::from_seconds(6.0, TimerMode::Once),
-            },
-            TaskDecomposer {
-                original_task: ev.task.clone(),
-                subtasks: vec![],
-                decomposition_depth: ev.depth,
-            },
-            Transform::from_translation(ev.position),
-            LoopVisual {
-                base_color: Color::srgb(0.6, 0.2, 0.9),
-                pulse_speed: 8.0,
-                radius: 14.0,
-            },
-            ThinkTimer(Timer::from_seconds(1.0, TimerMode::Repeating)),
-            ActTimer(Timer::from_seconds(0.8, TimerMode::Repeating)),
-            ObserveTimer(Timer::from_seconds(0.5, TimerMode::Repeating)),
-        )).id();
+        let sub_entity = commands
+            .spawn((
+                LoopAgent,
+                LoopState::Thinking,
+                SubLoop {
+                    parent: ev.parent,
+                    lifetime: Timer::from_seconds(6.0, TimerMode::Once),
+                },
+                TaskDecomposer {
+                    original_task: ev.task.clone(),
+                    subtasks: vec![],
+                    decomposition_depth: ev.depth,
+                },
+                Transform::from_translation(ev.position),
+                LoopVisual {
+                    base_color: Color::srgb(0.6, 0.2, 0.9),
+                    pulse_speed: 8.0,
+                    radius: 14.0,
+                },
+                ThinkTimer(Timer::from_seconds(1.0, TimerMode::Repeating)),
+                ActTimer(Timer::from_seconds(0.8, TimerMode::Repeating)),
+                ObserveTimer(Timer::from_seconds(0.5, TimerMode::Repeating)),
+            ))
+            .id();
 
         // Linea padre-hijo
-        commands.spawn((
-            ConnectionLine {
-                from: ev.parent,
-                to: sub_entity,
-                line_type: ConnectionType::ParentChild,
-                color: Color::srgb(0.6, 0.2, 0.9),
-            },
-        ));
+        commands.spawn((ConnectionLine {
+            from: ev.parent,
+            to: sub_entity,
+            line_type: ConnectionType::ParentChild,
+            color: Color::srgb(0.6, 0.2, 0.9),
+        },));
 
         metrics.active_loops += 1;
     }
@@ -111,7 +107,8 @@ pub fn sub_loop_lifetime(
 ) {
     for (entity, mut sub_loop, mut visual) in sub_loops.iter_mut() {
         sub_loop.lifetime.tick(time.delta());
-        let progress = sub_loop.lifetime.elapsed_secs() / sub_loop.lifetime.duration().as_secs_f32();
+        let progress =
+            sub_loop.lifetime.elapsed_secs() / sub_loop.lifetime.duration().as_secs_f32();
         visual.base_color.set_alpha(1.0 - progress);
         if sub_loop.lifetime.finished() {
             commands.entity(entity).despawn();
