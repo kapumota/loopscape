@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 
+mod app;
 mod components;
+mod core;
 mod eras;
 mod events;
 mod llm_integration;
@@ -24,7 +26,72 @@ enum GameEra {
     MultiAgentOrchestration,
 }
 
+fn run_core_headless_from_args() -> bool {
+    let args = std::env::args().collect::<Vec<_>>();
+
+    if !args
+        .iter()
+        .any(|arg| arg == "--ticks" || arg.starts_with("--ticks="))
+    {
+        return false;
+    }
+
+    let seed = parse_arg_u64(&args, "--seed").unwrap_or(123);
+    let ticks = parse_arg_u32(&args, "--ticks").unwrap_or(100);
+    let agents = parse_arg_u32(&args, "--agents").unwrap_or(5);
+    let tasks = parse_arg_u32(&args, "--tasks").unwrap_or(12);
+
+    let config = crate::core::scheduler::SimulationConfig::new(seed).with_size(agents, tasks);
+    let mut state = crate::core::scheduler::SimulationState::new(config);
+    state.run_ticks(ticks);
+
+    println!("Loopscape core determinista");
+    println!("Semilla: {}", seed);
+    println!("Ticks ejecutados: {}", ticks);
+    println!("Agentes iniciales: {}", agents);
+    println!("Tareas iniciales: {}", tasks);
+    println!("Agentes activos: {}", state.metrics.active_loops);
+    println!("Tareas totales: {}", state.metrics.total_tasks);
+    println!("Tareas completas: {}", state.metrics.completed_tasks);
+    println!("Tareas pendientes: {}", state.metrics.pending_tasks);
+    println!("Tareas asignadas: {}", state.metrics.assigned_tasks);
+    println!("Rendimiento: {:.3}", state.metrics.throughput);
+    println!("Eventos generados: {}", state.events.len());
+
+    true
+}
+
+fn parse_arg_u64(args: &[String], name: &str) -> Option<u64> {
+    parse_arg_value(args, name).and_then(|value| value.parse::<u64>().ok())
+}
+
+fn parse_arg_u32(args: &[String], name: &str) -> Option<u32> {
+    parse_arg_value(args, name).and_then(|value| value.parse::<u32>().ok())
+}
+
+fn parse_arg_value(args: &[String], name: &str) -> Option<String> {
+    let inline_prefix = format!("{name}=");
+
+    for arg in args {
+        if let Some(value) = arg.strip_prefix(&inline_prefix) {
+            return Some(value.to_string());
+        }
+    }
+
+    args.windows(2).find_map(|pair| {
+        if pair[0] == name {
+            Some(pair[1].clone())
+        } else {
+            None
+        }
+    })
+}
+
 fn main() {
+    if run_core_headless_from_args() {
+        return;
+    }
+
     let mut app = App::new();
 
     // Plugins base
