@@ -6,6 +6,12 @@ pub enum DslError {
     UnknownCommand { keyword: String },
     EmptyArguments { command: String },
     InvalidProgram { reason: String },
+    UnexpectedCharacter {
+        character: String,
+        line: usize,
+        column: usize,
+    },
+    UnterminatedString { line: usize, column: usize },
 }
 
 impl DslError {
@@ -14,6 +20,20 @@ impl DslError {
         Self::InvalidProgram {
             reason: reason.into(),
         }
+    }
+
+    /// Crea un error lexico para un caracter no reconocido.
+    pub fn unexpected_character(character: char, line: usize, column: usize) -> Self {
+        Self::UnexpectedCharacter {
+            character: character.to_string(),
+            line,
+            column,
+        }
+    }
+
+    /// Crea un error lexico para una cadena sin cierre.
+    pub fn unterminated_string(line: usize, column: usize) -> Self {
+        Self::UnterminatedString { line, column }
     }
 }
 
@@ -27,6 +47,18 @@ impl std::fmt::Display for DslError {
                 write!(formatter, "el comando {command} necesita argumentos")
             }
             Self::InvalidProgram { reason } => formatter.write_str(reason),
+            Self::UnexpectedCharacter {
+                character,
+                line,
+                column,
+            } => write!(
+                formatter,
+                "caracter inesperado en linea {line}, columna {column}: {character}"
+            ),
+            Self::UnterminatedString { line, column } => write!(
+                formatter,
+                "cadena sin cierre en linea {line}, columna {column}"
+            ),
         }
     }
 }
@@ -53,5 +85,22 @@ mod tests {
         };
 
         assert_eq!(error.to_string(), "el comando /goal necesita argumentos");
+    }
+
+    #[test]
+    fn unexpected_character_has_spanish_message() {
+        let error = DslError::unexpected_character('@', 3, 7);
+
+        assert_eq!(
+            error.to_string(),
+            "caracter inesperado en linea 3, columna 7: @"
+        );
+    }
+
+    #[test]
+    fn unterminated_string_has_spanish_message() {
+        let error = DslError::unterminated_string(5, 2);
+
+        assert_eq!(error.to_string(), "cadena sin cierre en linea 5, columna 2");
     }
 }

@@ -255,3 +255,33 @@ Validacion:
 cargo test dsl
 make validate-fast
 ```
+
+#### Fase 3.2: lexer minimo
+
+Estado: implementada como microfase del DSL.
+
+Entregables:
+
+```text
+src/dsl/token.rs
+src/dsl/lexer.rs
+```
+
+El lexer reconoce:
+
+```text
+slash commands
+identificadores
+flechas
+numeros
+strings simples
+saltos de linea
+comentarios
+```
+
+Validacion:
+
+```bash
+cargo test dsl::lexer
+make validate-fast
+```

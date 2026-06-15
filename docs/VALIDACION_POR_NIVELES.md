@@ -79,3 +79,13 @@ cargo test dsl
 ```
 
 Este comando valida el AST y el modelo de comandos del lenguaje de orquestacion.
+
+#### Pruebas rapidas del lexer DSL
+
+Para cambios del lexer se puede ejecutar una prueba focalizada:
+
+```bash
+cargo test dsl::lexer
+```
+
+Esta validacion no levanta Bevy ni compila WebAssembly.
