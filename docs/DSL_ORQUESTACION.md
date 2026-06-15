@@ -51,7 +51,6 @@ La fase 3.2 agrega un lexer para convertir texto del DSL en tokens. El lexer rec
 Ejemplo de entrada:
 
 ```text
-# flujo minimo
 /goal rescatar_victimas
 /plan buscar -> clasificar -> asistir
 /delegate sector_a worker_1

@@ -3,15 +3,24 @@ use serde::{Deserialize, Serialize};
 /// Error estructurado del DSL de orquestacion.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub enum DslError {
-    UnknownCommand { keyword: String },
-    EmptyArguments { command: String },
-    InvalidProgram { reason: String },
+    UnknownCommand {
+        keyword: String,
+    },
+    EmptyArguments {
+        command: String,
+    },
+    InvalidProgram {
+        reason: String,
+    },
     UnexpectedCharacter {
         character: String,
         line: usize,
         column: usize,
     },
-    UnterminatedString { line: usize, column: usize },
+    UnterminatedString {
+        line: usize,
+        column: usize,
+    },
 }
 
 impl DslError {
