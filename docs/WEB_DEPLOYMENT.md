@@ -1,14 +1,14 @@
-### Despliegue web
+### Build web y despliegue estatico
 
 #### Objetivo
 
-Loopscape puede compilarse a WebAssembly con Trunk y publicarse como sitio estatico. El despliegue web debe mantenerse separado de la validacion principal para que un error de publicacion no bloquee pruebas locales.
+Loopscape puede compilarse a WebAssembly con Trunk y publicarse como sitio estatico. El build web debe mantenerse separado de la validacion principal para que un error de hosting no bloquee pruebas, revisiones ni Pull Requests.
 
 #### Compilacion local
 
 ```bash
-make setup
-make web-build
+make setup-web
+make web-build-release
 ```
 
 El resultado queda en:
@@ -20,33 +20,38 @@ dist/
 #### Prueba local
 
 ```bash
+make setup-web
 make web-serve
 ```
 
-Abre:
+Luego abre:
 
 ```text
 http://localhost:8080
 ```
 
-#### GitHub Pages
+#### Politica del repositorio
 
-El workflow de despliegue compila `dist/` desde `main`. Para usarlo:
+Loopscape no publica automaticamente en GitHub Pages. El repositorio mantiene el build web como una accion manual y guarda `dist/` como artefacto temporal cuando se necesita revisar una version web.
+
+La validacion diaria debe ser ligera:
 
 ```bash
-git checkout main
-git pull origin main
-git push origin main
+make validate
 ```
 
-Luego configura GitHub Pages para usar GitHub Actions.
+El build web completo debe ejecutarse solo cuando sea necesario:
+
+```bash
+make validate-web
+```
 
 #### Netlify
 
 Usa estos valores:
 
 ```text
-Comando de compilacion: cargo install trunk --locked && trunk build --release
+Comando de compilacion: make setup-web && make web-build-release
 Publish directory: dist
 ```
 
@@ -55,7 +60,7 @@ Publish directory: dist
 Usa `vercel.json` como base. Si el proveedor no detecta Rust, configura el build command manualmente:
 
 ```text
-cargo install trunk --locked && trunk build --release
+make setup-web && make web-build-release
 ```
 
 #### Cloudflare Pages
@@ -63,16 +68,22 @@ cargo install trunk --locked && trunk build --release
 Usa estos valores:
 
 ```text
-Comando de compilacion: cargo install trunk --locked && trunk build --release
+Comando de compilacion: make setup-web && make web-build-release
 Directorio de salida de compilacion: dist
 ```
 
-#### Recomendacion de Fase 1
+#### Validacion antes de desplegar
 
-Primero valida localmente:
+Antes de publicar ejecuta:
 
 ```bash
 make validate
 ```
 
-Despues despliega. La validacion debe ser obligatoria; el despliegue debe ser consecuencia de una rama fusionada correctamente.
+Despues genera el build web de forma explicita:
+
+```bash
+make validate-web
+```
+
+El despliegue debe ser una decision manual de release, no un efecto lateral de cada push a `main`.

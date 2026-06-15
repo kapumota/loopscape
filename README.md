@@ -22,13 +22,13 @@ Esta version contiene una base jugable y visual con cinco eras:
 - Era 4: Ralph formalizado;
 - Era 5: Orquestacion multiagente.
 
-La Fase 1 profesionaliza la base sin cambiar todavia el concepto central del juego. Agrega validacion reproducible, limpieza, documentacion tecnica, flujo por ramas y preparacion para parches.
+La Fase 1 profesionaliza la base sin cambiar todavia el concepto central del juego. Agrega validacion reproducible, limpieza, documentacion tecnica, flujo por ramas, preparacion para parches y CI ligero sin despliegue automatico en GitHub Pages.
 
 #### Requisitos
 
 - Rust estable;
 - target `wasm32-unknown-unknown` para compilacion web;
-- Trunk para ejecutar o compilar la version WASM;
+- Trunk solo para ejecutar o compilar la version WASM;
 - Node.js solo si se usa el proxy local de LLM.
 
 #### Uso nativo
@@ -55,10 +55,7 @@ http://localhost:8080
 
 ```bash
 make setup
-make style-check
-make check
-make test
-make web-build
+make validate
 make clean
 ```
 
@@ -69,9 +66,7 @@ git checkout main
 git pull origin main
 git checkout -b fase-1-base-profesional
 
-make check
-make test
-make web-build
+make validate
 
 git add .
 git commit -m "fase 1: endurece base reproducible de Loopscape"
@@ -131,6 +126,8 @@ src/
 docs/
   ARQUITECTURA.md
   FASE_1_BASE_PROFESIONAL.md
+  CI_LIGERO.md
+  CI_LIGERO.md
   FLUJO_RAMA_PATCHES.md
   CREAR_REPOSITORIO_RAMAS.md
   PLAN_FASES_AVANZADO.md
@@ -146,19 +143,28 @@ scripts/
 - `docs/PLAN_FASES_AVANZADO.md`: plan de 10 fases para llevar Loopscape a nivel avanzado.
 - `docs/ARQUITECTURA.md`: arquitectura base del proyecto.
 - `docs/FASE_1_BASE_PROFESIONAL.md`: alcance de la Fase 1.
+- `docs/CI_LIGERO.md`: separacion entre CI diario, build web manual y despliegue externo.
+- `docs/CI_LIGERO.md`: separacion entre CI diario, build web manual y despliegue externo.
 
 #### Criterio de Fase 1 lista
 
-La Fase 1 se considera lista cuando pasan estos comandos:
+La Fase 1 se considera lista cuando pasa este comando:
 
 ```bash
-make style-check
-make fmt-check
-make check
-make test
-make web-build
+make validate
+```
+
+Para revisar la version web de forma explicita:
+
+```bash
+make setup-web
+make validate-web
 ```
 
 #### Licencia
 
 MIT. El proyecto esta orientado a educacion, investigacion aplicada y prototipado de sistemas interactivos.
+
+#### CI ligero
+
+El flujo principal de GitHub Actions valida solo estilo, formato, compilacion nativa y pruebas. El build WebAssembly queda separado en un workflow manual y no publica en GitHub Pages. Ver `docs/CI_LIGERO.md`.

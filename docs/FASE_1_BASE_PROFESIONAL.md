@@ -39,10 +39,13 @@ git checkout -b fase-1-base-profesional
 
 ```bash
 make setup
-make fmt-check
-make check
-make test
-make web-build
+make validate
+```
+
+Para revisar la version web de forma explicita:
+
+```bash
+make validate-web
 ```
 
 #### Commit sugerido
@@ -71,16 +74,14 @@ Esta rama profesionaliza la base de Loopscape con comandos reproducibles, valida
 
 - Agrega Makefile con comandos de setup, validacion, pruebas, web build y limpieza.
 - Agrega scripts de validacion y limpieza.
-- Agrega CI para formato, check, pruebas y build WASM.
+- Agrega CI ligero para formato, check y pruebas nativas.
 - Reorganiza documentacion con titulos ### y subtitulos ####.
 - Agrega pruebas unitarias iniciales para parsing ReAct.
 
 #### Validacion
 
-- make fmt-check
-- make check
-- make test
-- make web-build
+- make validate
+- make validate-web
 ```
 
 #### Criterio de aceptacion
@@ -88,8 +89,8 @@ Esta rama profesionaliza la base de Loopscape con comandos reproducibles, valida
 La fase se acepta si:
 
 - el proyecto compila en modo nativo;
-- el build WASM genera `dist/`;
+- el build WASM genera `dist/` cuando se ejecuta manualmente;
 - las pruebas unitarias pasan;
-- la documentacion no depende de pasos manuales ambiguos;
+- la documentacion separa validacion diaria y build web;
 - `.env` y secretos no se versionan;
 - `make clean` deja limpio el arbol de trabajo de artefactos generados.
