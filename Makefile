@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: setup setup-native setup-web style-check fmt fmt-check check test run web-serve web-build web-build-release clippy validate validate-full validate-web clean clean-deep proxy-install proxy-run
+.PHONY: setup setup-native setup-web style-check fmt fmt-check check test run web-serve web-build web-build-release clippy validate-fast validate validate-web validate-full clean clean-deep proxy-install proxy-run
 
 style-check:
 	@bash scripts/style_check.sh
@@ -53,15 +53,19 @@ clippy:
 	@echo "Ejecutando Clippy"
 	cargo clippy --all-targets -- -D warnings
 
+validate-fast:
+	@bash scripts/validate_fast.sh
+
 validate:
 	@bash scripts/validate.sh
 
-validate-full:
-	@bash scripts/validate.sh --full
-
 validate-web:
-	$(MAKE) setup-web
-	$(MAKE) web-build-release
+	@bash scripts/validate_web.sh
+
+validate-full:
+	$(MAKE) validate
+	$(MAKE) validate-web
+	$(MAKE) clippy
 
 clean:
 	@bash scripts/clean.sh
