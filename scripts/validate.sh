@@ -1,36 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Validacion local rapida usada antes de abrir un Pull Request.
-# Por defecto no compila WebAssembly para mantener el flujo diario liviano.
+# Validacion media usada antes de abrir Pull Requests importantes.
+# Incluye compilacion nativa y pruebas, pero no compila WebAssembly.
 modo="${1:-}"
 
-echo "Validando estilo del repositorio"
-bash scripts/style_check.sh
+if [[ "$modo" == "--full" ]]; then
+    echo "El modo --full se mantiene por compatibilidad. Use make validate-full como flujo recomendado."
+fi
 
-echo "Validando formato Rust"
-cargo fmt --all -- --check
+echo "Ejecutando validacion rapida"
+bash scripts/validate_fast.sh
 
-echo "Validando compilacion nativa"
-cargo check --all-targets
+echo "Verificando compilacion nativa"
+cargo check --locked --all-targets
 
 echo "Ejecutando pruebas nativas"
-cargo test --all-targets --no-fail-fast
+cargo test --locked --all-targets --no-fail-fast
 
 if [[ "$modo" == "--full" ]]; then
     echo "Ejecutando Clippy"
     cargo clippy --all-targets -- -D warnings
 
-    echo "Preparando target WebAssembly"
-    rustup target add wasm32-unknown-unknown
-
-    if ! command -v trunk > /dev/null 2>&1; then
-        echo "Instalando Trunk"
-        cargo install trunk --locked
-    fi
-
-    echo "Compilando WebAssembly"
-    RUSTFLAGS='--cfg getrandom_backend="wasm_js"' trunk build --release
+    echo "Ejecutando validacion web"
+    bash scripts/validate_web.sh
 fi
 
-echo "Validacion completa"
+echo "Validacion media completa"

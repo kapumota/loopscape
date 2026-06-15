@@ -9,6 +9,16 @@ on:
     branches: [main]
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      nivel:
+        description: "Nivel de validacion"
+        required: true
+        default: "rapida"
+        type: choice
+        options:
+          - rapida
+          - media
 
 permissions:
   contents: read
@@ -47,14 +57,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
-      - name: Verificar estilo documental
-        run: make style-check
-
-      - name: Verificar formato
-        run: make fmt-check
-
-      - name: Verificar compilacion nativa
-        run: cargo check --locked --all-targets
-
-      - name: Ejecutar pruebas nativas
-        run: cargo test --locked --all-targets --no-fail-fast
+      - name: Determinar nivel de validacion
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            make validate
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.nivel }}" = "media" ]; then
+            make validate
+          else
+            make validate-fast
+          fi

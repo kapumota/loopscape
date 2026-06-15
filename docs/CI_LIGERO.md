@@ -18,13 +18,16 @@ El flujo principal es:
 .github/workflows/ci.yml
 ```
 
-Este flujo ejecuta:
+Este flujo ejecuta validacion por niveles:
 
 ```bash
-make style-check
-make fmt-check
-cargo check --locked --all-targets
-cargo test --locked --all-targets --no-fail-fast
+make validate-fast
+```
+
+En pushes a `main` o ejecuciones manuales importantes puede ejecutar:
+
+```bash
+make validate
 ```
 
 No instala Trunk, no agrega el target WebAssembly y no publica ramas remotas.
@@ -47,7 +50,13 @@ Luego guarda `dist/` como artefacto temporal de GitHub Actions. No publica en Gi
 
 #### Validacion local recomendada
 
-Para trabajo diario:
+Para trabajo diario y Pull Requests pequeños:
+
+```bash
+make validate-fast
+```
+
+Para Pull Requests importantes:
 
 ```bash
 make validate
@@ -74,3 +83,16 @@ La fase queda corregida si:
 Los workflows principales declaran `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24` para probar la migracion de GitHub Actions hacia Node.js 24. Tambien se evita depender de acciones externas innecesarias para instalar Rust o restaurar cache.
 
 La validacion diaria sigue siendo nativa y ligera. El build WebAssembly permanece como tarea manual.
+
+#### Validacion por niveles
+
+La validacion queda separada en tres niveles para evitar que cada Pull Request ejecute tareas costosas.
+
+```text
+PR normal: make validate-fast
+PR importante: make validate
+Manual web: make validate-web
+Manual completa: make validate-full
+```
+
+`validate-fast` revisa estilo y formato. `validate` agrega compilacion nativa y pruebas. `validate-web` compila WebAssembly solo cuando se solicita manualmente. `validate-full` combina validacion media, validacion web y Clippy estricto.
