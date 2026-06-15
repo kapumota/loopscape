@@ -1,5 +1,9 @@
 name: Validacion ligera
 
+# Fuerza acciones JavaScript a usar Node.js 24 durante la transicion de GitHub Actions.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 on:
   pull_request:
     branches: [main]
@@ -20,22 +24,28 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Descargar codigo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Instalar Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt
+      - name: Instalar Rust estable
+        run: |
+          rustup toolchain install stable --profile minimal --component rustfmt
+          rustup default stable
 
       - name: Instalar dependencias del sistema
         run: |
           sudo apt-get update
           sudo apt-get install -y pkg-config libasound2-dev libudev-dev
 
-      - name: Restaurar cache de Rust
-        uses: Swatinem/rust-cache@v2
+      - name: Restaurar cache de Cargo
+        uses: actions/cache@v5
         with:
-          cache-on-failure: true
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
 
       - name: Verificar estilo documental
         run: make style-check
