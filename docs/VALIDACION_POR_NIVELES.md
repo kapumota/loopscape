@@ -42,3 +42,14 @@ make validate-full
 #### Criterio de aceptacion
 
 La fase queda cerrada si existen los targets `validate-fast`, `validate`, `validate-web` y `validate-full`, si los scripts correspondientes estan separados y si el workflow principal puede usar validacion rapida para Pull Requests normales.
+
+#### Pruebas rapidas del nucleo
+
+Para cambios que afectan `src/core`, se agregan dos comandos focalizados:
+
+```bash
+make test-core
+make test-deterministic
+```
+
+Estos comandos permiten revisar el nucleo determinista sin ejecutar el build WebAssembly ni abrir la aplicacion visual.
