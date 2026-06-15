@@ -69,3 +69,13 @@ cargo run -- --smoke --seed 123 --ticks 10
 ```
 
 Este paso no reemplaza las pruebas del nucleo. Sirve como comprobacion rapida de arranque del binario nativo.
+
+#### Pruebas rapidas del DSL
+
+Para cambios que afectan `src/dsl`, se puede ejecutar una validacion focalizada sin levantar Bevy ni compilar WebAssembly:
+
+```bash
+cargo test dsl
+```
+
+Este comando valida el AST y el modelo de comandos del lenguaje de orquestacion.
