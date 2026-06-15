@@ -173,6 +173,7 @@ Entregables:
 - escaneo de secretos;
 - politica de seguridad;
 - permisos minimos en GitHub Actions;
+- separacion entre CI ligero y build web manual;
 - evidencia de validacion.
 
 Rama sugerida:
@@ -188,7 +189,7 @@ Objetivo: entregar versiones instalables o ejecutables.
 Entregables:
 
 - build web con Trunk;
-- publicacion en GitHub Pages o Pages equivalente;
+- build web estatico sin publicacion automatica en GitHub Pages;
 - release con artefactos;
 - changelog por version;
 - tag `v0.9.0` o `v1.0.0-rc1`;

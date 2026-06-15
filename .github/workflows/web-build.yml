@@ -1,14 +1,20 @@
-name: Despliegue web
+name: Build web manual
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-web-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-    name: Construir sitio WASM
+  wasm:
+    name: WebAssembly manual
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Descargar codigo
         uses: actions/checkout@v4
@@ -23,15 +29,21 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pkg-config libasound2-dev libudev-dev
 
+      - name: Restaurar cache de Rust
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+
       - name: Instalar Trunk
         run: cargo install trunk --locked
 
       - name: Construir WebAssembly
         run: make web-build-release
 
-      - name: Publicar en GitHub Pages
-        if: github.ref == 'refs/heads/main'
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Guardar artefacto web
+        uses: actions/upload-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          name: loopscape-web-dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
