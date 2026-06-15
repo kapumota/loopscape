@@ -28,24 +28,31 @@ enum GameEra {
 
 fn run_core_headless_from_args() -> bool {
     let args = std::env::args().collect::<Vec<_>>();
-
-    if !args
+    let smoke_requested = has_flag(&args, "--smoke") || has_flag(&args, "--headless");
+    let ticks_requested = args
         .iter()
-        .any(|arg| arg == "--ticks" || arg.starts_with("--ticks="))
-    {
+        .any(|arg| arg == "--ticks" || arg.starts_with("--ticks="));
+
+    if !smoke_requested && !ticks_requested {
         return false;
     }
 
     let seed = parse_arg_u64(&args, "--seed").unwrap_or(123);
-    let ticks = parse_arg_u32(&args, "--ticks").unwrap_or(100);
+    let ticks = parse_arg_u32(&args, "--ticks").unwrap_or(10);
     let agents = parse_arg_u32(&args, "--agents").unwrap_or(5);
     let tasks = parse_arg_u32(&args, "--tasks").unwrap_or(12);
+    let mode = if smoke_requested {
+        "prueba de humo nativa"
+    } else {
+        "ejecucion nativa sin ventana"
+    };
 
     let config = crate::core::scheduler::SimulationConfig::new(seed).with_size(agents, tasks);
     let mut state = crate::core::scheduler::SimulationState::new(config);
     state.run_ticks(ticks);
 
     println!("Loopscape core determinista");
+    println!("Modo: {}", mode);
     println!("Semilla: {}", seed);
     println!("Ticks ejecutados: {}", ticks);
     println!("Agentes iniciales: {}", agents);
@@ -57,8 +64,13 @@ fn run_core_headless_from_args() -> bool {
     println!("Tareas asignadas: {}", state.metrics.assigned_tasks);
     println!("Rendimiento: {:.3}", state.metrics.throughput);
     println!("Eventos generados: {}", state.events.len());
+    println!("Prueba de humo completada correctamente");
 
     true
+}
+
+fn has_flag(args: &[String], name: &str) -> bool {
+    args.iter().any(|arg| arg == name)
 }
 
 fn parse_arg_u64(args: &[String], name: &str) -> Option<u64> {

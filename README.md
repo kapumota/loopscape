@@ -37,6 +37,20 @@ La Fase 1 profesionaliza la base sin cambiar todavia el concepto central del jue
 cargo run
 ```
 
+#### Smoke nativo
+
+Para verificar que el binario arranca y que el nucleo determinista ejecuta un numero pequeño de ticks sin abrir un flujo largo:
+
+```bash
+cargo run -- --smoke --seed 123 --ticks 10
+```
+
+Tambien se puede usar el target de Makefile:
+
+```bash
+make smoke-native
+```
+
 #### Uso web local
 
 ```bash
@@ -56,6 +70,7 @@ http://localhost:8080
 ```bash
 make setup
 make validate
+make smoke-native
 make clean
 ```
 
