@@ -31,3 +31,35 @@ impl DeterministicRng {
         self.next_u32() % upper_exclusive
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::DeterministicRng;
+
+    #[test]
+    fn rng_same_seed_repeats_sequence() {
+        let mut first = DeterministicRng::new(42);
+        let mut second = DeterministicRng::new(42);
+
+        let first_values = (0..8).map(|_| first.next_u32()).collect::<Vec<_>>();
+        let second_values = (0..8).map(|_| second.next_u32()).collect::<Vec<_>>();
+
+        assert_eq!(first_values, second_values);
+    }
+
+    #[test]
+    fn rng_range_respects_upper_bound() {
+        let mut rng = DeterministicRng::new(99);
+
+        for _ in 0..100 {
+            assert!(rng.next_range(7) < 7);
+        }
+    }
+
+    #[test]
+    fn rng_zero_upper_bound_returns_zero() {
+        let mut rng = DeterministicRng::new(99);
+
+        assert_eq!(rng.next_range(0), 0);
+    }
+}

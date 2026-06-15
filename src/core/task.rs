@@ -35,3 +35,19 @@ impl CoreTask {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{CoreTask, TaskId, TaskStatus};
+
+    #[test]
+    fn new_task_starts_pending() {
+        let task = CoreTask::new(TaskId(3), "clasificar datos");
+
+        assert_eq!(task.id, TaskId(3));
+        assert_eq!(task.description, "clasificar datos");
+        assert_eq!(task.status, TaskStatus::Pending);
+        assert_eq!(task.assigned_to, None);
+        assert_eq!(task.remaining_ticks, 0);
+    }
+}

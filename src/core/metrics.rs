@@ -100,3 +100,39 @@ mod tests {
         assert_eq!(first.throughput, 0.3);
     }
 }
+
+#[cfg(test)]
+mod focused_tests {
+    use super::CoreMetrics;
+    use crate::core::scheduler::{SimulationConfig, SimulationState};
+    use crate::core::task::TaskStatus;
+
+    #[test]
+    fn metrics_from_state_counts_task_statuses() {
+        let config = SimulationConfig::new(21).with_size(2, 5);
+        let mut state = SimulationState::new(config);
+        state.run_ticks(10);
+
+        let metrics = CoreMetrics::from_state(&state);
+        let completed = state
+            .tasks
+            .iter()
+            .filter(|task| task.status == TaskStatus::Completed)
+            .count();
+        let assigned = state
+            .tasks
+            .iter()
+            .filter(|task| task.status == TaskStatus::Assigned)
+            .count();
+        let pending = state
+            .tasks
+            .iter()
+            .filter(|task| task.status == TaskStatus::Pending)
+            .count();
+
+        assert_eq!(metrics.completed_tasks, completed);
+        assert_eq!(metrics.assigned_tasks, assigned);
+        assert_eq!(metrics.pending_tasks, pending);
+        assert_eq!(metrics.total_tasks, state.tasks.len());
+    }
+}

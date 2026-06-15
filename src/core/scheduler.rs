@@ -202,3 +202,52 @@ impl SimulationState {
         self.metrics = CoreMetrics::from_state(self);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{SimulationConfig, SimulationState};
+    use crate::core::event::CoreEvent;
+    use crate::core::task::TaskStatus;
+
+    #[test]
+    fn scheduler_initializes_configured_state() {
+        let config = SimulationConfig::new(55).with_size(2, 3);
+        let state = SimulationState::new(config);
+
+        assert_eq!(state.tick, 0);
+        assert_eq!(state.seed, 55);
+        assert_eq!(state.agents.len(), 2);
+        assert_eq!(state.tasks.len(), 3);
+        assert_eq!(state.metrics.active_loops, 2);
+        assert_eq!(state.metrics.total_tasks, 3);
+    }
+
+    #[test]
+    fn scheduler_assigns_tasks_on_first_tick() {
+        let config = SimulationConfig::new(7).with_size(1, 1);
+        let mut state = SimulationState::new(config);
+
+        state.tick();
+
+        assert_eq!(state.tick, 1);
+        assert_eq!(state.tasks[0].status, TaskStatus::Assigned);
+        assert!(state.tasks[0].assigned_to.is_some());
+        assert!(state
+            .events
+            .iter()
+            .any(|event| matches!(event, CoreEvent::TaskAssigned { .. })));
+    }
+
+    #[test]
+    fn scheduler_completes_tasks_deterministically() {
+        let config = SimulationConfig::new(123).with_size(2, 4);
+        let mut first = SimulationState::new(config.clone());
+        let mut second = SimulationState::new(config);
+
+        first.run_ticks(20);
+        second.run_ticks(20);
+
+        assert_eq!(first, second);
+        assert!(first.metrics.completed_tasks > 0);
+    }
+}

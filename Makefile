@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: setup setup-native setup-web style-check fmt fmt-check check test run web-serve web-build web-build-release clippy validate-fast validate validate-web validate-full clean clean-deep proxy-install proxy-run
+.PHONY: setup setup-native setup-web style-check fmt fmt-check check test run web-serve web-build web-build-release clippy validate-fast validate validate-web validate-full clean clean-deep proxy-install proxy-run test-core test-deterministic
 
 style-check:
 	@bash scripts/style_check.sh
@@ -79,3 +79,11 @@ proxy-install:
 
 proxy-run:
 	cd proxy && npm run dev
+
+test-core:
+	@echo "Ejecutando pruebas rapidas del nucleo"
+	cargo test --locked --lib core
+
+test-deterministic:
+	@echo "Ejecutando pruebas deterministas del nucleo"
+	cargo test --locked --lib deterministic
