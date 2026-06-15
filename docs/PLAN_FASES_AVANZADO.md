@@ -234,3 +234,24 @@ Fases 0 a 10: laboratorio avanzado con valor academico y tecnico.
 #### Recomendacion final
 
 No conviene saltar directo a la Era 5. Primero hay que separar nucleo, simulacion, DSL, visualizacion y sandbox LLM. Ese orden evita que el proyecto se vuelva una demo dificil de mantener.
+
+#### Fase 3.1: AST y modelo de comandos
+
+Estado: implementada como microfase inicial del DSL.
+
+Entregables:
+
+```text
+src/dsl/mod.rs
+src/dsl/ast.rs
+src/dsl/command.rs
+src/dsl/error.rs
+docs/DSL_ORQUESTACION.md
+```
+
+Validacion:
+
+```bash
+cargo test dsl
+make validate-fast
+```

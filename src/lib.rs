@@ -4,3 +4,4 @@
 //! para ejecutar pruebas rapidas sin levantar la aplicacion visual ni WebAssembly.
 
 pub mod core;
+pub mod dsl;
