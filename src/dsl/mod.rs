@@ -6,10 +6,14 @@
 pub mod ast;
 pub mod command;
 pub mod error;
+pub mod lexer;
+pub mod token;
 
 pub use ast::{OrchestrationCommand, OrchestrationProgram};
 pub use command::CommandKind;
 pub use error::DslError;
+pub use lexer::{lex, Lexer};
+pub use token::{Token, TokenKind, TokenSpan};
 
 #[cfg(test)]
 mod tests {
