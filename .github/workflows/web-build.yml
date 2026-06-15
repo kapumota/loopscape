@@ -1,5 +1,9 @@
 name: Build web manual
 
+# Fuerza acciones JavaScript a usar Node.js 24 durante la transicion de GitHub Actions.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 on:
   workflow_dispatch:
 
@@ -17,22 +21,28 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Descargar codigo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Instalar Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: wasm32-unknown-unknown
+      - name: Instalar Rust estable para WebAssembly
+        run: |
+          rustup toolchain install stable --profile minimal --target wasm32-unknown-unknown
+          rustup default stable
 
       - name: Instalar dependencias del sistema
         run: |
           sudo apt-get update
           sudo apt-get install -y pkg-config libasound2-dev libudev-dev
 
-      - name: Restaurar cache de Rust
-        uses: Swatinem/rust-cache@v2
+      - name: Restaurar cache de Cargo
+        uses: actions/cache@v5
         with:
-          cache-on-failure: true
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
 
       - name: Instalar Trunk
         run: cargo install trunk --locked
@@ -41,7 +51,7 @@ jobs:
         run: make web-build-release
 
       - name: Guardar artefacto web
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: loopscape-web-dist
           path: dist/

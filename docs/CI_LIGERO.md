@@ -68,3 +68,9 @@ La fase queda corregida si:
 - el CI principal no compila WebAssembly en cada push;
 - el build web solo corre cuando se lanza manualmente;
 - la documentacion ya no indica GitHub Pages como ruta recomendada.
+
+#### Compatibilidad con Node.js 24
+
+Los workflows principales declaran `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24` para probar la migracion de GitHub Actions hacia Node.js 24. Tambien se evita depender de acciones externas innecesarias para instalar Rust o restaurar cache.
+
+La validacion diaria sigue siendo nativa y ligera. El build WebAssembly permanece como tarea manual.
