@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: setup setup-native setup-web style-check fmt fmt-check check test run web-serve web-build web-build-release clippy validate-fast validate validate-web validate-full clean clean-deep proxy-install proxy-run test-core test-deterministic
+.PHONY: setup setup-native setup-web style-check fmt fmt-check check test run web-serve web-build web-build-release clippy validate-fast validate validate-web validate-full clean clean-deep proxy-install proxy-run test-core test-deterministic smoke-native
 
 style-check:
 	@bash scripts/style_check.sh
@@ -87,3 +87,7 @@ test-core:
 test-deterministic:
 	@echo "Ejecutando pruebas deterministas del nucleo"
 	cargo test --locked --lib deterministic
+
+smoke-native:
+	@echo "Ejecutando prueba de humo nativa"
+	cargo run -- --smoke --seed 123 --ticks 10

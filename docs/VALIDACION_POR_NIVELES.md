@@ -53,3 +53,19 @@ make test-deterministic
 ```
 
 Estos comandos permiten revisar el nucleo determinista sin ejecutar el build WebAssembly ni abrir la aplicacion visual.
+
+#### Smoke nativo
+
+Para revisar que el binario nativo arranca sin abrir un flujo largo se agrega el comando:
+
+```bash
+make smoke-native
+```
+
+El comando ejecuta una corrida corta del nucleo determinista:
+
+```bash
+cargo run -- --smoke --seed 123 --ticks 10
+```
+
+Este paso no reemplaza las pruebas del nucleo. Sirve como comprobacion rapida de arranque del binario nativo.
