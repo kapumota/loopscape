@@ -237,3 +237,15 @@ cargo run -- --graph artifacts/rescate.graph.json --seed 123 --ticks 50
 #### Uso
 
 La importacion carga un grafo JSON exportado, valida su estructura y ejecuta una corrida corta del nucleo determinista para confirmar que el flujo puede inspeccionarse sin abrir el modo visual.
+
+### Roundtrip de grafo JSON
+
+#### Objetivo
+
+El roundtrip garantiza que un script `.loop` pueda convertirse a grafo JSON, importarse de nuevo y conservar ids, nodos, aristas y metadatos estables.
+
+#### Validacion
+
+```bash
+cargo test --test dsl_graph_contract
+```

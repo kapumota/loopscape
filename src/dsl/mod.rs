@@ -17,8 +17,10 @@ pub use ast::{OrchestrationCommand, OrchestrationProgram};
 pub use command::CommandKind;
 pub use error::DslError;
 pub use graph::{
-    graph_from_json, graph_from_program, graph_from_source, graph_json_from_source, graph_to_json,
-    validate_graph, GraphEdge, GraphMetadata, GraphNode, OrchestrationGraph,
+    graph_contract, graph_from_json, graph_from_program, graph_from_source, graph_json_from_source,
+    graph_roundtrip_from_json, graph_roundtrip_from_source, graph_to_json, validate_graph,
+    validate_graph_contract, GraphContract, GraphEdge, GraphMetadata, GraphNode,
+    OrchestrationGraph, GRAPH_FORMAT_VERSION,
 };
 pub use interpreter::{interpret_program, interpret_source, DslInterpreter, InterpreterConfig};
 pub use lexer::{lex, Lexer};
