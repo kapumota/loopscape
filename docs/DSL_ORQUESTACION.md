@@ -213,3 +213,15 @@ Comando para abrir el visor visual:
 ```bash
 cargo run -- --script examples/rescate.loop --visual --seed 123 --ticks 50
 ```
+
+### Exportacion de grafo JSON
+
+#### Comando
+
+```bash
+cargo run -- --script examples/rescate.loop --export-graph artifacts/rescate.graph.json
+```
+
+#### Uso
+
+La exportacion genera un archivo JSON con metadatos, nodos, aristas e identificadores estables. Este archivo permite revisar la estructura logica del flujo sin abrir el modo visual.

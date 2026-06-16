@@ -392,3 +392,27 @@ Validacion:
 make validate-fast
 cargo run -- --script examples/rescate.loop --seed 123 --ticks 50
 ```
+
+### Fase 4.2: exportacion de grafo JSON
+
+#### Objetivo
+
+Guardar la estructura logica del flujo DSL como JSON reproducible antes de implementar un editor visual completo.
+
+#### Entregables
+
+```text
+graph.json
+nodos
+aristas
+metadatos
+ids estables
+```
+
+#### Validacion
+
+```bash
+cargo run -- --script examples/rescate.loop --export-graph artifacts/rescate.graph.json
+test -f artifacts/rescate.graph.json
+make validate-fast
+```
