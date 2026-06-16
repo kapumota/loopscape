@@ -1,0 +1,5 @@
+/goal verificar_resultados
+/plan recolectar -> comparar -> aprobar
+/delegate auditoria worker_verificacion
+/verify checklist_verificacion
+/terminate when verified
