@@ -27,6 +27,28 @@ pub enum CoreEvent {
         task: TaskId,
         agent: AgentId,
     },
+    GoalCreated {
+        tick: u64,
+        goal: String,
+    },
+    PlanStepCreated {
+        tick: u64,
+        index: u32,
+        step: String,
+    },
+    DelegationRequested {
+        tick: u64,
+        target: String,
+        worker: String,
+    },
+    VerificationRequested {
+        tick: u64,
+        checklist: String,
+    },
+    TerminationPolicySet {
+        tick: u64,
+        policy: String,
+    },
 }
 
 #[cfg(test)]
@@ -49,5 +71,35 @@ mod tests {
             serde_json::from_str(&encoded).expect("debe reconstruir evento del core");
 
         assert_eq!(event, decoded);
+    }
+
+    #[test]
+    fn core_event_can_represent_dsl_interpreter_outputs() {
+        let events = vec![
+            CoreEvent::GoalCreated {
+                tick: 0,
+                goal: "rescatar_victimas".to_string(),
+            },
+            CoreEvent::PlanStepCreated {
+                tick: 0,
+                index: 0,
+                step: "buscar".to_string(),
+            },
+            CoreEvent::DelegationRequested {
+                tick: 0,
+                target: "sector_a".to_string(),
+                worker: "worker_1".to_string(),
+            },
+            CoreEvent::VerificationRequested {
+                tick: 0,
+                checklist: "checklist_final".to_string(),
+            },
+            CoreEvent::TerminationPolicySet {
+                tick: 0,
+                policy: "when_verified".to_string(),
+            },
+        ];
+
+        assert_eq!(events.len(), 5);
     }
 }

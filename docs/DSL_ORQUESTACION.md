@@ -143,3 +143,35 @@ Validacion:
 cargo test dsl::validator
 make validate-fast
 ```
+
+#### Interprete hacia eventos del nucleo
+
+La fase 3.5 agrega una traduccion desde programas DSL validados hacia eventos internos del nucleo. Esta traduccion todavia no ejecuta una simulacion completa. Solo produce una traza tipada que luego podra consumir el scheduler o una capa de replay.
+
+Salida esperada para un flujo minimo:
+
+```text
+GoalCreated
+PlanStepCreated
+DelegationRequested
+VerificationRequested
+TerminationPolicySet
+```
+
+Ejemplo:
+
+```text
+/goal rescatar_victimas
+/plan buscar -> clasificar -> asistir
+/delegate sector_a worker_1
+/verify checklist_final
+/terminate when verified
+```
+
+Validacion:
+
+```bash
+cargo test dsl::interpreter
+cargo test core
+make validate-fast
+```

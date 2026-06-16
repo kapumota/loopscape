@@ -1,11 +1,12 @@
 //! DSL de orquestacion de Loopscape.
 //!
-//! Este modulo agrupa el AST, lexer, parser y validador semantico.
-//! El interprete se agrega en una microfase posterior.
+//! Este modulo agrupa el AST, lexer, parser, validador semantico e interprete.
+//! El DSL se mantiene separado de la visualizacion para conservar pruebas rapidas.
 
 pub mod ast;
 pub mod command;
 pub mod error;
+pub mod interpreter;
 pub mod lexer;
 pub mod parser;
 pub mod token;
@@ -14,6 +15,7 @@ pub mod validator;
 pub use ast::{OrchestrationCommand, OrchestrationProgram};
 pub use command::CommandKind;
 pub use error::DslError;
+pub use interpreter::{interpret_program, interpret_source, DslInterpreter, InterpreterConfig};
 pub use lexer::{lex, Lexer};
 pub use parser::{parse, Parser};
 pub use token::{Token, TokenKind, TokenSpan};

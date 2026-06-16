@@ -114,3 +114,17 @@ make validate-fast
 ```
 
 Esta validacion no levanta Bevy ni compila WebAssembly.
+
+#### Interpretacion del DSL hacia eventos
+
+La fase 3.5 agrega pruebas rapidas para convertir un programa DSL validado en eventos internos del nucleo.
+
+Para cambios en el interprete se debe ejecutar:
+
+```bash
+cargo test dsl::interpreter
+cargo test core
+make validate-fast
+```
+
+Esta validacion no levanta Bevy ni compila WebAssembly.
