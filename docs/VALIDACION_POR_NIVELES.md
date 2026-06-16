@@ -211,3 +211,17 @@ make validate-fast
 #### Criterio
 
 El grafo debe conservar ids estables, metadatos consistentes, nodos validos, aristas validas y roundtrip canonico.
+
+### Fase 5.1: eventos JSONL
+
+#### Validacion headless
+
+```bash
+cargo run -- --script examples/rescate.loop --record artifacts/runs/dev/events.jsonl --seed 123 --ticks 50
+test -f artifacts/runs/dev/events.jsonl
+cargo test core::trace
+cargo test --test core_trace_jsonl
+make validate-fast
+```
+
+Los archivos generados en `artifacts/runs` son artefactos locales y no deben agregarse al commit.

@@ -467,3 +467,27 @@ cargo run -- --script examples/rescate.loop --export-graph artifacts/rescate.gra
 cargo run -- --graph artifacts/rescate.graph.json --seed 123 --ticks 50
 make validate-fast
 ```
+
+### Fase 5.1: eventos JSONL
+
+#### Objetivo
+
+Registrar eventos deterministas del nucleo en formato JSONL antes de introducir LLM real.
+
+#### Entregables
+
+```text
+comando --record
+archivo events.jsonl
+contrato de linea JSONL
+pruebas de roundtrip de traza
+validacion de determinismo por seed
+```
+
+#### Validacion
+
+```bash
+cargo run -- --script examples/rescate.loop --record artifacts/runs/dev/events.jsonl --seed 123 --ticks 50
+test -f artifacts/runs/dev/events.jsonl
+make validate-fast
+```

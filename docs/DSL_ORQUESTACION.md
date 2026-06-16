@@ -249,3 +249,13 @@ El roundtrip garantiza que un script `.loop` pueda convertirse a grafo JSON, imp
 ```bash
 cargo test --test dsl_graph_contract
 ```
+
+### Registro de eventos JSONL
+
+Los scripts `.loop` pueden ejecutarse en modo headless y grabar eventos del nucleo con `--record`.
+
+```bash
+cargo run -- --script examples/rescate.loop --record artifacts/runs/dev/events.jsonl --seed 123 --ticks 50
+```
+
+Esta salida permite auditar la corrida sin depender del modo visual.

@@ -58,6 +58,7 @@ fn run_import_graph_from_args() -> bool {
     let config = crate::core::scheduler::SimulationConfig::new(seed);
     let mut state = crate::core::scheduler::SimulationState::new(config);
     state.run_ticks(ticks);
+    record_core_events_from_args(&args, &state.events);
 
     println!("Loopscape grafo de orquestacion");
     println!("Grafo: {graph_path}");
@@ -89,6 +90,24 @@ fn run_import_graph_from_args() -> bool {
 
     println!("Grafo DSL importado correctamente");
     true
+}
+
+fn record_core_events_from_args(args: &[String], events: &[crate::core::event::CoreEvent]) {
+    let Some(record_path) = parse_arg_value(args, "--record") else {
+        return;
+    };
+
+    if record_path.trim().is_empty() {
+        eprintln!("El argumento --record no puede estar vacio");
+        std::process::exit(2);
+    }
+
+    if let Err(error) = crate::core::trace::write_events_jsonl(events, &record_path) {
+        eprintln!("No se pudo registrar eventos JSONL {record_path}: {error}");
+        std::process::exit(2);
+    }
+
+    println!("Eventos JSONL registrados: {record_path}");
 }
 
 fn describe_graph_node(node: &loopscape::dsl::GraphNode) -> String {
@@ -197,6 +216,7 @@ fn run_dsl_script_from_args() -> bool {
     let config = crate::core::scheduler::SimulationConfig::new(seed);
     let mut state = crate::core::scheduler::SimulationState::new(config);
     state.run_ticks(ticks);
+    record_core_events_from_args(&args, &state.events);
 
     println!("Loopscape DSL de orquestacion");
     println!("Script: {script_path}");
@@ -336,6 +356,7 @@ fn run_core_headless_from_args() -> bool {
     let config = crate::core::scheduler::SimulationConfig::new(seed).with_size(agents, tasks);
     let mut state = crate::core::scheduler::SimulationState::new(config);
     state.run_ticks(ticks);
+    record_core_events_from_args(&args, &state.events);
 
     println!("Loopscape core determinista");
     println!("Modo: {}", mode);
