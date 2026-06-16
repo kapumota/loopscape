@@ -103,3 +103,14 @@ Para validar todo el DSL sin levantar Bevy ni compilar WebAssembly:
 ```bash
 cargo test dsl
 ```
+
+#### Validacion semantica del DSL
+
+La fase 3.4 agrega pruebas rapidas del validador semantico del DSL. Para cambios en reglas de orquestacion se debe ejecutar:
+
+```bash
+cargo test dsl::validator
+make validate-fast
+```
+
+Esta validacion no levanta Bevy ni compila WebAssembly.

@@ -111,3 +111,35 @@ cargo test dsl::parser
 cargo test dsl
 make validate-fast
 ```
+
+#### Validador semantico
+
+La fase 3.4 agrega validacion semantica sobre el `OrchestrationProgram` construido por el parser. El objetivo es detectar programas mal formados antes de conectar el DSL con el nucleo de simulacion.
+
+Reglas minimas:
+
+```text
+el programa debe tener exactamente un /goal
+/plan no puede estar vacio
+/delegate debe tener objetivo y worker
+/delegate no puede referenciar un worker vacio
+/verify debe aparecer antes de /terminate when verified
+los comandos desconocidos conservan un error claro desde el lexer
+```
+
+Ejemplo valido:
+
+```text
+/goal rescatar_victimas
+/plan buscar -> clasificar -> asistir
+/delegate sector_a worker_1
+/verify checklist_final
+/terminate when verified
+```
+
+Validacion:
+
+```bash
+cargo test dsl::validator
+make validate-fast
+```

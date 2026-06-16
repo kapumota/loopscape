@@ -1,7 +1,7 @@
 //! DSL de orquestacion de Loopscape.
 //!
-//! Esta fase define solo el AST y el modelo de comandos. El lexer, parser,
-//! validador semantico e interprete se agregan en microfases posteriores.
+//! Este modulo agrupa el AST, lexer, parser y validador semantico.
+//! El interprete se agrega en una microfase posterior.
 
 pub mod ast;
 pub mod command;
@@ -9,6 +9,7 @@ pub mod error;
 pub mod lexer;
 pub mod parser;
 pub mod token;
+pub mod validator;
 
 pub use ast::{OrchestrationCommand, OrchestrationProgram};
 pub use command::CommandKind;
@@ -16,6 +17,7 @@ pub use error::DslError;
 pub use lexer::{lex, Lexer};
 pub use parser::{parse, Parser};
 pub use token::{Token, TokenKind, TokenSpan};
+pub use validator::{validate_program, validate_source, SemanticValidator};
 
 #[cfg(test)]
 mod tests {
