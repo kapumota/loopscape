@@ -26,6 +26,73 @@ enum GameEra {
     MultiAgentOrchestration,
 }
 
+fn run_export_graph_from_args() -> bool {
+    let args = std::env::args().collect::<Vec<_>>();
+    let Some(script_path) = parse_arg_value(&args, "--script") else {
+        return false;
+    };
+    let Some(output_path) = parse_arg_value(&args, "--export-graph") else {
+        return false;
+    };
+
+    if script_path.trim().is_empty() {
+        eprintln!("El argumento --script no puede estar vacio");
+        std::process::exit(2);
+    }
+
+    if output_path.trim().is_empty() {
+        eprintln!("El argumento --export-graph no puede estar vacio");
+        std::process::exit(2);
+    }
+
+    let source = match std::fs::read_to_string(&script_path) {
+        Ok(source) => source,
+        Err(error) => {
+            eprintln!("No se pudo leer el script DSL {script_path}: {error}");
+            std::process::exit(2);
+        }
+    };
+
+    let graph = match loopscape::dsl::graph_from_source(&source, Some(script_path.clone())) {
+        Ok(graph) => graph,
+        Err(error) => {
+            eprintln!("No se pudo construir el grafo DSL: {error}");
+            std::process::exit(2);
+        }
+    };
+
+    let json = match loopscape::dsl::graph_to_json(&graph) {
+        Ok(json) => json,
+        Err(error) => {
+            eprintln!("No se pudo serializar el grafo DSL: {error}");
+            std::process::exit(2);
+        }
+    };
+
+    let output = std::path::Path::new(&output_path);
+    if let Some(parent) = output.parent() {
+        if !parent.as_os_str().is_empty() {
+            if let Err(error) = std::fs::create_dir_all(parent) {
+                eprintln!("No se pudo crear el directorio de salida {parent:?}: {error}");
+                std::process::exit(2);
+            }
+        }
+    }
+
+    if let Err(error) = std::fs::write(output, json) {
+        eprintln!("No se pudo escribir el grafo DSL {output_path}: {error}");
+        std::process::exit(2);
+    }
+
+    println!("Loopscape DSL de orquestacion");
+    println!("Script: {script_path}");
+    println!("Grafo exportado: {output_path}");
+    println!("Nodos: {}", graph.nodes.len());
+    println!("Aristas: {}", graph.edges.len());
+    println!("Grafo DSL exportado correctamente");
+    true
+}
+
 fn run_dsl_script_from_args() -> bool {
     let args = std::env::args().collect::<Vec<_>>();
     if wants_visual_dsl_script(&args) {
@@ -250,6 +317,10 @@ fn parse_arg_value(args: &[String], name: &str) -> Option<String> {
 }
 
 fn main() {
+    if run_export_graph_from_args() {
+        return;
+    }
+
     if run_dsl_script_from_args() {
         return;
     }

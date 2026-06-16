@@ -6,6 +6,7 @@
 pub mod ast;
 pub mod command;
 pub mod error;
+pub mod graph;
 pub mod interpreter;
 pub mod lexer;
 pub mod parser;
@@ -15,6 +16,10 @@ pub mod validator;
 pub use ast::{OrchestrationCommand, OrchestrationProgram};
 pub use command::CommandKind;
 pub use error::DslError;
+pub use graph::{
+    graph_from_program, graph_from_source, graph_json_from_source, graph_to_json, GraphEdge,
+    GraphMetadata, GraphNode, OrchestrationGraph,
+};
 pub use interpreter::{interpret_program, interpret_source, DslInterpreter, InterpreterConfig};
 pub use lexer::{lex, Lexer};
 pub use parser::{parse, Parser};

@@ -165,3 +165,17 @@ make validate-fast
 ```
 
 El modo `--visual` queda reservado para inspeccion manual en una sesion con entorno grafico.
+
+### Validacion de exportacion de grafo
+
+#### Comando recomendado
+
+```bash
+cargo run -- --script examples/rescate.loop --export-graph artifacts/rescate.graph.json
+test -f artifacts/rescate.graph.json
+make validate-fast
+```
+
+#### Criterio
+
+La exportacion de grafo es compatible con trabajo remoto porque no requiere `DISPLAY`, Wayland ni ventana grafica.
