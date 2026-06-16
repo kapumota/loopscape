@@ -89,3 +89,17 @@ cargo test dsl::lexer
 ```
 
 Esta validacion no levanta Bevy ni compila WebAssembly.
+
+#### Pruebas rapidas del parser DSL
+
+Para cambios del parser se puede ejecutar una prueba focalizada:
+
+```bash
+cargo test dsl::parser
+```
+
+Para validar todo el DSL sin levantar Bevy ni compilar WebAssembly:
+
+```bash
+cargo test dsl
+```
