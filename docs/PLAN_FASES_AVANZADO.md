@@ -306,3 +306,25 @@ cargo test dsl::parser
 cargo test dsl
 make validate-fast
 ```
+
+#### Fase 3.4: validador semantico del DSL
+
+Objetivo: detectar programas DSL mal formados antes de ejecutarlos.
+
+Entregables:
+
+```text
+src/dsl/validator.rs
+validacion de un unico /goal
+validacion de /plan no vacio
+validacion de /delegate con worker
+validacion de orden /verify antes de /terminate when verified
+pruebas unitarias del validador
+```
+
+Cierre:
+
+```bash
+cargo test dsl::validator
+make validate-fast
+```
