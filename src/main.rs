@@ -133,6 +133,46 @@ fn wants_visual_dsl_script(args: &[String]) -> bool {
         && (has_flag(args, "--visual") || has_flag(args, "--viewer"))
 }
 
+fn requires_visual_runtime(args: &[String]) -> bool {
+    if has_flag(args, "--smoke") || has_flag(args, "--headless") {
+        return false;
+    }
+
+    if parse_arg_value(args, "--script").is_some() && !wants_visual_dsl_script(args) {
+        return false;
+    }
+
+    true
+}
+
+fn has_graphical_environment() -> bool {
+    #[cfg(target_arch = "wasm32")]
+    {
+        true
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        std::env::var_os("DISPLAY").is_some()
+            || std::env::var_os("WAYLAND_DISPLAY").is_some()
+            || std::env::var_os("WAYLAND_SOCKET").is_some()
+    }
+}
+
+fn exit_if_visual_environment_missing() -> bool {
+    let args = std::env::args().collect::<Vec<_>>();
+
+    if !requires_visual_runtime(&args) || has_graphical_environment() {
+        return false;
+    }
+
+    eprintln!("No se detecto entorno grafico para iniciar Loopscape en modo visual.");
+    eprintln!(
+        "Ejecuta sin --visual para modo remoto o abre una sesion con DISPLAY, WAYLAND_DISPLAY o WAYLAND_SOCKET."
+    );
+    std::process::exit(2);
+}
+
 fn run_core_headless_from_args() -> bool {
     let args = std::env::args().collect::<Vec<_>>();
     if wants_visual_dsl_script(&args) {
@@ -215,6 +255,10 @@ fn main() {
     }
 
     if run_core_headless_from_args() {
+        return;
+    }
+
+    if exit_if_visual_environment_missing() {
         return;
     }
 

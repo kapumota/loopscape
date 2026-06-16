@@ -41,3 +41,19 @@ Esta fase permite demostrar que un script `.loop` puede llegar a la capa visual 
 make validate-fast
 cargo run -- --script examples/rescate.loop --seed 123 --ticks 50
 ```
+
+#### Entornos remotos sin pantalla
+
+El modo visual requiere una sesion grafica local. En servidores remotos por SSH normalmente no existen `DISPLAY`, `WAYLAND_DISPLAY` ni `WAYLAND_SOCKET`.
+
+Si se ejecuta `--visual` sin entorno grafico, Loopscape muestra un mensaje en español y termina sin panic. Para validar en remoto se debe usar el modo sin ventana.
+
+```bash
+cargo run -- --script examples/rescate.loop --seed 123 --ticks 50
+```
+
+Para abrir el visor se necesita una sesion grafica real.
+
+```bash
+cargo run -- --script examples/rescate.loop --visual --seed 123 --ticks 50
+```
