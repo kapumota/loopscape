@@ -607,3 +607,20 @@ cargo test llm
 cargo test --test llm_limits
 make validate-fast
 ```
+
+### Fase 6.3: proxy HTTP opcional
+
+#### Objetivo
+
+Preparar un proxy HTTP opcional detras de feature flag antes de conectar providers reales.
+
+#### Entregables
+
+```text
+feature llm-proxy
+contrato de proxy HTTP
+limite de body
+timeout obligatorio
+CORS restringido
+sin claves hardcodeadas
+```

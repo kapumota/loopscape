@@ -319,3 +319,13 @@ max_prompt_tokens
 max_response_tokens
 timeout_ticks
 ```
+
+### Runtime LLM sandbox con proxy opcional
+
+#### Uso previsto
+
+El DSL puede integrarse mas adelante con decisiones tipo LLM usando primero providers simulados y luego un proxy opcional compilado con `llm-proxy`.
+
+#### Restriccion
+
+El proxy esta apagado por defecto y no debe introducir claves, red ni comportamiento no determinista en las validaciones normales.

@@ -295,3 +295,15 @@ make validate-fast
 #### Criterio
 
 Los providers LLM simulados deben rechazar prompts, respuestas y latencias simuladas fuera de limite sin usar red ni secretos.
+
+### Validacion de proxy LLM opcional
+
+#### Comando
+
+```bash
+cargo check --features llm-proxy
+```
+
+#### Criterio
+
+La feature `llm-proxy` debe compilar sin activar red por defecto, sin claves hardcodeadas y con limites obligatorios.

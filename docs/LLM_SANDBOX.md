@@ -96,3 +96,32 @@ cargo test --test llm_limits
 make validate-fast
 git diff --check
 ```
+
+### Fase 6.3: proxy HTTP opcional
+
+#### Objetivo
+
+Agregar un contrato de proxy HTTP opcional para providers LLM, apagado por defecto y protegido por la feature `llm-proxy`.
+
+#### Reglas de seguridad
+
+```text
+feature llm-proxy obligatoria
+sin claves hardcodeadas
+body maximo obligatorio
+timeout obligatorio
+CORS restringido
+apagado por defecto
+```
+
+#### Alcance
+
+Esta fase no habilita llamadas de red por defecto. Solo compila el contrato del proxy cuando se activa `llm-proxy`.
+
+#### Validacion
+
+```bash
+cargo test llm
+cargo check --features llm-proxy
+make validate-fast
+```

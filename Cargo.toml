@@ -36,6 +36,7 @@ getrandom = { version = "0.3", features = ["wasm_js"] }
 default = []
 wasm = ["wasm-bindgen-futures", "web-sys", "js-sys", "getrandom/wasm_js"]
 
+llm-proxy = []
 [profile.release]
 opt-level = "z"
 lto = true

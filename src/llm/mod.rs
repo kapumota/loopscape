@@ -1,6 +1,8 @@
 pub mod error;
 pub mod mock;
 pub mod provider;
+#[cfg(feature = "llm-proxy")]
+pub mod proxy;
 pub mod replay;
 
 pub use error::LlmError;
@@ -10,3 +12,6 @@ pub use provider::{
     ProviderCapabilities,
 };
 pub use replay::ReplayProvider;
+
+#[cfg(feature = "llm-proxy")]
+pub use proxy::{HttpProxyProvider, LlmProxyConfig, ProxyCorsPolicy, ProxyHttpRequest};
