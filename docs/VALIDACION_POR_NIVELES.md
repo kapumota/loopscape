@@ -193,3 +193,21 @@ make validate-fast
 #### Criterio
 
 La importacion debe funcionar en modo remoto sin `DISPLAY`, Wayland ni ventana grafica.
+
+### Validacion de contrato de grafo JSON
+
+#### Uso
+
+Para cambios en exportacion, importacion o contrato de grafos JSON, ejecutar:
+
+```bash
+cargo test dsl::graph
+cargo test --test dsl_graph_contract
+cargo run -- --script examples/rescate.loop --export-graph artifacts/rescate.graph.json
+cargo run -- --graph artifacts/rescate.graph.json --seed 123 --ticks 50
+make validate-fast
+```
+
+#### Criterio
+
+El grafo debe conservar ids estables, metadatos consistentes, nodos validos, aristas validas y roundtrip canonico.

@@ -7,7 +7,7 @@ use super::command::CommandKind;
 use super::error::DslError;
 use super::validator::{validate_program, validate_source};
 
-const GRAPH_VERSION: &str = "loopscape.orchestration.graph.v1";
+pub const GRAPH_FORMAT_VERSION: &str = "loopscape.orchestration.graph.v1";
 
 /// Grafo logico exportable de un programa DSL de orquestacion.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
@@ -51,6 +51,33 @@ pub struct GraphEdge {
     pub label: String,
 }
 
+/// Contrato publico del formato JSON de grafo.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct GraphContract {
+    pub version: &'static str,
+    pub top_level_keys: &'static [&'static str],
+    pub metadata_fields: &'static [&'static str],
+    pub node_fields: &'static [&'static str],
+    pub edge_fields: &'static [&'static str],
+}
+
+/// Devuelve el contrato estable que deben respetar los grafos exportados.
+pub fn graph_contract() -> GraphContract {
+    GraphContract {
+        version: GRAPH_FORMAT_VERSION,
+        top_level_keys: &["metadatos", "nodos", "aristas"],
+        metadata_fields: &[
+            "version",
+            "source",
+            "command_count",
+            "node_count",
+            "edge_count",
+        ],
+        node_fields: &["id", "kind", "label", "command", "source_line", "order"],
+        edge_fields: &["id", "from", "to", "kind", "label"],
+    }
+}
+
 /// Construye un grafo logico desde un programa DSL ya parseado.
 pub fn graph_from_program(
     program: &OrchestrationProgram,
@@ -67,7 +94,7 @@ pub fn graph_from_program(
 
     let mut graph = OrchestrationGraph {
         metadata: GraphMetadata {
-            version: GRAPH_VERSION.to_string(),
+            version: GRAPH_FORMAT_VERSION.to_string(),
             source,
             command_count: program.commands.len(),
             node_count: nodes.len(),
@@ -110,13 +137,96 @@ pub fn graph_from_json(input: &str) -> Result<OrchestrationGraph, DslError> {
         ))
     })?;
 
-    validate_graph(&graph)?;
+    validate_graph_contract(&graph)?;
     Ok(graph)
+}
+
+/// Ejecuta el ciclo JSON, importacion, validacion y serializacion estable.
+pub fn graph_roundtrip_from_json(input: &str) -> Result<String, DslError> {
+    let graph = graph_from_json(input)?;
+    graph_to_json(&graph)
+}
+
+/// Ejecuta el ciclo DSL, JSON, importacion y serializacion estable.
+pub fn graph_roundtrip_from_source(
+    input: &str,
+    source: Option<String>,
+) -> Result<String, DslError> {
+    let json = graph_json_from_source(input, source)?;
+    graph_roundtrip_from_json(&json)
+}
+
+/// Verifica el contrato estable del grafo exportado.
+pub fn validate_graph_contract(graph: &OrchestrationGraph) -> Result<(), DslError> {
+    validate_graph(graph)?;
+
+    if graph.metadata.command_count == 0 {
+        return Err(DslError::invalid_program(
+            "el grafo no declara comandos de orquestacion",
+        ));
+    }
+
+    if let Some(source) = &graph.metadata.source {
+        if source.trim().is_empty() {
+            return Err(DslError::invalid_program(
+                "la ruta de origen del grafo esta vacia",
+            ));
+        }
+    }
+
+    for node in &graph.nodes {
+        if node.label.trim().is_empty() {
+            return Err(DslError::invalid_program(format!(
+                "el nodo {} no tiene etiqueta",
+                node.id
+            )));
+        }
+
+        if node.command.trim().is_empty() {
+            return Err(DslError::invalid_program(format!(
+                "el nodo {} no declara comando de origen",
+                node.id
+            )));
+        }
+
+        if node.id.contains(' ') {
+            return Err(DslError::invalid_program(format!(
+                "el id de nodo contiene espacios: {}",
+                node.id
+            )));
+        }
+    }
+
+    for (index, edge) in graph.edges.iter().enumerate() {
+        if edge.kind.trim().is_empty() {
+            return Err(DslError::invalid_program(format!(
+                "la arista {} no tiene tipo",
+                edge.id
+            )));
+        }
+
+        if edge.label.trim().is_empty() {
+            return Err(DslError::invalid_program(format!(
+                "la arista {} no tiene etiqueta",
+                edge.id
+            )));
+        }
+
+        let expected_id = format!("edge-{index:03}");
+        if edge.id != expected_id {
+            return Err(DslError::invalid_program(format!(
+                "id de arista fuera de contrato: {}",
+                edge.id
+            )));
+        }
+    }
+
+    Ok(())
 }
 
 /// Verifica la consistencia minima de un grafo importado.
 pub fn validate_graph(graph: &OrchestrationGraph) -> Result<(), DslError> {
-    if graph.metadata.version != GRAPH_VERSION {
+    if graph.metadata.version != GRAPH_FORMAT_VERSION {
         return Err(DslError::invalid_program(format!(
             "version de grafo no soportada: {}",
             graph.metadata.version

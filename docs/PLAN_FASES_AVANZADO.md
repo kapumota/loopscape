@@ -440,3 +440,30 @@ cargo run -- --script examples/rescate.loop --export-graph artifacts/rescate.gra
 cargo run -- --graph artifacts/rescate.graph.json --seed 123 --ticks 50
 make validate-fast
 ```
+
+### Fase 4.4: roundtrip y contrato estable del grafo JSON
+
+#### Objetivo
+
+Garantizar que el ciclo DSL, grafo JSON, importacion y serializacion canonica sea estable.
+
+#### Entregables
+
+```text
+test de roundtrip
+contrato publico del formato
+validacion de ids estables
+validacion de metadatos
+validacion de nodos y aristas
+documentacion del contrato JSON
+```
+
+#### Validacion
+
+```bash
+cargo test dsl::graph
+cargo test --test dsl_graph_contract
+cargo run -- --script examples/rescate.loop --export-graph artifacts/rescate.graph.json
+cargo run -- --graph artifacts/rescate.graph.json --seed 123 --ticks 50
+make validate-fast
+```

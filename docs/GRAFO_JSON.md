@@ -73,3 +73,53 @@ make validate-fast
 #### Criterio
 
 El importador rechaza grafos con version no soportada, conteos inconsistentes, ids duplicados o aristas que apunten a nodos inexistentes.
+
+### Contrato estable y roundtrip
+
+#### Objetivo
+
+El contrato estable define que un grafo exportado debe poder importarse y serializarse de nuevo sin cambiar su estructura canonica.
+
+El ciclo esperado es:
+
+```text
+DSL
+JSON exportado
+importacion JSON
+validacion de contrato
+JSON canonico
+```
+
+#### Campos obligatorios
+
+El formato conserva estas secciones de primer nivel:
+
+```text
+metadatos
+nodos
+aristas
+```
+
+Los nodos deben mantener `id`, `kind`, `label`, `command`, `source_line` y `order`.
+
+Las aristas deben mantener `id`, `from`, `to`, `kind` y `label`.
+
+#### Ids estables
+
+Los nodos exportados usan ids derivados del orden del comando, el tipo de nodo y el indice local.
+
+Las aristas exportadas usan ids secuenciales con la forma `edge-000`, `edge-001` y asi sucesivamente.
+
+#### Validacion recomendada
+
+```bash
+cargo test dsl::graph
+cargo test --test dsl_graph_contract
+cargo run -- --script examples/rescate.loop --export-graph artifacts/rescate.graph.json
+cargo run -- --graph artifacts/rescate.graph.json --seed 123 --ticks 50
+make validate-fast
+```
+
+#### Alcance
+
+Esta fase no cambia el visor visual ni implementa editor de nodos. Su objetivo es estabilizar el formato que usaran replay, metricas, comparacion de escenarios y futuras herramientas visuales.
