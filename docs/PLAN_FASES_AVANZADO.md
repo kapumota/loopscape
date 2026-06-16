@@ -328,3 +328,27 @@ Cierre:
 cargo test dsl::validator
 make validate-fast
 ```
+
+#### Fase 3.5: interprete del DSL hacia eventos del nucleo
+
+Objetivo: convertir un programa DSL validado en eventos internos del nucleo.
+
+Entregables:
+
+```text
+src/dsl/interpreter.rs
+CoreEvent::GoalCreated
+CoreEvent::PlanStepCreated
+CoreEvent::DelegationRequested
+CoreEvent::VerificationRequested
+CoreEvent::TerminationPolicySet
+pruebas unitarias del interprete
+```
+
+Cierre:
+
+```bash
+cargo test dsl::interpreter
+cargo test core
+make validate-fast
+```
