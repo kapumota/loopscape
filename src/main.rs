@@ -28,6 +28,9 @@ enum GameEra {
 
 fn run_dsl_script_from_args() -> bool {
     let args = std::env::args().collect::<Vec<_>>();
+    if wants_visual_dsl_script(&args) {
+        return false;
+    }
     let Some(script_path) = parse_arg_value(&args, "--script") else {
         return false;
     };
@@ -97,8 +100,44 @@ fn describe_dsl_event(event: &loopscape::core::event::CoreEvent) -> String {
     }
 }
 
+fn load_visual_dsl_program_from_args() -> Option<LoadedDslProgram> {
+    let args = std::env::args().collect::<Vec<_>>();
+    if !wants_visual_dsl_script(&args) {
+        return None;
+    }
+
+    let script_path = parse_arg_value(&args, "--script")?;
+    let source = match std::fs::read_to_string(&script_path) {
+        Ok(source) => source,
+        Err(error) => {
+            return Some(LoadedDslProgram::with_error(
+                script_path,
+                format!("no se pudo leer el script DSL: {error}"),
+            ));
+        }
+    };
+
+    let program = match loopscape::dsl::validate_source(&source) {
+        Ok(program) => program,
+        Err(error) => return Some(LoadedDslProgram::with_error(script_path, error.to_string())),
+    };
+
+    Some(LoadedDslProgram::from_script_lines(
+        script_path,
+        program.to_script_lines(),
+    ))
+}
+
+fn wants_visual_dsl_script(args: &[String]) -> bool {
+    parse_arg_value(args, "--script").is_some()
+        && (has_flag(args, "--visual") || has_flag(args, "--viewer"))
+}
+
 fn run_core_headless_from_args() -> bool {
     let args = std::env::args().collect::<Vec<_>>();
+    if wants_visual_dsl_script(&args) {
+        return false;
+    }
     let smoke_requested = has_flag(&args, "--smoke") || has_flag(&args, "--headless");
     let ticks_requested = args
         .iter()
@@ -179,6 +218,8 @@ fn main() {
         return;
     }
 
+    let loaded_dsl_program = load_visual_dsl_program_from_args();
+
     let mut app = App::new();
 
     // Plugins base
@@ -199,8 +240,13 @@ fn main() {
         .init_resource::<Metrics>()
         .init_resource::<XRayMode>()
         .init_resource::<EraConfig>()
+        .init_resource::<LoadedDslProgram>()
         .init_resource::<HTTPClient>()
         .init_resource::<llm_integration::ReActContext>();
+
+    if let Some(dsl_program) = loaded_dsl_program {
+        app.insert_resource(dsl_program);
+    }
 
     // Eventos
     app.add_event::<EraTransitionEvent>()

@@ -197,3 +197,19 @@ Ejemplo de script:
 ```
 
 La opcion `--seed` fija la semilla determinista usada por la corrida de apoyo del nucleo. La opcion `--ticks` define cuantos ticks ejecutar para comprobar que el binario puede arrancar y completar una ejecucion corta.
+
+#### Visor visual del DSL
+
+La fase 4.1 agrega un visor lateral para programas `.loop`. El visor muestra el script cargado, el comando activo y el estado de cada comando.
+
+Comando para validacion por terminal:
+
+```bash
+cargo run -- --script examples/rescate.loop --seed 123 --ticks 50
+```
+
+Comando para abrir el visor visual:
+
+```bash
+cargo run -- --script examples/rescate.loop --visual --seed 123 --ticks 50
+```

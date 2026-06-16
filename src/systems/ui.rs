@@ -38,6 +38,19 @@ pub fn setup_ui(mut commands: Commands) {
             ..default()
         })
         .insert(MetricsLabel);
+
+    commands
+        .spawn(Text::new("DSL: sin script visual cargado"))
+        .insert(TextFont::default().with_font_size(13.0))
+        .insert(TextColor(Color::srgb(0.8, 0.9, 1.0)))
+        .insert(Node {
+            position_type: PositionType::Absolute,
+            top: Val::Px(110.0),
+            right: Val::Px(18.0),
+            width: Val::Px(410.0),
+            ..default()
+        })
+        .insert(DslViewerLabel);
 }
 
 #[derive(Component)]
@@ -46,15 +59,20 @@ pub struct EraLabel;
 #[derive(Component)]
 pub struct MetricsLabel;
 
+#[derive(Component)]
+pub struct DslViewerLabel;
+
 #[allow(clippy::type_complexity)]
 pub fn update_ui(
     era: Res<State<GameEra>>,
     metrics: Res<Metrics>,
     xray: Res<XRayMode>,
     era_config: Res<EraConfig>,
+    mut dsl_program: ResMut<LoadedDslProgram>,
     mut labels: ParamSet<(
         Query<&mut Text, With<EraLabel>>,
         Query<&mut Text, With<MetricsLabel>>,
+        Query<&mut Text, With<DslViewerLabel>>,
     )>,
 ) {
     let era_name = match era.get() {
@@ -78,5 +96,12 @@ pub fn update_ui(
             metrics.consensus_term,
             if xray.enabled { "ON" } else { "OFF" }
         );
+    }
+
+    let dsl_tick = metrics.era_timer.floor() as usize;
+    dsl_program.advance_to_tick(dsl_tick);
+
+    for mut text in labels.p2().iter_mut() {
+        text.0 = dsl_program.to_panel_text();
     }
 }
