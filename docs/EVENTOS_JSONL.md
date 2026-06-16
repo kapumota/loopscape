@@ -65,3 +65,13 @@ cargo run -- --replay artifacts/runs/dev/events.jsonl
 ```
 
 El replay valida formato, secuencia, ticks monotonos y consistencia entre el tipo declarado y el evento interno.
+
+### Relacion con metricas CSV
+
+Las trazas JSONL guardan eventos detallados. Las metricas CSV resumen una corrida en columnas comparables.
+
+```bash
+cargo run -- --script examples/rescate.loop --record artifacts/runs/dev/events.jsonl --metrics artifacts/runs/dev/metrics.csv --seed 123 --ticks 50
+```
+
+Ambas salidas son artefactos generados y no deben agregarse al commit por defecto.

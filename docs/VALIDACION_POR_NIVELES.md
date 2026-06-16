@@ -238,3 +238,17 @@ make validate-fast
 ```
 
 El archivo generado en `artifacts/runs/dev/events.jsonl` es un artefacto de ejecucion y no debe agregarse al commit.
+
+### Fase 5.3: metricas CSV
+
+#### Validacion headless
+
+```bash
+cargo run -- --script examples/rescate.loop --metrics artifacts/runs/dev/metrics.csv --seed 123 --ticks 50
+test -f artifacts/runs/dev/metrics.csv
+cargo test metrics
+cargo test --test simulation_metrics_csv
+make validate-fast
+```
+
+El archivo generado en `artifacts/runs/dev/metrics.csv` es un artefacto local y no debe agregarse al commit.

@@ -89,6 +89,7 @@ fn run_import_graph_from_args() -> bool {
     let config = crate::core::scheduler::SimulationConfig::new(seed);
     let mut state = crate::core::scheduler::SimulationState::new(config);
     state.run_ticks(ticks);
+    export_metrics_from_args(&args, &state);
     record_core_events_from_args(&args, &state.events);
 
     println!("Loopscape grafo de orquestacion");
@@ -121,6 +122,24 @@ fn run_import_graph_from_args() -> bool {
 
     println!("Grafo DSL importado correctamente");
     true
+}
+
+fn export_metrics_from_args(args: &[String], state: &crate::core::scheduler::SimulationState) {
+    let Some(metrics_path) = parse_arg_value(args, "--metrics") else {
+        return;
+    };
+
+    if metrics_path.trim().is_empty() {
+        eprintln!("El argumento --metrics no puede estar vacio");
+        std::process::exit(2);
+    }
+
+    if let Err(error) = crate::core::metrics::write_metrics_csv(state, &metrics_path) {
+        eprintln!("No se pudo exportar metricas CSV {metrics_path}: {error}");
+        std::process::exit(2);
+    }
+
+    println!("Metricas CSV exportadas: {metrics_path}");
 }
 
 fn record_core_events_from_args(args: &[String], events: &[crate::core::event::CoreEvent]) {
@@ -247,6 +266,7 @@ fn run_dsl_script_from_args() -> bool {
     let config = crate::core::scheduler::SimulationConfig::new(seed);
     let mut state = crate::core::scheduler::SimulationState::new(config);
     state.run_ticks(ticks);
+    export_metrics_from_args(&args, &state);
     record_core_events_from_args(&args, &state.events);
 
     println!("Loopscape DSL de orquestacion");
@@ -387,6 +407,7 @@ fn run_core_headless_from_args() -> bool {
     let config = crate::core::scheduler::SimulationConfig::new(seed).with_size(agents, tasks);
     let mut state = crate::core::scheduler::SimulationState::new(config);
     state.run_ticks(ticks);
+    export_metrics_from_args(&args, &state);
     record_core_events_from_args(&args, &state.events);
 
     println!("Loopscape core determinista");
