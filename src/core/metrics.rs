@@ -136,3 +136,89 @@ mod focused_tests {
         assert_eq!(metrics.total_tasks, state.tasks.len());
     }
 }
+
+use std::fs::File;
+use std::io::Write;
+use std::path::Path;
+
+use super::event::CoreEvent;
+
+pub const METRICS_CSV_HEADER: &str = "ticks,tareas_completadas,loops_activos,tokens_usados,fallos_detectados,fallos_recuperados,latencia_promedio";
+
+/// Fila estable para exportar metricas comparables de simulacion.
+#[derive(Clone, Debug, PartialEq)]
+pub struct SimulationMetricsCsvRow {
+    pub ticks: u64,
+    pub completed_tasks: usize,
+    pub active_loops: usize,
+    pub tokens_used: u64,
+    pub failures_detected: u64,
+    pub failures_recovered: u64,
+    pub average_latency: f32,
+}
+
+impl SimulationMetricsCsvRow {
+    pub fn from_state(state: &SimulationState) -> Self {
+        let (assigned_count, assigned_duration_total) = assigned_duration_summary(&state.events);
+        let average_latency = if assigned_count == 0 {
+            0.0
+        } else {
+            assigned_duration_total as f32 / assigned_count as f32
+        };
+
+        Self {
+            ticks: state.tick,
+            completed_tasks: state.metrics.completed_tasks,
+            active_loops: state.metrics.active_loops,
+            tokens_used: 0,
+            failures_detected: 0,
+            failures_recovered: 0,
+            average_latency,
+        }
+    }
+
+    pub fn to_csv_line(&self) -> String {
+        format!(
+            "{},{},{},{},{},{},{:.3}",
+            self.ticks,
+            self.completed_tasks,
+            self.active_loops,
+            self.tokens_used,
+            self.failures_detected,
+            self.failures_recovered,
+            self.average_latency
+        )
+    }
+}
+
+/// Escribe una fila CSV con metricas comparables de simulacion.
+pub fn write_metrics_csv<P: AsRef<Path>>(state: &SimulationState, path: P) -> Result<(), String> {
+    let path = path.as_ref();
+    if let Some(parent) = path.parent() {
+        if !parent.as_os_str().is_empty() {
+            std::fs::create_dir_all(parent).map_err(|error| {
+                format!("no se pudo crear el directorio de metricas {parent:?}: {error}")
+            })?;
+        }
+    }
+
+    let row = SimulationMetricsCsvRow::from_state(state);
+    let mut file = File::create(path)
+        .map_err(|error| format!("no se pudo crear el archivo CSV {path:?}: {error}"))?;
+
+    writeln!(file, "{METRICS_CSV_HEADER}")
+        .map_err(|error| format!("no se pudo escribir cabecera CSV {path:?}: {error}"))?;
+    writeln!(file, "{}", row.to_csv_line())
+        .map_err(|error| format!("no se pudo escribir fila CSV {path:?}: {error}"))?;
+
+    Ok(())
+}
+
+fn assigned_duration_summary(events: &[CoreEvent]) -> (u64, u64) {
+    events
+        .iter()
+        .fold((0, 0), |(count, total), event| match event {
+            CoreEvent::TaskAssigned { duration, .. } => (count + 1, total + u64::from(*duration)),
+            _ => (count, total),
+        })
+}

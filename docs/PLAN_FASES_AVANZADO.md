@@ -512,3 +512,27 @@ Criterio de aceptacion:
 cargo test replay
 make validate-fast
 ```
+
+### Fase 5.3: metricas CSV
+
+#### Objetivo
+
+Exportar metricas comparables de simulacion en CSV antes de introducir LLM real.
+
+#### Entregables
+
+```text
+comando --metrics
+archivo metrics.csv
+columnas estables
+pruebas de determinismo de metricas
+documentacion headless
+```
+
+#### Validacion
+
+```bash
+cargo run -- --script examples/rescate.loop --metrics artifacts/runs/dev/metrics.csv --seed 123 --ticks 50
+test -f artifacts/runs/dev/metrics.csv
+make validate-fast
+```

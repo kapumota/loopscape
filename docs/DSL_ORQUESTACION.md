@@ -270,3 +270,13 @@ cargo run -- --replay artifacts/runs/dev/events.jsonl
 ```
 
 Este flujo mantiene la ejecucion reproducible antes de introducir componentes no deterministas como LLMs reales.
+
+### Exportacion de metricas CSV
+
+Los scripts `.loop` pueden ejecutarse en modo headless y exportar metricas comparables con `--metrics`.
+
+```bash
+cargo run -- --script examples/rescate.loop --metrics artifacts/runs/dev/metrics.csv --seed 123 --ticks 50
+```
+
+Esta salida complementa las trazas JSONL y permite comparar escenarios sin depender del modo visual.
