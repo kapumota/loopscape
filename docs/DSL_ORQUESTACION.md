@@ -305,3 +305,17 @@ El runtime LLM sandbox queda limitado a providers simulados para preparar futura
 MockProvider
 ReplayProvider
 ```
+
+### Límites del runtime LLM sandbox
+
+#### Uso previsto
+
+El DSL puede integrarse en fases posteriores con providers simulados. Antes de conectar red, el runtime LLM sandbox ya modela limites de tokens y timeouts simulados.
+
+#### Campos controlados
+
+```text
+max_prompt_tokens
+max_response_tokens
+timeout_ticks
+```

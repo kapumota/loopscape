@@ -281,3 +281,17 @@ make validate-fast
 #### Criterio
 
 Los providers de Fase 6.1 no deben usar red, HTTP real, OpenAI, Ollama ni claves de API.
+
+### Validación de límites LLM simulados
+
+#### Comandos
+
+```bash
+cargo test llm
+cargo test --test llm_limits
+make validate-fast
+```
+
+#### Criterio
+
+Los providers LLM simulados deben rechazar prompts, respuestas y latencias simuladas fuera de limite sin usar red ni secretos.
