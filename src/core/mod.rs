@@ -5,6 +5,7 @@
 //! derivadas del estado interno.
 
 pub mod agent;
+pub mod compare;
 pub mod event;
 pub mod loop_state;
 pub mod metrics;

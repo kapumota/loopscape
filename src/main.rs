@@ -26,6 +26,68 @@ enum GameEra {
     MultiAgentOrchestration,
 }
 
+fn run_metrics_comparison_from_args() -> bool {
+    let args = std::env::args().collect::<Vec<_>>();
+    let Some((baseline_path, candidate_path)) = parse_arg_pair(&args, "--compare-metrics") else {
+        return false;
+    };
+
+    if baseline_path.trim().is_empty() || candidate_path.trim().is_empty() {
+        eprintln!("El argumento --compare-metrics requiere dos rutas CSV no vacias");
+        std::process::exit(2);
+    }
+
+    let comparison =
+        match crate::core::compare::compare_metrics_files(&baseline_path, &candidate_path) {
+            Ok(comparison) => comparison,
+            Err(error) => {
+                eprintln!("No se pudo comparar metricas CSV: {error}");
+                std::process::exit(2);
+            }
+        };
+
+    if let Some(output_path) = parse_arg_value(&args, "--compare-output") {
+        if output_path.trim().is_empty() {
+            eprintln!("El argumento --compare-output no puede estar vacio");
+            std::process::exit(2);
+        }
+
+        if let Err(error) =
+            crate::core::compare::write_metrics_comparison_csv(&comparison, &output_path)
+        {
+            eprintln!("No se pudo escribir comparacion CSV {output_path}: {error}");
+            std::process::exit(2);
+        }
+
+        println!("Comparacion CSV exportada: {output_path}");
+    }
+
+    println!("Loopscape comparacion de corridas");
+    println!("Base: {baseline_path}");
+    println!("Candidata: {candidate_path}");
+    println!("Delta ticks: {}", comparison.delta.ticks);
+    println!(
+        "Delta tareas completadas: {}",
+        comparison.delta.completed_tasks
+    );
+    println!("Delta loops activos: {}", comparison.delta.active_loops);
+    println!("Delta tokens usados: {}", comparison.delta.tokens_used);
+    println!(
+        "Delta fallos detectados: {}",
+        comparison.delta.failures_detected
+    );
+    println!(
+        "Delta fallos recuperados: {}",
+        comparison.delta.failures_recovered
+    );
+    println!(
+        "Delta latencia promedio: {:.3}",
+        comparison.delta.average_latency
+    );
+    println!("Comparacion completada correctamente");
+    true
+}
+
 fn run_replay_from_args() -> bool {
     let args = std::env::args().collect::<Vec<_>>();
     let Some(trace_path) = parse_arg_value(&args, "--replay") else {
@@ -440,6 +502,13 @@ fn parse_arg_u32(args: &[String], name: &str) -> Option<u32> {
     parse_arg_value(args, name).and_then(|value| value.parse::<u32>().ok())
 }
 
+fn parse_arg_pair(args: &[String], flag: &str) -> Option<(String, String)> {
+    let index = args.iter().position(|arg| arg == flag)?;
+    let first = args.get(index + 1)?.clone();
+    let second = args.get(index + 2)?.clone();
+    Some((first, second))
+}
+
 fn parse_arg_value(args: &[String], name: &str) -> Option<String> {
     let inline_prefix = format!("{name}=");
 
@@ -459,6 +528,10 @@ fn parse_arg_value(args: &[String], name: &str) -> Option<String> {
 }
 
 fn main() {
+    if run_metrics_comparison_from_args() {
+        return;
+    }
+
     if run_replay_from_args() {
         return;
     }

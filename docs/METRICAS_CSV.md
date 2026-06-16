@@ -51,3 +51,13 @@ make validate-fast
 #### Limpieza
 
 Los archivos dentro de `artifacts/runs` son salidas generadas. No deben agregarse al commit salvo que se publique una corrida de ejemplo de forma explicita.
+
+### Comparacion de metricas
+
+Los archivos `metrics.csv` pueden compararse con `--compare-metrics`.
+
+```bash
+cargo run -- --compare-metrics artifacts/runs/base/metrics.csv artifacts/runs/dev/metrics.csv --compare-output artifacts/runs/dev/comparison.csv
+```
+
+El reporte de comparacion usa las columnas `metrica`, `base`, `candidata` y `diferencia`.
