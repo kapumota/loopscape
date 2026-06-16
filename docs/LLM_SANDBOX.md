@@ -65,3 +65,34 @@ Esta fase no usa internet.
 Esta fase no lee claves de API.
 
 Esta fase solo agrega el contrato interno para providers simulados y reproducibles.
+
+### Fase 6.2: limites de tokens y timeouts simulados
+
+#### Objetivo
+
+Modelar costo y limites antes de conectar providers reales.
+
+Esta fase agrega limites locales para prompts, respuestas y latencia simulada. No introduce red, HTTP real, OpenAI, Ollama ni claves.
+
+#### Limites disponibles
+
+```text
+max_prompt_tokens
+max_response_tokens
+timeout_ticks
+```
+
+#### Criterio de seguridad
+
+Un provider debe rechazar solicitudes que excedan los limites definidos antes de producir respuesta.
+
+El timeout es simulado en ticks. No mide tiempo real de pared.
+
+#### Validación
+
+```bash
+cargo test llm
+cargo test --test llm_limits
+make validate-fast
+git diff --check
+```

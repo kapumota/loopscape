@@ -583,3 +583,27 @@ cargo test llm
 cargo test --test llm_mock_provider
 make validate-fast
 ```
+
+### Fase 6.2: limites de tokens y timeouts simulados
+
+#### Objetivo
+
+Agregar limites simulados al runtime LLM sandbox antes de permitir providers reales.
+
+#### Entregables
+
+```text
+LlmLimits
+max_prompt_tokens
+max_response_tokens
+timeout_ticks
+pruebas de limites
+```
+
+#### Validación
+
+```bash
+cargo test llm
+cargo test --test llm_limits
+make validate-fast
+```
