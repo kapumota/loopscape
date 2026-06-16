@@ -26,6 +26,77 @@ enum GameEra {
     MultiAgentOrchestration,
 }
 
+fn run_dsl_script_from_args() -> bool {
+    let args = std::env::args().collect::<Vec<_>>();
+    let Some(script_path) = parse_arg_value(&args, "--script") else {
+        return false;
+    };
+
+    if script_path.trim().is_empty() {
+        eprintln!("El argumento --script no puede estar vacio");
+        std::process::exit(2);
+    }
+
+    let seed = parse_arg_u64(&args, "--seed").unwrap_or(123);
+    let ticks = parse_arg_u32(&args, "--ticks").unwrap_or(50);
+    let source = match std::fs::read_to_string(&script_path) {
+        Ok(source) => source,
+        Err(error) => {
+            eprintln!("No se pudo leer el script DSL {script_path}: {error}");
+            std::process::exit(2);
+        }
+    };
+
+    let dsl_events = match loopscape::dsl::interpret_source(&source) {
+        Ok(events) => events,
+        Err(error) => {
+            eprintln!("El script DSL no es valido: {error}");
+            std::process::exit(2);
+        }
+    };
+
+    let config = crate::core::scheduler::SimulationConfig::new(seed);
+    let mut state = crate::core::scheduler::SimulationState::new(config);
+    state.run_ticks(ticks);
+
+    println!("Loopscape DSL de orquestacion");
+    println!("Script: {script_path}");
+    println!("Semilla: {seed}");
+    println!("Ticks ejecutados: {ticks}");
+    println!("Eventos DSL generados: {}", dsl_events.len());
+    println!("Eventos del nucleo generados: {}", state.events.len());
+    println!("Tareas completas: {}", state.metrics.completed_tasks);
+    println!("Tareas pendientes: {}", state.metrics.pending_tasks);
+
+    for (index, event) in dsl_events.iter().enumerate() {
+        println!("Evento DSL {}: {}", index + 1, describe_dsl_event(event));
+    }
+
+    println!("Script DSL completado correctamente");
+    true
+}
+
+fn describe_dsl_event(event: &loopscape::core::event::CoreEvent) -> String {
+    match event {
+        loopscape::core::event::CoreEvent::GoalCreated { goal, .. } => {
+            format!("GoalCreated objetivo={goal}")
+        }
+        loopscape::core::event::CoreEvent::PlanStepCreated { index, step, .. } => {
+            format!("PlanStepCreated indice={index} paso={step}")
+        }
+        loopscape::core::event::CoreEvent::DelegationRequested { target, worker, .. } => {
+            format!("DelegationRequested destino={target} worker={worker}")
+        }
+        loopscape::core::event::CoreEvent::VerificationRequested { checklist, .. } => {
+            format!("VerificationRequested checklist={checklist}")
+        }
+        loopscape::core::event::CoreEvent::TerminationPolicySet { policy, .. } => {
+            format!("TerminationPolicySet politica={policy}")
+        }
+        _ => "CoreEvent no generado por DSL".to_string(),
+    }
+}
+
 fn run_core_headless_from_args() -> bool {
     let args = std::env::args().collect::<Vec<_>>();
     let smoke_requested = has_flag(&args, "--smoke") || has_flag(&args, "--headless");
@@ -100,6 +171,10 @@ fn parse_arg_value(args: &[String], name: &str) -> Option<String> {
 }
 
 fn main() {
+    if run_dsl_script_from_args() {
+        return;
+    }
+
     if run_core_headless_from_args() {
         return;
     }

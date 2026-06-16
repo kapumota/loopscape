@@ -128,3 +128,14 @@ make validate-fast
 ```
 
 Esta validacion no levanta Bevy ni compila WebAssembly.
+
+#### Ejecucion de scripts DSL
+
+La fase 3.6 agrega una comprobacion manual para scripts `.loop` desde el binario nativo.
+
+```bash
+cargo run -- --script examples/rescate.loop --seed 123 --ticks 50
+make validate-fast
+```
+
+Esta validacion no compila WebAssembly y no publica artefactos. Sirve para verificar el flujo del DSL antes de conectar editor visual o replay.

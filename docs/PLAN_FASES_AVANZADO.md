@@ -352,3 +352,25 @@ cargo test dsl::interpreter
 cargo test core
 make validate-fast
 ```
+
+#### Fase 3.6: CLI y ejemplos del DSL
+
+Objetivo: ejecutar scripts `.loop` desde el binario nativo.
+
+Entregables:
+
+```text
+examples/rescate.loop
+examples/verificacion.loop
+argumento --script
+soporte para --seed
+soporte para --ticks
+documentacion de ejecucion CLI
+```
+
+Cierre:
+
+```bash
+cargo run -- --script examples/rescate.loop --seed 123 --ticks 50
+make validate-fast
+```

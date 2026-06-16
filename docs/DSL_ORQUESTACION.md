@@ -175,3 +175,25 @@ cargo test dsl::interpreter
 cargo test core
 make validate-fast
 ```
+
+#### Ejecucion desde CLI
+
+La fase 3.6 agrega ejecucion de scripts `.loop` desde el binario nativo. El comando lee el archivo, lo pasa por lexer, parser, validador semantico e interprete, y muestra los eventos DSL generados.
+
+Comando principal:
+
+```bash
+cargo run -- --script examples/rescate.loop --seed 123 --ticks 50
+```
+
+Ejemplo de script:
+
+```text
+/goal rescatar_victimas
+/plan buscar -> clasificar -> asistir
+/delegate sector_a worker_1
+/verify checklist_final
+/terminate when verified
+```
+
+La opcion `--seed` fija la semilla determinista usada por la corrida de apoyo del nucleo. La opcion `--ticks` define cuantos ticks ejecutar para comprobar que el binario puede arrancar y completar una ejecucion corta.
