@@ -11,6 +11,7 @@ pub mod metrics;
 pub mod rng;
 pub mod scheduler;
 pub mod task;
+pub mod trace;
 
 #[cfg(test)]
 mod tests {
