@@ -259,3 +259,14 @@ cargo run -- --script examples/rescate.loop --record artifacts/runs/dev/events.j
 ```
 
 Esta salida permite auditar la corrida sin depender del modo visual.
+
+### Replay determinista de ejecuciones
+
+Un escenario DSL puede grabarse como eventos JSONL y reproducirse posteriormente:
+
+```bash
+cargo run -- --script examples/rescate.loop --record artifacts/runs/dev/events.jsonl --seed 123 --ticks 50
+cargo run -- --replay artifacts/runs/dev/events.jsonl
+```
+
+Este flujo mantiene la ejecucion reproducible antes de introducir componentes no deterministas como LLMs reales.

@@ -8,6 +8,7 @@ pub mod agent;
 pub mod event;
 pub mod loop_state;
 pub mod metrics;
+pub mod replay;
 pub mod rng;
 pub mod scheduler;
 pub mod task;

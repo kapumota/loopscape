@@ -55,3 +55,13 @@ make validate-fast
 #### Limpieza
 
 Los archivos dentro de `artifacts/runs` son salidas generadas. No deben agregarse al commit salvo que se decida publicar una traza de ejemplo de forma explicita.
+
+### Fase 5.2 replay determinista
+
+El archivo JSONL grabado con `--record` puede reproducirse en modo headless con:
+
+```bash
+cargo run -- --replay artifacts/runs/dev/events.jsonl
+```
+
+El replay valida formato, secuencia, ticks monotonos y consistencia entre el tipo declarado y el evento interno.

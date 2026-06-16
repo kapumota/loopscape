@@ -26,6 +26,37 @@ enum GameEra {
     MultiAgentOrchestration,
 }
 
+fn run_replay_from_args() -> bool {
+    let args = std::env::args().collect::<Vec<_>>();
+    let Some(trace_path) = parse_arg_value(&args, "--replay") else {
+        return false;
+    };
+
+    if trace_path.trim().is_empty() {
+        eprintln!("El argumento --replay no puede estar vacio");
+        std::process::exit(2);
+    }
+
+    let summary = match crate::core::replay::replay_trace_jsonl(&trace_path) {
+        Ok(summary) => summary,
+        Err(error) => {
+            eprintln!("No se pudo reproducir la traza JSONL {trace_path}: {error}");
+            std::process::exit(2);
+        }
+    };
+
+    println!("Loopscape replay determinista");
+    println!("Traza: {trace_path}");
+    println!("Formato: {}", summary.format);
+    println!("Eventos reproducidos: {}", summary.event_count);
+    println!("Tick inicial: {}", summary.first_tick);
+    println!("Tick final: {}", summary.last_tick);
+    println!("Primer evento: {}", summary.first_event_kind);
+    println!("Ultimo evento: {}", summary.last_event_kind);
+    println!("Replay completado correctamente");
+    true
+}
+
 fn run_import_graph_from_args() -> bool {
     let args = std::env::args().collect::<Vec<_>>();
     let Some(graph_path) = parse_arg_value(&args, "--graph") else {
@@ -407,6 +438,10 @@ fn parse_arg_value(args: &[String], name: &str) -> Option<String> {
 }
 
 fn main() {
+    if run_replay_from_args() {
+        return;
+    }
+
     if run_import_graph_from_args() {
         return;
     }
