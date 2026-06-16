@@ -47,3 +47,29 @@ Las aristas representan el flujo secuencial del programa de orquestacion. Por ah
 #### Alcance
 
 Esta fase no implementa editor visual, guardado de nodos editables ni ejecucion distribuida. Solo exporta la estructura logica del DSL como JSON reproducible.
+
+### Importacion de grafo JSON
+
+#### Objetivo
+
+La importacion permite cargar un grafo previamente exportado y verificar que conserva nodos, aristas, metadatos e ids estables.
+
+#### Comando principal
+
+```bash
+cargo run -- --graph artifacts/rescate.graph.json --seed 123 --ticks 50
+```
+
+#### Validacion remota
+
+Si el archivo no existe, generarlo primero con la exportacion de la fase 4.2.
+
+```bash
+cargo run -- --script examples/rescate.loop --export-graph artifacts/rescate.graph.json
+cargo run -- --graph artifacts/rescate.graph.json --seed 123 --ticks 50
+make validate-fast
+```
+
+#### Criterio
+
+El importador rechaza grafos con version no soportada, conteos inconsistentes, ids duplicados o aristas que apunten a nodos inexistentes.

@@ -179,3 +179,17 @@ make validate-fast
 #### Criterio
 
 La exportacion de grafo es compatible con trabajo remoto porque no requiere `DISPLAY`, Wayland ni ventana grafica.
+
+### Validacion de importacion de grafo
+
+#### Comando recomendado
+
+```bash
+cargo run -- --script examples/rescate.loop --export-graph artifacts/rescate.graph.json
+cargo run -- --graph artifacts/rescate.graph.json --seed 123 --ticks 50
+make validate-fast
+```
+
+#### Criterio
+
+La importacion debe funcionar en modo remoto sin `DISPLAY`, Wayland ni ventana grafica.
