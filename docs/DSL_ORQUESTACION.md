@@ -79,3 +79,35 @@ Validacion:
 cargo test dsl::lexer
 make validate-fast
 ```
+
+#### Parser minimo
+
+La fase 3.3 agrega un parser minimo para convertir tokens en un `OrchestrationProgram`. El parser usa el lexer de la fase 3.2 y construye comandos tipados del AST definido en la fase 3.1.
+
+Ejemplo soportado:
+
+```text
+/goal rescatar_victimas
+/plan buscar -> clasificar -> asistir
+/delegate sector_a worker_1
+/verify checklist_final
+/terminate when verified
+```
+
+Reglas iniciales:
+
+```text
+cada linea util inicia con un comando DSL
+/plan usa flechas entre pasos
+las flechas solo se aceptan dentro de /plan
+las lineas vacias se ignoran
+los errores se reportan con mensajes en espanol
+```
+
+Validacion:
+
+```bash
+cargo test dsl::parser
+cargo test dsl
+make validate-fast
+```

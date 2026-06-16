@@ -285,3 +285,24 @@ Validacion:
 cargo test dsl::lexer
 make validate-fast
 ```
+
+#### Fase 3.3: parser minimo
+
+Estado: implementada como microfase del DSL.
+
+Entregables:
+
+```text
+src/dsl/parser.rs
+examples/rescate.loop
+```
+
+El parser convierte tokens en `OrchestrationProgram` y soporta el flujo minimo de orquestacion.
+
+Validacion:
+
+```bash
+cargo test dsl::parser
+cargo test dsl
+make validate-fast
+```

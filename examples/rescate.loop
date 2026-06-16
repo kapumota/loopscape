@@ -1,0 +1,5 @@
+/goal rescatar_victimas
+/plan buscar -> clasificar -> asistir
+/delegate sector_a worker_1
+/verify checklist_final
+/terminate when verified

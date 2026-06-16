@@ -7,12 +7,14 @@ pub mod ast;
 pub mod command;
 pub mod error;
 pub mod lexer;
+pub mod parser;
 pub mod token;
 
 pub use ast::{OrchestrationCommand, OrchestrationProgram};
 pub use command::CommandKind;
 pub use error::DslError;
 pub use lexer::{lex, Lexer};
+pub use parser::{parse, Parser};
 pub use token::{Token, TokenKind, TokenSpan};
 
 #[cfg(test)]
