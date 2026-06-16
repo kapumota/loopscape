@@ -5,3 +5,4 @@
 
 pub mod core;
 pub mod dsl;
+pub mod llm;
