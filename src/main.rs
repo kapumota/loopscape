@@ -26,6 +26,75 @@ enum GameEra {
     MultiAgentOrchestration,
 }
 
+fn run_import_graph_from_args() -> bool {
+    let args = std::env::args().collect::<Vec<_>>();
+    let Some(graph_path) = parse_arg_value(&args, "--graph") else {
+        return false;
+    };
+
+    if graph_path.trim().is_empty() {
+        eprintln!("El argumento --graph no puede estar vacio");
+        std::process::exit(2);
+    }
+
+    let source = match std::fs::read_to_string(&graph_path) {
+        Ok(source) => source,
+        Err(error) => {
+            eprintln!("No se pudo leer el grafo JSON {graph_path}: {error}");
+            std::process::exit(2);
+        }
+    };
+
+    let graph = match loopscape::dsl::graph_from_json(&source) {
+        Ok(graph) => graph,
+        Err(error) => {
+            eprintln!("El grafo JSON no es valido: {error}");
+            std::process::exit(2);
+        }
+    };
+
+    let seed = parse_arg_u64(&args, "--seed").unwrap_or(123);
+    let ticks = parse_arg_u32(&args, "--ticks").unwrap_or(50);
+    let config = crate::core::scheduler::SimulationConfig::new(seed);
+    let mut state = crate::core::scheduler::SimulationState::new(config);
+    state.run_ticks(ticks);
+
+    println!("Loopscape grafo de orquestacion");
+    println!("Grafo: {graph_path}");
+    println!("Formato: {}", graph.metadata.version);
+    println!(
+        "Origen: {}",
+        graph
+            .metadata
+            .source
+            .as_deref()
+            .unwrap_or("no especificado")
+    );
+    println!("Semilla: {seed}");
+    println!("Ticks ejecutados: {ticks}");
+    println!("Comandos importados: {}", graph.metadata.command_count);
+    println!("Nodos importados: {}", graph.nodes.len());
+    println!("Aristas importadas: {}", graph.edges.len());
+    println!("Eventos del nucleo generados: {}", state.events.len());
+    println!("Tareas completas: {}", state.metrics.completed_tasks);
+    println!("Tareas pendientes: {}", state.metrics.pending_tasks);
+
+    if let Some(first_node) = graph.nodes.first() {
+        println!("Nodo inicial: {}", describe_graph_node(first_node));
+    }
+
+    if let Some(last_node) = graph.nodes.last() {
+        println!("Nodo final: {}", describe_graph_node(last_node));
+    }
+
+    println!("Grafo DSL importado correctamente");
+    true
+}
+
+fn describe_graph_node(node: &loopscape::dsl::GraphNode) -> String {
+    format!("{} tipo={} etiqueta={}", node.id, node.kind, node.label)
+}
+
 fn run_export_graph_from_args() -> bool {
     let args = std::env::args().collect::<Vec<_>>();
     let Some(script_path) = parse_arg_value(&args, "--script") else {
@@ -317,6 +386,10 @@ fn parse_arg_value(args: &[String], name: &str) -> Option<String> {
 }
 
 fn main() {
+    if run_import_graph_from_args() {
+        return;
+    }
+
     if run_export_graph_from_args() {
         return;
     }

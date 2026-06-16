@@ -225,3 +225,15 @@ cargo run -- --script examples/rescate.loop --export-graph artifacts/rescate.gra
 #### Uso
 
 La exportacion genera un archivo JSON con metadatos, nodos, aristas e identificadores estables. Este archivo permite revisar la estructura logica del flujo sin abrir el modo visual.
+
+### Importacion de grafo JSON
+
+#### Comando
+
+```bash
+cargo run -- --graph artifacts/rescate.graph.json --seed 123 --ticks 50
+```
+
+#### Uso
+
+La importacion carga un grafo JSON exportado, valida su estructura y ejecuta una corrida corta del nucleo determinista para confirmar que el flujo puede inspeccionarse sin abrir el modo visual.

@@ -416,3 +416,27 @@ cargo run -- --script examples/rescate.loop --export-graph artifacts/rescate.gra
 test -f artifacts/rescate.graph.json
 make validate-fast
 ```
+
+### Fase 4.3: importacion de grafo JSON
+
+#### Objetivo
+
+Cargar un grafo previamente exportado y validar que su estructura logica conserva nodos, aristas, metadatos e ids estables.
+
+#### Entregables
+
+```text
+argumento --graph
+importador JSON
+validacion de ids
+validacion de aristas
+pruebas unitarias del grafo
+```
+
+#### Validacion
+
+```bash
+cargo run -- --script examples/rescate.loop --export-graph artifacts/rescate.graph.json
+cargo run -- --graph artifacts/rescate.graph.json --seed 123 --ticks 50
+make validate-fast
+```
