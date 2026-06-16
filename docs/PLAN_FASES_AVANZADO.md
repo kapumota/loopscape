@@ -536,3 +536,27 @@ cargo run -- --script examples/rescate.loop --metrics artifacts/runs/dev/metrics
 test -f artifacts/runs/dev/metrics.csv
 make validate-fast
 ```
+
+### Fase 5.4: comparacion de corridas
+
+#### Objetivo
+
+Comparar corridas mediante archivos `metrics.csv` para detectar diferencias reproducibles entre escenarios, seeds o configuraciones.
+
+#### Entregables
+
+```text
+comando --compare-metrics
+reporte comparison.csv
+pruebas de comparacion
+contrato de columnas de comparacion
+documentacion headless
+```
+
+#### Validacion
+
+```bash
+cargo test compare
+cargo test --test metrics_comparison
+make validate-fast
+```

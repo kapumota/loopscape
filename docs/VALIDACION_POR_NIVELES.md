@@ -252,3 +252,18 @@ make validate-fast
 ```
 
 El archivo generado en `artifacts/runs/dev/metrics.csv` es un artefacto local y no debe agregarse al commit.
+
+### Fase 5.4: comparacion de corridas
+
+#### Validacion headless
+
+```bash
+cargo run -- --script examples/rescate.loop --metrics artifacts/runs/base/metrics.csv --seed 123 --ticks 50
+cargo run -- --script examples/rescate.loop --metrics artifacts/runs/dev/metrics.csv --seed 124 --ticks 50
+cargo run -- --compare-metrics artifacts/runs/base/metrics.csv artifacts/runs/dev/metrics.csv --compare-output artifacts/runs/dev/comparison.csv
+test -f artifacts/runs/dev/comparison.csv
+cargo test compare
+make validate-fast
+```
+
+Los archivos generados en `artifacts/runs` son artefactos locales y no deben agregarse al commit.

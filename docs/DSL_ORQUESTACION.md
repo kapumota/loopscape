@@ -280,3 +280,13 @@ cargo run -- --script examples/rescate.loop --metrics artifacts/runs/dev/metrics
 ```
 
 Esta salida complementa las trazas JSONL y permite comparar escenarios sin depender del modo visual.
+
+### Comparacion de corridas
+
+Despues de exportar metricas CSV, dos corridas pueden compararse de forma headless.
+
+```bash
+cargo run -- --compare-metrics artifacts/runs/base/metrics.csv artifacts/runs/dev/metrics.csv --compare-output artifacts/runs/dev/comparison.csv
+```
+
+Esta comparacion permite analizar cambios por seed, ticks o configuracion sin depender del modo visual.

@@ -222,3 +222,59 @@ fn assigned_duration_summary(events: &[CoreEvent]) -> (u64, u64) {
             _ => (count, total),
         })
 }
+
+/// Lee una fila de metricas CSV desde disco y valida la cabecera estable.
+pub fn read_metrics_csv<P: AsRef<Path>>(path: P) -> Result<SimulationMetricsCsvRow, String> {
+    let path = path.as_ref();
+    let content = std::fs::read_to_string(path)
+        .map_err(|error| format!("no se pudo leer el archivo CSV {path:?}: {error}"))?;
+
+    let mut lines = content.lines().filter(|line| !line.trim().is_empty());
+    let header = lines
+        .next()
+        .ok_or_else(|| "el archivo CSV no contiene cabecera".to_string())?;
+
+    if header.trim() != METRICS_CSV_HEADER {
+        return Err(format!(
+            "cabecera CSV invalida: se esperaba {METRICS_CSV_HEADER}, se obtuvo {header}"
+        ));
+    }
+
+    let row = lines
+        .next()
+        .ok_or_else(|| "el archivo CSV no contiene fila de metricas".to_string())?;
+
+    if lines.next().is_some() {
+        return Err("el archivo CSV contiene mas de una fila de metricas".to_string());
+    }
+
+    parse_metrics_csv_row(row)
+}
+
+/// Convierte una fila CSV estable en metricas de simulacion.
+pub fn parse_metrics_csv_row(row: &str) -> Result<SimulationMetricsCsvRow, String> {
+    let columns = row.split(',').collect::<Vec<_>>();
+    if columns.len() != 7 {
+        return Err(format!(
+            "fila CSV invalida: se esperaban 7 columnas y se obtuvieron {}",
+            columns.len()
+        ));
+    }
+
+    Ok(SimulationMetricsCsvRow {
+        ticks: parse_column(columns[0], "ticks")?,
+        completed_tasks: parse_column(columns[1], "tareas_completadas")?,
+        active_loops: parse_column(columns[2], "loops_activos")?,
+        tokens_used: parse_column(columns[3], "tokens_usados")?,
+        failures_detected: parse_column(columns[4], "fallos_detectados")?,
+        failures_recovered: parse_column(columns[5], "fallos_recuperados")?,
+        average_latency: parse_column(columns[6], "latencia_promedio")?,
+    })
+}
+
+fn parse_column<T: std::str::FromStr>(value: &str, name: &str) -> Result<T, String> {
+    value
+        .trim()
+        .parse::<T>()
+        .map_err(|_| format!("no se pudo interpretar la columna {name} con valor {value}"))
+}
