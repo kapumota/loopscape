@@ -290,3 +290,18 @@ cargo run -- --compare-metrics artifacts/runs/base/metrics.csv artifacts/runs/de
 ```
 
 Esta comparacion permite analizar cambios por seed, ticks o configuracion sin depender del modo visual.
+
+### Relación entre DSL y runtime LLM sandbox
+
+#### Uso previsto
+
+El DSL sigue siendo la fuente determinista del escenario.
+
+El runtime LLM sandbox queda limitado a providers simulados para preparar futuras decisiones asistidas sin introducir no determinismo externo.
+
+#### Providers disponibles
+
+```text
+MockProvider
+ReplayProvider
+```

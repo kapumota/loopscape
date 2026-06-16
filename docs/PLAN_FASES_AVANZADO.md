@@ -560,3 +560,26 @@ cargo test compare
 cargo test --test metrics_comparison
 make validate-fast
 ```
+
+### Fase 6.1: provider LLM simulado
+
+#### Objetivo
+
+Introducir una interfaz LLM segura sin red ni claves.
+
+#### Entregables
+
+```text
+MockProvider
+ReplayProvider
+contrato LlmProvider
+pruebas de sandbox
+```
+
+#### Validación
+
+```bash
+cargo test llm
+cargo test --test llm_mock_provider
+make validate-fast
+```

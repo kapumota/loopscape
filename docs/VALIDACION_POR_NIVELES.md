@@ -267,3 +267,17 @@ make validate-fast
 ```
 
 Los archivos generados en `artifacts/runs` son artefactos locales y no deben agregarse al commit.
+
+### Validación de providers LLM simulados
+
+#### Comandos
+
+```bash
+cargo test llm
+cargo test --test llm_mock_provider
+make validate-fast
+```
+
+#### Criterio
+
+Los providers de Fase 6.1 no deben usar red, HTTP real, OpenAI, Ollama ni claves de API.
