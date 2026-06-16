@@ -154,3 +154,14 @@ Para inspeccion visual manual:
 ```bash
 cargo run -- --script examples/rescate.loop --visual --seed 123 --ticks 50
 ```
+
+#### Validacion visual en remoto
+
+La validacion automatica no debe ejecutar `--visual` en servidores sin pantalla. El flujo remoto recomendado es headless.
+
+```bash
+cargo run -- --script examples/rescate.loop --seed 123 --ticks 50
+make validate-fast
+```
+
+El modo `--visual` queda reservado para inspeccion manual en una sesion con entorno grafico.
