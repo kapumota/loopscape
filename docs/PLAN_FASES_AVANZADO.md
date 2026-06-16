@@ -491,3 +491,24 @@ cargo run -- --script examples/rescate.loop --record artifacts/runs/dev/events.j
 test -f artifacts/runs/dev/events.jsonl
 make validate-fast
 ```
+
+### Fase 5.2 replay determinista
+
+Objetivo: reproducir una traza JSONL grabada previamente y validar su contrato secuencial.
+
+Entregables:
+
+```text
+comando --replay
+modulo core::replay
+validacion de ticks monotonos
+pruebas de replay determinista
+documentacion headless
+```
+
+Criterio de aceptacion:
+
+```bash
+cargo test replay
+make validate-fast
+```

@@ -225,3 +225,16 @@ make validate-fast
 ```
 
 Los archivos generados en `artifacts/runs` son artefactos locales y no deben agregarse al commit.
+
+### Fase 5.2 replay determinista
+
+Validacion recomendada para replay:
+
+```bash
+cargo run -- --script examples/rescate.loop --record artifacts/runs/dev/events.jsonl --seed 123 --ticks 50
+cargo run -- --replay artifacts/runs/dev/events.jsonl
+cargo test replay
+make validate-fast
+```
+
+El archivo generado en `artifacts/runs/dev/events.jsonl` es un artefacto de ejecucion y no debe agregarse al commit.
