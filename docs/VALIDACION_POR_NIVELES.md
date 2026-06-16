@@ -139,3 +139,18 @@ make validate-fast
 ```
 
 Esta validacion no compila WebAssembly y no publica artefactos. Sirve para verificar el flujo del DSL antes de conectar editor visual o replay.
+
+#### Visor DSL
+
+La fase 4.1 conserva la validacion rapida sin abrir ventana y agrega una ruta visual manual para revisar scripts `.loop` en pantalla.
+
+```bash
+make validate-fast
+cargo run -- --script examples/rescate.loop --seed 123 --ticks 50
+```
+
+Para inspeccion visual manual:
+
+```bash
+cargo run -- --script examples/rescate.loop --visual --seed 123 --ticks 50
+```

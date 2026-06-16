@@ -374,3 +374,21 @@ Cierre:
 cargo run -- --script examples/rescate.loop --seed 123 --ticks 50
 make validate-fast
 ```
+
+#### Fase 4.1: visor de programas DSL
+
+Objetivo: mostrar el programa DSL cargado en pantalla sin implementar todavia un editor visual completo.
+
+Entregables:
+
+- panel lateral de comandos DSL;
+- estado por comando: pendiente, activo, completado o error;
+- resaltado del comando actual;
+- documentacion del visor visual.
+
+Validacion:
+
+```bash
+make validate-fast
+cargo run -- --script examples/rescate.loop --seed 123 --ticks 50
+```
