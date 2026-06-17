@@ -75,6 +75,34 @@ impl OrchestrationCommand {
         Self::new(CommandKind::Terminate, [condition.into()])
     }
 
+    /// Construye un comando `/worker-failure`.
+    pub fn worker_failure(
+        worker_id: impl Into<String>,
+        start_tick: impl Into<String>,
+        duration_ticks: impl Into<String>,
+    ) -> Result<Self, DslError> {
+        Self::new(
+            CommandKind::WorkerFailure,
+            [worker_id.into(), start_tick.into(), duration_ticks.into()],
+        )
+    }
+
+    /// Construye un comando `/byzantine-failure`.
+    pub fn byzantine_failure(
+        worker_id: impl Into<String>,
+        false_value: impl Into<String>,
+    ) -> Result<Self, DslError> {
+        Self::new(
+            CommandKind::ByzantineFailure,
+            [worker_id.into(), false_value.into()],
+        )
+    }
+
+    /// Construye un comando `/byzantine-vote`.
+    pub fn byzantine_vote(value: impl Into<String>) -> Result<Self, DslError> {
+        Self::new(CommandKind::ByzantineVote, [value.into()])
+    }
+
     /// Devuelve una representacion textual util para depuracion y pruebas.
     pub fn to_script_line(&self) -> String {
         match self.kind {
@@ -154,6 +182,13 @@ mod tests {
         assert_eq!(delegate.kind, CommandKind::Delegate);
         assert_eq!(verify.kind, CommandKind::Verify);
         assert_eq!(terminate.kind, CommandKind::Terminate);
+        let worker_failure = CommandKind::WorkerFailure;
+        let byzantine_failure = CommandKind::ByzantineFailure;
+        let byzantine_vote = CommandKind::ByzantineVote;
+
+        assert_eq!(worker_failure, CommandKind::WorkerFailure);
+        assert_eq!(byzantine_failure, CommandKind::ByzantineFailure);
+        assert_eq!(byzantine_vote, CommandKind::ByzantineVote);
     }
 
     #[test]

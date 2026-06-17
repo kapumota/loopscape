@@ -10,6 +10,7 @@ pub mod graph;
 pub mod interpreter;
 pub mod lexer;
 pub mod parser;
+pub mod scenario;
 pub mod token;
 pub mod validator;
 
@@ -25,6 +26,9 @@ pub use graph::{
 pub use interpreter::{interpret_program, interpret_source, DslInterpreter, InterpreterConfig};
 pub use lexer::{lex, Lexer};
 pub use parser::{parse, Parser};
+pub use scenario::{
+    failure_scenario_from_program, failure_scenario_from_source, DslFailureScenario,
+};
 pub use token::{Token, TokenKind, TokenSpan};
 pub use validator::{validate_program, validate_source, SemanticValidator};
 

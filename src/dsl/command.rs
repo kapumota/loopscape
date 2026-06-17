@@ -10,6 +10,9 @@ pub enum CommandKind {
     Delegate,
     Verify,
     Terminate,
+    WorkerFailure,
+    ByzantineFailure,
+    ByzantineVote,
 }
 
 impl CommandKind {
@@ -21,6 +24,9 @@ impl CommandKind {
             Self::Delegate => "/delegate",
             Self::Verify => "/verify",
             Self::Terminate => "/terminate",
+            Self::WorkerFailure => "/worker-failure",
+            Self::ByzantineFailure => "/byzantine-failure",
+            Self::ByzantineVote => "/byzantine-vote",
         }
     }
 
@@ -32,6 +38,9 @@ impl CommandKind {
             "/delegate" => Ok(Self::Delegate),
             "/verify" => Ok(Self::Verify),
             "/terminate" => Ok(Self::Terminate),
+            "/worker-failure" => Ok(Self::WorkerFailure),
+            "/byzantine-failure" => Ok(Self::ByzantineFailure),
+            "/byzantine-vote" => Ok(Self::ByzantineVote),
             other => Err(DslError::UnknownCommand {
                 keyword: other.to_string(),
             }),
@@ -56,6 +65,12 @@ mod tests {
         assert_eq!(CommandKind::Delegate.keyword(), "/delegate");
         assert_eq!(CommandKind::Verify.keyword(), "/verify");
         assert_eq!(CommandKind::Terminate.keyword(), "/terminate");
+        assert_eq!(CommandKind::WorkerFailure.keyword(), "/worker-failure");
+        assert_eq!(
+            CommandKind::ByzantineFailure.keyword(),
+            "/byzantine-failure"
+        );
+        assert_eq!(CommandKind::ByzantineVote.keyword(), "/byzantine-vote");
     }
 
     #[test]

@@ -1,8 +1,8 @@
 #![allow(dead_code)]
 
 use crate::components::LoopState as VisualLoopState;
-use crate::core::loop_state::CoreLoopState;
-use crate::core::metrics::{CoreMetrics, CoreMetricsInput};
+use loopscape::core::loop_state::CoreLoopState;
+use loopscape::core::metrics::{CoreMetrics, CoreMetricsInput};
 
 /// Traduce estados del núcleo a nombres visibles para la capa Bevy.
 pub fn core_state_label(state: CoreLoopState) -> &'static str {

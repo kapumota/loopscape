@@ -12,6 +12,7 @@ impl SemanticValidator {
         validate_goal_count(program)?;
         validate_plan_steps(program)?;
         validate_delegate_workers(program)?;
+        validate_failure_commands(program)?;
         validate_verified_termination_order(program)?;
         Ok(())
     }
@@ -75,6 +76,79 @@ fn validate_delegate_workers(program: &OrchestrationProgram) -> Result<(), DslEr
     }
 
     Ok(())
+}
+
+fn validate_failure_commands(program: &OrchestrationProgram) -> Result<(), DslError> {
+    for command in &program.commands {
+        match command.kind {
+            CommandKind::WorkerFailure => validate_worker_failure_arguments(&command.arguments)?,
+            CommandKind::ByzantineFailure => {
+                validate_byzantine_failure_arguments(&command.arguments)?
+            }
+            CommandKind::ByzantineVote => validate_byzantine_vote_arguments(&command.arguments)?,
+            _ => {}
+        }
+    }
+
+    Ok(())
+}
+
+fn validate_worker_failure_arguments(arguments: &[String]) -> Result<(), DslError> {
+    if arguments.len() != 3 {
+        return Err(DslError::invalid_program(
+            "el comando /worker-failure necesita worker, tick inicial y duracion",
+        ));
+    }
+
+    parse_u32_argument(&arguments[0], "worker")?;
+    parse_u64_argument(&arguments[1], "tick inicial")?;
+    let duration = parse_u64_argument(&arguments[2], "duracion")?;
+    if duration == 0 {
+        return Err(DslError::invalid_program(
+            "la duracion de /worker-failure debe ser mayor que cero",
+        ));
+    }
+
+    Ok(())
+}
+
+fn validate_byzantine_failure_arguments(arguments: &[String]) -> Result<(), DslError> {
+    if arguments.len() < 2 {
+        return Err(DslError::invalid_program(
+            "el comando /byzantine-failure necesita worker y valor falso",
+        ));
+    }
+
+    parse_u32_argument(&arguments[0], "worker")?;
+    if arguments[1..].join(" ").trim().is_empty() {
+        return Err(DslError::invalid_program(
+            "el valor falso de /byzantine-failure no puede estar vacio",
+        ));
+    }
+
+    Ok(())
+}
+
+fn validate_byzantine_vote_arguments(arguments: &[String]) -> Result<(), DslError> {
+    if arguments.is_empty() || arguments.join(" ").trim().is_empty() {
+        return Err(DslError::invalid_program(
+            "el comando /byzantine-vote necesita un valor esperado",
+        ));
+    }
+
+    Ok(())
+}
+
+fn parse_u32_argument(value: &str, name: &str) -> Result<u32, DslError> {
+    value.parse::<u32>().map_err(|_| {
+        DslError::invalid_program(format!("el argumento {name} debe ser un entero positivo"))
+    })
+}
+
+fn parse_u64_argument(value: &str, name: &str) -> Result<u64, DslError> {
+    value.parse::<u64>().map_err(|_| {
+        DslError::invalid_program(format!("el argumento {name} debe ser un entero positivo"))
+    })
 }
 
 fn validate_verified_termination_order(program: &OrchestrationProgram) -> Result<(), DslError> {
@@ -215,6 +289,44 @@ mod tests {
         assert_eq!(
             error.to_string(),
             "el comando /delegate no puede referenciar un worker vacio"
+        );
+    }
+
+    #[test]
+    fn validator_accepts_failure_commands() {
+        let program = validate_source(
+            r#"/goal rescatar_victimas
+/plan buscar -> clasificar
+/worker-failure 1 4 3
+/byzantine-failure 2 falso
+/byzantine-vote verdadero
+/verify checklist_final
+/terminate when verified"#,
+        )
+        .expect("debe aceptar fallos declarativos");
+
+        assert_eq!(program.command_count_by_kind(CommandKind::WorkerFailure), 1);
+        assert_eq!(
+            program.command_count_by_kind(CommandKind::ByzantineFailure),
+            1
+        );
+        assert_eq!(program.command_count_by_kind(CommandKind::ByzantineVote), 1);
+    }
+
+    #[test]
+    fn validator_rejects_invalid_worker_failure() {
+        let error = validate_source(
+            r#"/goal rescatar_victimas
+/plan buscar
+/worker-failure 1 4 0
+/verify checklist_final
+/terminate when verified"#,
+        )
+        .expect_err("debe rechazar duracion invalida");
+
+        assert_eq!(
+            error.to_string(),
+            "la duracion de /worker-failure debe ser mayor que cero"
         );
     }
 
