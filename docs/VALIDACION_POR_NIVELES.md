@@ -492,3 +492,18 @@ escaneo manual de secretos
 reporte de evidencia
 artefacto web manual cuando aplique
 ```
+
+#### Nivel release web manual
+
+La generacion del artefacto web queda fuera del CI automatico de PR.
+
+Validacion recomendada:
+
+```bash
+cargo metadata --locked --format-version 1 --no-deps > /dev/null
+git diff --check
+grep -R "pull_request:\|push:" .github/workflows/web-build.yml || true
+grep -R "upload-artifact" .github/workflows/web-build.yml
+```
+
+El objetivo es comprobar estructura y politica sin ejecutar un build web pesado en cada cambio.
