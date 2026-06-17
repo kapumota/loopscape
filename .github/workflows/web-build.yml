@@ -1,57 +1,64 @@
-
-name: Build web manual
+name: Artefacto web manual
 
 on:
   workflow_dispatch:
+    inputs:
+      version_label:
+        description: Etiqueta visible del artefacto
+        required: false
+        default: 0.9.0-dev
+      public_url:
+        description: Ruta publica usada por Trunk
+        required: false
+        default: ./
 
 permissions:
   contents: read
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  CARGO_TERM_COLOR: always
 
 concurrency:
-  group: build-web-${{ github.ref }}
+  group: web-artifact-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  wasm:
-    name: WebAssembly manual
+  construir-artefacto-web:
+    name: Construir artefacto web
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    permissions:
-      contents: read
+    timeout-minutes: 45
+
     steps:
       - name: Descargar codigo
-        uses: actions/checkout@v4
-
-      - name: Instalar Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: actions/checkout@v5
         with:
-          targets: wasm32-unknown-unknown
+          persist-credentials: false
 
-      - name: Instalar dependencias del sistema
+      - name: Preparar Rust y WebAssembly
         shell: bash
         run: |
           set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install -y pkg-config libasound2-dev libudev-dev
+          rustup target add wasm32-unknown-unknown
+          cargo install trunk --locked
 
-      - name: Restaurar cache de Rust
-        uses: Swatinem/rust-cache@v2
+      - name: Construir dist
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf dist
+          if make -n web-build >/dev/null 2>&1; then
+            make web-build
+          else
+            trunk build --release --dist dist --public-url "${{ inputs.public_url }}"
+          fi
+          test -d dist
+          find dist -maxdepth 2 -type f | sort
+
+      - name: Subir artefacto web
+        uses: actions/upload-artifact@v6
         with:
-          cache-on-failure: true
-
-      - name: Instalar Trunk
-        run: cargo install trunk --locked
-
-      - name: Construir WebAssembly
-        run: make web-build-release
-
-      - name: Guardar artefacto web
-        uses: actions/upload-artifact@v4
-        with:
-          name: loopscape-web-dist
-          path: dist/
+          name: loopscape-web-${{ inputs.version_label }}
+          path: dist
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 14

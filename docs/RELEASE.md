@@ -90,3 +90,11 @@ docs/RELEASE.md
 ```
 
 Tambien debe quedar documentado que el release candidate se crea en una fase posterior y que el tag se genera desde `main`.
+
+#### Artefacto web manual
+
+La Fase 9.2 agrega un workflow manual para generar `dist` como artifact descargable.
+
+Este flujo no publica GitHub Pages y no ejecuta deploy automatico.
+
+El artefacto web se usa como evidencia previa a release o como revision manual antes de crear un release candidate.

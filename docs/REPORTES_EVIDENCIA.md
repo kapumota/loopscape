@@ -69,3 +69,9 @@ Los reportes de evidencia se usan como soporte previo a release.
 Para un release candidate, el reporte debe generarse despues de las validaciones manuales relevantes y antes de crear el tag desde `main`.
 
 El reporte no reemplaza la revision humana. Su funcion es dejar trazabilidad de comandos, archivos y resultados disponibles.
+
+#### Artefacto web como evidencia
+
+El artefacto web manual puede acompañar un reporte de evidencia previo a release.
+
+El reporte de evidencia no versiona `dist`. El directorio `dist` debe tratarse como salida generada o artifact descargable del workflow manual.
