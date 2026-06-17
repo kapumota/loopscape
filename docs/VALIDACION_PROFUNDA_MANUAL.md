@@ -73,3 +73,11 @@ Fase 8.4: validacion profunda manual
 ```
 
 Esta fase no reemplaza los controles de seguridad. Los complementa con una puerta funcional manual para cambios grandes o revisiones antes de release.
+
+### Relacion con reportes de evidencia
+
+#### Uso
+
+La validacion profunda manual genera insumos que pueden resumirse con el reporte de evidencia.
+
+El reporte permite revisar metricas, replay y resultados funcionales sin volver a ejecutar pruebas pesadas.

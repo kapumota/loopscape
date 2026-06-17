@@ -106,3 +106,17 @@ No debe ejecutarse en cada PR ni en cada push. Tampoco debe usar secretos, permi
 ```text
 .github/workflows/deep-validation.yml
 ```
+
+### Fase 8.5: reportes de evidencia
+
+#### Politica
+
+El reporte de evidencia se genera manualmente y no ejecuta validaciones pesadas.
+
+No se ejecuta en cada PR ni en cada push. No usa secretos ni permisos de escritura.
+
+#### Workflow
+
+```text
+.github/workflows/evidence-report.yml
+```

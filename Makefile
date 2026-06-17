@@ -112,3 +112,9 @@ audit-rust-deny:
 	@echo "Ejecutando auditoria Rust con cargo deny"
 	@command -v cargo-deny >/dev/null 2>&1 || cargo install cargo-deny --locked
 	@cargo deny check advisories
+
+evidence-report:
+	python3 scripts/generate_evidence_report.py --input-root artifacts --output-dir artifacts/evidence
+
+evidence-report-release:
+	python3 scripts/generate_evidence_report.py --input-root artifacts --output-dir artifacts/evidence --motivo revision_release

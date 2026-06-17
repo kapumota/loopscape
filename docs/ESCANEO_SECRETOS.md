@@ -90,3 +90,11 @@ La validacion profunda funcional queda separada para no mezclar seguridad de rep
 El escaneo de secretos y la validacion profunda cumplen objetivos distintos.
 
 El escaneo de secretos revisa credenciales y valores sensibles. La validacion profunda revisa comportamiento funcional, escenarios DSL, metricas y replay.
+
+### Relacion con reportes de evidencia
+
+#### Uso
+
+Los resultados de escaneo de secretos pueden guardarse bajo `artifacts/secrets-scan`.
+
+El reporte de evidencia los detecta y los lista cuando existen.

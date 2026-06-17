@@ -461,3 +461,18 @@ validacion de replay
 ```text
 .github/workflows/deep-validation.yml
 ```
+
+### Nivel de evidencia reproducible
+
+#### Objetivo
+
+La Fase 8.5 agrega reportes de evidencia para resumir los resultados de las validaciones manuales.
+
+Este nivel no reemplaza las validaciones. Su objetivo es hacer que los resultados sean legibles y auditables.
+
+#### Salidas
+
+```text
+artifacts/evidence/reporte-evidencia.md
+artifacts/evidence/reporte-evidencia.json
+```
