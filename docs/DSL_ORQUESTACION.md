@@ -349,3 +349,13 @@ La Fase 7.2 no cambia la sintaxis del DSL. Agrega soporte de runtime para que fu
 #### Alcance
 
 Los fallos se configuran en el core mediante un plan determinista. Esto permite probar resiliencia sin depender de red, reloj de pared ni proveedores LLM reales.
+
+### Fallo bizantino simplificado y orquestacion
+
+#### Relacion con el DSL
+
+La Fase 7.3 no cambia la sintaxis del DSL. Agrega el modelo de core para que futuras fases puedan declarar workers con respuestas falsas y reglas de votacion desde escenarios reproducibles.
+
+#### Alcance
+
+El fallo bizantino se modela como respuesta falsa controlada. La votacion simple permite aceptar resultados por mayoria o rechazar empates y respuestas insuficientes.

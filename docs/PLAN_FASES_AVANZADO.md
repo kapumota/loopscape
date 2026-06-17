@@ -673,3 +673,29 @@ cargo test supervisor
 cargo test --test fallos_recuperables
 make validate-fast
 ```
+
+### Fase 7.3: fallo bizantino simplificado
+
+#### Objetivo
+
+Modelar respuestas falsas de workers y aplicar una votacion simple para decidir si un resultado se acepta o se rechaza.
+
+#### Entregables
+
+```text
+ByzantineFailurePlan
+WorkerResponse
+SimpleMajorityVoter
+VotingOutcome
+pruebas de mayoria
+pruebas de empate
+pruebas de respuestas falsas
+```
+
+#### Validacion
+
+```bash
+cargo test byzantine
+cargo test --test fallo_bizantino
+make validate-fast
+```
