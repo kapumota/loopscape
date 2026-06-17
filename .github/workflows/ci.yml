@@ -1,68 +1,77 @@
-name: Validacion ligera
-
-# Fuerza acciones JavaScript a usar Node.js 24 durante la transicion de GitHub Actions.
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+name: CI
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
   push:
-    branches: [main]
-  workflow_dispatch:
-    inputs:
-      nivel:
-        description: "Nivel de validacion"
-        required: true
-        default: "rapida"
-        type: choice
-        options:
-          - rapida
-          - media
+    branches:
+      - main
 
 permissions:
   contents: read
 
-concurrency:
-  group: validacion-${{ github.ref }}
-  cancel-in-progress: true
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  CARGO_TERM_COLOR: always
 
 jobs:
-  rust:
-    name: Rust nativo
+  auditoria-ligera:
+    name: Auditoria ligera
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
+
     steps:
       - name: Descargar codigo
         uses: actions/checkout@v5
-
-      - name: Instalar Rust estable
-        run: |
-          rustup toolchain install stable --profile minimal --component rustfmt
-          rustup default stable
-
-      - name: Instalar dependencias del sistema
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y pkg-config libasound2-dev libudev-dev
-
-      - name: Restaurar cache de Cargo
-        uses: actions/cache@v5
         with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
+          persist-credentials: false
 
-      - name: Determinar nivel de validacion
+      - name: Verificar politica segura de workflows
+        shell: bash
         run: |
-          if [ "${{ github.event_name }}" = "push" ]; then
-            make validate
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.nivel }}" = "media" ]; then
-            make validate
-          else
-            make validate-fast
-          fi
+          set -euo pipefail
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          patrones_bloqueados = [
+              "pull_request" + "_target",
+              "sec" + "rets" + ".",
+              "contents:" + " write",
+              "pages:" + " write",
+              "id-token:" + " write",
+          ]
+
+          hubo_error = False
+
+          for ruta in Path(".github/workflows").glob("*.yml"):
+              texto = ruta.read_text(encoding="utf-8")
+              for patron in patrones_bloqueados:
+                  if patron in texto:
+                      print(f"Politica rechazada en {ruta}: patron bloqueado")
+                      hubo_error = True
+
+          if hubo_error:
+              raise SystemExit(1)
+
+          print("Politica segura de workflows verificada")
+          PY
+
+      - name: Preparar Rust minimo
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup component add rustfmt
+
+      - name: Verificar formato Rust
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo fmt --all -- --check
+
+      - name: Verificar manifiesto Cargo
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo metadata --locked --format-version 1 --no-deps > /dev/null

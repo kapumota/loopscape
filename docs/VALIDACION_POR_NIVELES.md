@@ -388,3 +388,21 @@ make validate-multiagent
 #### Criterio
 
 La validacion debe compilar todos los targets, ejecutar pruebas multiagente, correr escenarios CLI y verificar metricas de fallos detectados y recuperados.
+
+### Nivel 8.1: auditoría ligera de workflows
+
+#### Comandos
+
+```bash
+cargo fmt
+cargo metadata --locked --format-version 1 --no-deps
+make validate-fast
+make validate-multiagent
+git diff --check
+```
+
+#### Criterio
+
+Los workflows de GitHub Actions deben usar permisos mínimos, no deben leer secretos en pull requests y no deben activar despliegues automáticos.
+
+La validación web queda manual mediante `workflow_dispatch`.
