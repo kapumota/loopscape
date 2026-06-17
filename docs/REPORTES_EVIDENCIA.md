@@ -61,3 +61,11 @@ replay determinista
 Si una evidencia aparece como pendiente, primero ejecuta el workflow manual correspondiente y luego vuelve a generar el reporte.
 
 Esta fase convierte la Fase 8 en un ciclo mas claro: ejecutar controles manuales, generar resultados y producir evidencia legible.
+
+#### Uso en release controlado
+
+Los reportes de evidencia se usan como soporte previo a release.
+
+Para un release candidate, el reporte debe generarse despues de las validaciones manuales relevantes y antes de crear el tag desde `main`.
+
+El reporte no reemplaza la revision humana. Su funcion es dejar trazabilidad de comandos, archivos y resultados disponibles.
