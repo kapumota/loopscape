@@ -1,0 +1,10 @@
+
+/goal validar_votacion
+/plan consultar -> votar -> decidir
+/delegate consulta worker_0
+/delegate revision worker_1
+/delegate auditoria worker_2
+/byzantine-failure 2 falso
+/byzantine-vote verdadero
+/verify mayoria_simple
+/terminate when verified

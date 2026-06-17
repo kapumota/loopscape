@@ -67,6 +67,9 @@ validate-full:
 	$(MAKE) validate-web
 	$(MAKE) clippy
 
+validate-multiagent:
+	@bash scripts/validate_multiagent.sh
+
 clean:
 	@bash scripts/clean.sh
 
