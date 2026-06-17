@@ -423,3 +423,15 @@ revision previa a release
 ```
 
 El objetivo es detectar avisos de seguridad de dependencias sin ralentizar cambios normales.
+
+### Nivel de seguridad de repositorio
+
+#### Escaneo de secretos
+
+La Fase 8.3 agrega un escaneo manual y semanal de secretos con `gitleaks`.
+
+Este nivel no reemplaza la validacion funcional. Su objetivo es revisar credenciales, tokens y claves sensibles sin ralentizar los PR pequenos.
+
+#### Comando equivalente
+
+La ejecucion principal se realiza desde GitHub Actions mediante `workflow_dispatch`.
