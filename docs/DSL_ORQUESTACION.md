@@ -339,3 +339,13 @@ El DSL describe objetivos, planes, delegaciones y verificaciones. El supervisor 
 #### Alcance
 
 La Fase 7.1 no cambia la sintaxis del DSL. Agrega infraestructura de nucleo para que futuras fases puedan asociar workers supervisados con delegaciones y tareas.
+
+### Fallos recuperables y orquestacion
+
+#### Relacion con el DSL
+
+La Fase 7.2 no cambia la sintaxis del DSL. Agrega soporte de runtime para que futuras fases puedan asociar delegaciones del DSL con workers supervisados y fallos recuperables.
+
+#### Alcance
+
+Los fallos se configuran en el core mediante un plan determinista. Esto permite probar resiliencia sin depender de red, reloj de pared ni proveedores LLM reales.

@@ -7,6 +7,7 @@
 pub mod agent;
 pub mod compare;
 pub mod event;
+pub mod failure;
 pub mod loop_state;
 pub mod metrics;
 pub mod replay;
