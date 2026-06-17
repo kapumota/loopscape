@@ -98,3 +98,11 @@ revision completa de licencias
 #### Relacion con Fase 8.1
 
 La Fase 8.1 mantiene el CI automatico liviano. Esta Fase 8.2 agrega auditoria Rust fuera del camino critico de PR.
+
+### Relacion con reportes de evidencia
+
+#### Uso
+
+Los resultados de auditoria Rust pueden guardarse bajo `artifacts/rust-security`.
+
+El reporte de evidencia los detecta y los lista cuando existen.

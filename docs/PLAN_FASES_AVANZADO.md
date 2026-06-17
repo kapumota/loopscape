@@ -858,3 +858,33 @@ Valida escenarios DSL, metricas y replay.
 #### Siguiente fase
 
 La siguiente fase recomendada es reportes de evidencia para hacer legibles los resultados de validacion.
+
+### Fase 8.5: reportes de evidencia
+
+#### Objetivo
+
+Convertir resultados de validacion, auditoria Rust, escaneo de secretos, metricas y replay en reportes Markdown y JSON.
+
+#### Cambios
+
+```text
+scripts/generate_evidence_report.py
+.github/workflows/evidence-report.yml
+docs/REPORTES_EVIDENCIA.md
+```
+
+#### Criterio de aceptacion
+
+```text
+El reporte se genera manualmente.
+No ejecuta pruebas pesadas.
+No se ejecuta por pull request.
+No se ejecuta por push.
+Produce reporte-evidencia.md.
+Produce reporte-evidencia.json.
+Resume metricas, replay, auditoria Rust y escaneo de secretos cuando existen.
+```
+
+#### Siguiente fase
+
+La siguiente fase recomendada es preparar release experimental con versionado, changelog y checklist de publicacion.

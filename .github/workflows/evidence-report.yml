@@ -1,0 +1,75 @@
+name: Reporte manual de evidencia
+
+on:
+  workflow_dispatch:
+    inputs:
+      motivo:
+        description: "Motivo de generacion"
+        required: true
+        default: "revision_manual"
+        type: choice
+        options:
+          - revision_manual
+          - revision_release
+      release_candidate:
+        description: "Identificador de release candidate"
+        required: false
+        default: ""
+        type: string
+      publicar_artifact:
+        description: "Publicar reporte como artifact"
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+concurrency:
+  group: reporte-evidencia-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  reporte-evidencia:
+    name: Reporte de evidencia
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Preparar directorios de evidencia
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/evidence
+          mkdir -p artifacts/manual-deep-validation
+          mkdir -p artifacts/rust-security
+          mkdir -p artifacts/secrets-scan
+          echo "Motivo: ${{ inputs.motivo }}" > artifacts/evidence/entrada-manual.txt
+
+      - name: Generar reporte de evidencia
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/generate_evidence_report.py             --input-root artifacts             --output-dir artifacts/evidence             --motivo "${{ inputs.motivo }}"             --release-candidate "${{ inputs.release_candidate }}"
+
+      - name: Mostrar resumen de evidencia
+        shell: bash
+        run: |
+          set -euo pipefail
+          sed -n '1,180p' artifacts/evidence/reporte-evidencia.md
+
+      - name: Publicar reporte de evidencia
+        if: ${{ inputs.publicar_artifact }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: reporte-evidencia-loopscape
+          path: artifacts/evidence
+          if-no-files-found: error
