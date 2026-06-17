@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Limpieza de artefactos generados por Rust, Trunk, Node y editores.
 echo "Limpiando artefactos generados"
-rm -rf target dist .trunk
+rm -rf target dist .trunk artifacts/validation
 find . -type f -name '*.log' -delete
 find . -type f -name '*.tmp' -delete
 find . -type f -name '*.bak' -delete
