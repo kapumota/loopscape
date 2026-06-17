@@ -699,3 +699,32 @@ cargo test byzantine
 cargo test --test fallo_bizantino
 make validate-fast
 ```
+
+### Fase 7.4: fallos por CLI y DSL
+
+#### Objetivo
+
+Exponer fallos recuperables y fallos bizantinos desde CLI y DSL, usando las APIs creadas en las fases 7.1, 7.2 y 7.3.
+
+#### Entregables
+
+```text
+--worker-failure
+--supervisor-timeout
+--worker-restart-limit
+--byzantine-failure
+--byzantine-vote
+/worker-failure
+/byzantine-failure
+/byzantine-vote
+```
+
+#### Validacion
+
+```bash
+cargo test failure
+cargo test byzantine
+cargo test dsl
+cargo test --test fallos_cli_dsl
+make validate-fast
+```

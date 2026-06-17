@@ -359,3 +359,29 @@ La Fase 7.3 no cambia la sintaxis del DSL. Agrega el modelo de core para que fut
 #### Alcance
 
 El fallo bizantino se modela como respuesta falsa controlada. La votacion simple permite aceptar resultados por mayoria o rechazar empates y respuestas insuficientes.
+
+### Fallos declarativos en DSL
+
+#### Comandos
+
+```text
+/worker-failure <worker> <tick_inicio> <duracion>
+/byzantine-failure <worker> <valor_falso>
+/byzantine-vote <valor_esperado>
+```
+
+#### Ejemplo
+
+```text
+/goal rescatar_victimas
+/plan buscar -> clasificar
+/worker-failure 1 4 3
+/byzantine-failure 2 falso
+/byzantine-vote verdadero
+/verify checklist_final
+/terminate when verified
+```
+
+#### Alcance
+
+Estos comandos configuran escenarios de fallo. No generan eventos DSL visibles por si mismos, pero alimentan la simulacion y la votacion cuando el script se ejecuta en modo headless.

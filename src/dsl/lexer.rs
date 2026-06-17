@@ -203,7 +203,7 @@ pub fn lex(input: &str) -> Result<Vec<Token>, DslError> {
 }
 
 fn is_command_body(character: char) -> bool {
-    character.is_ascii_alphabetic() || character == '_'
+    character.is_ascii_alphabetic() || matches!(character, '_' | '-')
 }
 
 fn is_identifier_start(character: char) -> bool {

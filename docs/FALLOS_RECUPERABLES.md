@@ -62,3 +62,21 @@ Los fallos recuperables modelan workers colgados y recuperacion por timeout. El 
 #### Complemento
 
 Ambos modelos son deterministas y sirven para evaluar resiliencia multiagente desde angulos distintos: disponibilidad y veracidad de respuestas.
+
+### Fallos recuperables por CLI y DSL
+
+#### CLI
+
+```bash
+cargo run -- --headless --ticks 12 --worker-failure 1:4:3 --metrics artifacts/runs/fallos/metrics.csv
+```
+
+#### DSL
+
+```text
+/worker-failure 1 4 3
+```
+
+#### Resultado esperado
+
+El worker deja de emitir heartbeat durante el rango configurado. El supervisor detecta timeout, aplica la politica de reinicio y las metricas reflejan `fallos_detectados` y `fallos_recuperados`.

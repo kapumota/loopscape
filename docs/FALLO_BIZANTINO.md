@@ -43,3 +43,22 @@ cargo test --test fallo_bizantino
 make validate-fast
 git diff --check
 ```
+
+### Fallo bizantino por CLI y DSL
+
+#### CLI
+
+```bash
+cargo run -- --byzantine-vote verdadero --agents 3 --byzantine-failure 2:falso
+```
+
+#### DSL
+
+```text
+/byzantine-failure 2 falso
+/byzantine-vote verdadero
+```
+
+#### Resultado esperado
+
+El worker configurado emite una respuesta falsa. La votacion por mayoria simple acepta el valor honesto si alcanza los votos requeridos.

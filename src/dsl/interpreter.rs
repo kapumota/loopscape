@@ -69,6 +69,9 @@ impl DslInterpreter {
                     tick: self.config.tick,
                     policy: normalize_policy(&command.arguments)?,
                 }),
+                CommandKind::WorkerFailure
+                | CommandKind::ByzantineFailure
+                | CommandKind::ByzantineVote => {}
             }
         }
 

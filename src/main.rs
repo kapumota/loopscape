@@ -2,7 +2,6 @@ use bevy::prelude::*;
 
 mod app;
 mod components;
-mod core;
 mod eras;
 mod events;
 mod llm_integration;
@@ -26,6 +25,282 @@ enum GameEra {
     MultiAgentOrchestration,
 }
 
+fn simulation_config_from_args(
+    args: &[String],
+    seed: u64,
+    agents: u32,
+    tasks: u32,
+    dsl_failures: Option<loopscape::dsl::DslFailureScenario>,
+) -> loopscape::core::scheduler::SimulationConfig {
+    let worker_timeout_ticks = parse_arg_u64(args, "--supervisor-timeout").unwrap_or(3);
+    let worker_restart_limit = parse_arg_u32(args, "--worker-restart-limit").unwrap_or(1);
+
+    let mut recoverable_failures = dsl_failures
+        .as_ref()
+        .map(|scenario| scenario.recoverable_failures.clone())
+        .unwrap_or_else(loopscape::core::failure::RecoverableFailurePlan::none);
+    let cli_failures = recoverable_failure_plan_from_args(args);
+    recoverable_failures.failures.extend(cli_failures.failures);
+
+    loopscape::core::scheduler::SimulationConfig::new(seed)
+        .with_size(agents, tasks)
+        .with_supervisor(worker_timeout_ticks, worker_restart_limit)
+        .with_recoverable_failures(recoverable_failures)
+}
+
+fn recoverable_failure_plan_from_args(
+    args: &[String],
+) -> loopscape::core::failure::RecoverableFailurePlan {
+    let values = parse_arg_values(args, "--worker-failure");
+    let Some(first) = values.first() else {
+        return loopscape::core::failure::RecoverableFailurePlan::none();
+    };
+
+    let (worker_id, start_tick, duration_ticks) = parse_worker_failure_tuple(first);
+    let mut plan = loopscape::core::failure::RecoverableFailurePlan::worker_hangs(
+        worker_id,
+        start_tick,
+        duration_ticks,
+    )
+    .unwrap_or_else(|error| exit_with_argument_error("--worker-failure", &error));
+
+    for value in values.iter().skip(1) {
+        let failure = parse_worker_failure_spec(value);
+        plan = plan.with_failure(failure);
+    }
+
+    plan
+}
+
+fn parse_worker_failure_spec(value: &str) -> loopscape::core::failure::WorkerFailureSpec {
+    let (worker_id, start_tick, duration_ticks) = parse_worker_failure_tuple(value);
+    loopscape::core::failure::WorkerFailureSpec::new(worker_id, start_tick, duration_ticks)
+        .unwrap_or_else(|error| exit_with_argument_error("--worker-failure", &error))
+}
+
+fn parse_worker_failure_tuple(value: &str) -> (u32, u64, u64) {
+    let parts = value.split(':').collect::<Vec<_>>();
+    if parts.len() != 3 {
+        exit_with_argument_error(
+            "--worker-failure",
+            "usa el formato worker:tick_inicio:duracion",
+        );
+    }
+
+    let worker_id = parts[0]
+        .parse::<u32>()
+        .unwrap_or_else(|_| exit_with_argument_error("--worker-failure", "worker invalido"));
+    let start_tick = parts[1]
+        .parse::<u64>()
+        .unwrap_or_else(|_| exit_with_argument_error("--worker-failure", "tick inicial invalido"));
+    let duration_ticks = parts[2]
+        .parse::<u64>()
+        .unwrap_or_else(|_| exit_with_argument_error("--worker-failure", "duracion invalida"));
+
+    (worker_id, start_tick, duration_ticks)
+}
+
+fn byzantine_failure_plan_from_args(
+    args: &[String],
+    dsl_failures: Option<&loopscape::dsl::DslFailureScenario>,
+) -> loopscape::core::byzantine::ByzantineFailurePlan {
+    let mut plan = dsl_failures
+        .map(|scenario| scenario.byzantine_failures.clone())
+        .unwrap_or_else(loopscape::core::byzantine::ByzantineFailurePlan::none);
+    let values = parse_arg_values(args, "--byzantine-failure");
+    let Some(first) = values.first() else {
+        return plan;
+    };
+
+    if plan.failures.is_empty() {
+        let (worker_id, false_value) = parse_byzantine_failure_tuple(first);
+        plan =
+            loopscape::core::byzantine::ByzantineFailurePlan::worker_lies(worker_id, false_value)
+                .unwrap_or_else(|error| exit_with_argument_error("--byzantine-failure", &error));
+    } else {
+        let failure = parse_byzantine_failure_spec(first);
+        plan = plan.with_failure(failure);
+    }
+
+    for value in values.iter().skip(1) {
+        let failure = parse_byzantine_failure_spec(value);
+        plan = plan.with_failure(failure);
+    }
+
+    plan
+}
+
+fn parse_byzantine_failure_spec(value: &str) -> loopscape::core::byzantine::ByzantineFailureSpec {
+    let (worker_id, false_value) = parse_byzantine_failure_tuple(value);
+    loopscape::core::byzantine::ByzantineFailureSpec::new(worker_id, false_value)
+        .unwrap_or_else(|error| exit_with_argument_error("--byzantine-failure", &error))
+}
+
+fn parse_byzantine_failure_tuple(value: &str) -> (u32, String) {
+    let Some((worker_id, false_value)) = value.split_once(':') else {
+        exit_with_argument_error("--byzantine-failure", "usa el formato worker:valor_falso");
+    };
+
+    let worker_id = worker_id
+        .parse::<u32>()
+        .unwrap_or_else(|_| exit_with_argument_error("--byzantine-failure", "worker invalido"));
+
+    (worker_id, false_value.to_string())
+}
+
+fn print_supervisor_summary(state: &loopscape::core::scheduler::SimulationState) {
+    let rows = crate::app::supervisor::supervisor_rows(&state.supervisor);
+    let labels = crate::app::supervisor::supervisor_event_labels(&state.supervisor.events);
+    let _primer_worker = state.supervisor.worker(0);
+    let ultimo_tick = state
+        .supervisor
+        .events
+        .last()
+        .map(loopscape::core::supervisor::SupervisorEvent::tick)
+        .unwrap_or(state.tick);
+
+    println!("Supervisor workers: {}", rows.len());
+    println!("Supervisor ultimo tick: {ultimo_tick}");
+
+    for row in rows.iter().take(3) {
+        println!(
+            "Worker {} estado={} heartbeat={} reinicios={}",
+            row.worker_id, row.estado, row.ultimo_heartbeat, row.reinicios
+        );
+    }
+
+    for label in labels.iter().rev().take(3).rev() {
+        println!("Evento supervisor: {label}");
+    }
+}
+
+fn print_byzantine_vote_summary(
+    args: &[String],
+    agents: u32,
+    dsl_failures: Option<&loopscape::dsl::DslFailureScenario>,
+) -> bool {
+    let cli_vote_value = parse_arg_value(args, "--byzantine-vote");
+    let dsl_vote_value = dsl_failures.and_then(|scenario| scenario.byzantine_vote_value.clone());
+    let vote_value = cli_vote_value.or(dsl_vote_value);
+    let plan = byzantine_failure_plan_from_args(args, dsl_failures);
+
+    if vote_value.is_none() && plan.failures.is_empty() {
+        return false;
+    }
+
+    if agents == 0 {
+        exit_with_argument_error(
+            "--agents",
+            "la votacion bizantina requiere al menos un worker",
+        );
+    }
+
+    let honest_value = vote_value.unwrap_or_else(|| "valor_correcto".to_string());
+    let worker_ids = (0..agents).collect::<Vec<_>>();
+    let responses =
+        loopscape::core::byzantine::build_worker_responses(&worker_ids, honest_value, &plan);
+    let voter = voter_from_args(args, worker_ids.len());
+    let outcome = voter.decide(&responses);
+    let accepted = outcome.decision.is_accepted();
+
+    println!("Votacion bizantina simplificada");
+    println!("Workers votantes: {}", worker_ids.len());
+    println!("Respuestas falsas: {}", outcome.false_responses);
+    println!("Resultado aceptado: {accepted}");
+
+    match outcome.decision {
+        loopscape::core::byzantine::VoteDecision::Accepted { value, votes } => {
+            println!("Decision: aceptada valor={value} votos={votes}");
+        }
+        loopscape::core::byzantine::VoteDecision::Rejected { reason } => {
+            println!("Decision: rechazada razon={reason}");
+        }
+    }
+
+    for count in outcome.counts {
+        println!("Conteo voto: {} -> {}", count.value, count.votes);
+    }
+
+    true
+}
+
+fn voter_from_args(
+    args: &[String],
+    total_workers: usize,
+) -> loopscape::core::byzantine::SimpleMajorityVoter {
+    match (
+        parse_arg_usize(args, "--vote-minimum-responses"),
+        parse_arg_usize(args, "--vote-required-votes"),
+    ) {
+        (Some(minimum_responses), Some(required_votes)) => {
+            let config =
+                loopscape::core::byzantine::VotingConfig::new(minimum_responses, required_votes)
+                    .unwrap_or_else(|error| {
+                        exit_with_argument_error("--vote-required-votes", &error)
+                    });
+            loopscape::core::byzantine::SimpleMajorityVoter::new(config)
+        }
+        (None, None) => loopscape::core::byzantine::SimpleMajorityVoter::majority(total_workers)
+            .unwrap_or_else(|error| exit_with_argument_error("--agents", &error)),
+        _ => exit_with_argument_error(
+            "--vote-minimum-responses",
+            "define tambien --vote-required-votes",
+        ),
+    }
+}
+
+fn run_byzantine_vote_from_args() -> bool {
+    let args = std::env::args().collect::<Vec<_>>();
+    if parse_arg_value(&args, "--script").is_some() {
+        return false;
+    }
+
+    let has_vote = parse_arg_value(&args, "--byzantine-vote").is_some();
+    let has_fault = !parse_arg_values(&args, "--byzantine-failure").is_empty();
+    if !has_vote && !has_fault {
+        return false;
+    }
+
+    let agents = parse_arg_u32(&args, "--agents").unwrap_or(5);
+    print_byzantine_vote_summary(&args, agents, None);
+    true
+}
+
+fn parse_arg_usize(args: &[String], name: &str) -> Option<usize> {
+    parse_arg_value(args, name).and_then(|value| value.parse::<usize>().ok())
+}
+
+fn parse_arg_values(args: &[String], name: &str) -> Vec<String> {
+    let inline_prefix = format!("{name}=");
+    let mut values = Vec::new();
+
+    for (index, arg) in args.iter().enumerate() {
+        if let Some(value) = arg.strip_prefix(&inline_prefix) {
+            values.extend(split_compact_values(value));
+        } else if arg == name {
+            if let Some(value) = args.get(index + 1) {
+                values.extend(split_compact_values(value));
+            }
+        }
+    }
+
+    values
+}
+
+fn split_compact_values(value: &str) -> Vec<String> {
+    value
+        .split(',')
+        .map(str::trim)
+        .filter(|item| !item.is_empty())
+        .map(str::to_string)
+        .collect()
+}
+
+fn exit_with_argument_error(argument: &str, message: &str) -> ! {
+    eprintln!("Argumento invalido {argument}: {message}");
+    std::process::exit(2);
+}
+
 fn run_metrics_comparison_from_args() -> bool {
     let args = std::env::args().collect::<Vec<_>>();
     let Some((baseline_path, candidate_path)) = parse_arg_pair(&args, "--compare-metrics") else {
@@ -38,7 +313,7 @@ fn run_metrics_comparison_from_args() -> bool {
     }
 
     let comparison =
-        match crate::core::compare::compare_metrics_files(&baseline_path, &candidate_path) {
+        match loopscape::core::compare::compare_metrics_files(&baseline_path, &candidate_path) {
             Ok(comparison) => comparison,
             Err(error) => {
                 eprintln!("No se pudo comparar metricas CSV: {error}");
@@ -53,7 +328,7 @@ fn run_metrics_comparison_from_args() -> bool {
         }
 
         if let Err(error) =
-            crate::core::compare::write_metrics_comparison_csv(&comparison, &output_path)
+            loopscape::core::compare::write_metrics_comparison_csv(&comparison, &output_path)
         {
             eprintln!("No se pudo escribir comparacion CSV {output_path}: {error}");
             std::process::exit(2);
@@ -99,7 +374,7 @@ fn run_replay_from_args() -> bool {
         std::process::exit(2);
     }
 
-    let summary = match crate::core::replay::replay_trace_jsonl(&trace_path) {
+    let summary = match loopscape::core::replay::replay_trace_jsonl(&trace_path) {
         Ok(summary) => summary,
         Err(error) => {
             eprintln!("No se pudo reproducir la traza JSONL {trace_path}: {error}");
@@ -148,11 +423,13 @@ fn run_import_graph_from_args() -> bool {
 
     let seed = parse_arg_u64(&args, "--seed").unwrap_or(123);
     let ticks = parse_arg_u32(&args, "--ticks").unwrap_or(50);
-    let config = crate::core::scheduler::SimulationConfig::new(seed);
-    let mut state = crate::core::scheduler::SimulationState::new(config);
+    let config = simulation_config_from_args(&args, seed, 5, 12, None);
+    let mut state = loopscape::core::scheduler::SimulationState::new(config);
     state.run_ticks(ticks);
     export_metrics_from_args(&args, &state);
     record_core_events_from_args(&args, &state.events);
+    print_supervisor_summary(&state);
+    print_byzantine_vote_summary(&args, 5, None);
 
     println!("Loopscape grafo de orquestacion");
     println!("Grafo: {graph_path}");
@@ -186,7 +463,7 @@ fn run_import_graph_from_args() -> bool {
     true
 }
 
-fn export_metrics_from_args(args: &[String], state: &crate::core::scheduler::SimulationState) {
+fn export_metrics_from_args(args: &[String], state: &loopscape::core::scheduler::SimulationState) {
     let Some(metrics_path) = parse_arg_value(args, "--metrics") else {
         return;
     };
@@ -196,7 +473,7 @@ fn export_metrics_from_args(args: &[String], state: &crate::core::scheduler::Sim
         std::process::exit(2);
     }
 
-    if let Err(error) = crate::core::metrics::write_metrics_csv(state, &metrics_path) {
+    if let Err(error) = loopscape::core::metrics::write_metrics_csv(state, &metrics_path) {
         eprintln!("No se pudo exportar metricas CSV {metrics_path}: {error}");
         std::process::exit(2);
     }
@@ -204,7 +481,7 @@ fn export_metrics_from_args(args: &[String], state: &crate::core::scheduler::Sim
     println!("Metricas CSV exportadas: {metrics_path}");
 }
 
-fn record_core_events_from_args(args: &[String], events: &[crate::core::event::CoreEvent]) {
+fn record_core_events_from_args(args: &[String], events: &[loopscape::core::event::CoreEvent]) {
     let Some(record_path) = parse_arg_value(args, "--record") else {
         return;
     };
@@ -214,7 +491,7 @@ fn record_core_events_from_args(args: &[String], events: &[crate::core::event::C
         std::process::exit(2);
     }
 
-    if let Err(error) = crate::core::trace::write_events_jsonl(events, &record_path) {
+    if let Err(error) = loopscape::core::trace::write_events_jsonl(events, &record_path) {
         eprintln!("No se pudo registrar eventos JSONL {record_path}: {error}");
         std::process::exit(2);
     }
@@ -317,19 +594,35 @@ fn run_dsl_script_from_args() -> bool {
         }
     };
 
-    let dsl_events = match loopscape::dsl::interpret_source(&source) {
+    let program = match loopscape::dsl::validate_source(&source) {
+        Ok(program) => program,
+        Err(error) => {
+            eprintln!("El script DSL no es valido: {error}");
+            std::process::exit(2);
+        }
+    };
+    let dsl_events = match loopscape::dsl::interpret_program(&program) {
         Ok(events) => events,
         Err(error) => {
             eprintln!("El script DSL no es valido: {error}");
             std::process::exit(2);
         }
     };
+    let dsl_failures = match loopscape::dsl::failure_scenario_from_program(&program) {
+        Ok(scenario) => scenario,
+        Err(error) => {
+            eprintln!("No se pudo extraer fallos del DSL: {error}");
+            std::process::exit(2);
+        }
+    };
 
-    let config = crate::core::scheduler::SimulationConfig::new(seed);
-    let mut state = crate::core::scheduler::SimulationState::new(config);
+    let config = simulation_config_from_args(&args, seed, 5, 12, Some(dsl_failures.clone()));
+    let mut state = loopscape::core::scheduler::SimulationState::new(config);
     state.run_ticks(ticks);
     export_metrics_from_args(&args, &state);
     record_core_events_from_args(&args, &state.events);
+    print_supervisor_summary(&state);
+    print_byzantine_vote_summary(&args, 5, Some(&dsl_failures));
 
     println!("Loopscape DSL de orquestacion");
     println!("Script: {script_path}");
@@ -466,11 +759,13 @@ fn run_core_headless_from_args() -> bool {
         "ejecucion nativa sin ventana"
     };
 
-    let config = crate::core::scheduler::SimulationConfig::new(seed).with_size(agents, tasks);
-    let mut state = crate::core::scheduler::SimulationState::new(config);
+    let config = simulation_config_from_args(&args, seed, agents, tasks, None);
+    let mut state = loopscape::core::scheduler::SimulationState::new(config);
     state.run_ticks(ticks);
     export_metrics_from_args(&args, &state);
     record_core_events_from_args(&args, &state.events);
+    print_supervisor_summary(&state);
+    print_byzantine_vote_summary(&args, agents, None);
 
     println!("Loopscape core determinista");
     println!("Modo: {}", mode);
@@ -541,6 +836,10 @@ fn main() {
     }
 
     if run_export_graph_from_args() {
+        return;
+    }
+
+    if run_byzantine_vote_from_args() {
         return;
     }
 

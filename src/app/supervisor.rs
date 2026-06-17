@@ -1,4 +1,4 @@
-use crate::core::supervisor::{SupervisorEvent, SupervisorState, WorkerStatus};
+use loopscape::core::supervisor::{SupervisorEvent, SupervisorState, WorkerStatus};
 
 /// Fila estable para presentar workers supervisados sin acoplarse a Bevy.
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -64,7 +64,7 @@ fn supervisor_event_label(event: &SupervisorEvent) -> String {
 #[cfg(test)]
 mod tests {
     use super::{supervisor_event_labels, supervisor_rows};
-    use crate::core::supervisor::{RestartPolicy, SupervisorState, WorkerState};
+    use loopscape::core::supervisor::{RestartPolicy, SupervisorState, WorkerState};
 
     #[test]
     fn supervisor_rows_use_spanish_status_labels() {

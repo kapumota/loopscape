@@ -354,3 +354,21 @@ git diff --check
 #### Criterio
 
 Una votacion con mayoria honesta debe aceptar el valor correcto aunque exista un worker con respuesta falsa. Una votacion empatada o sin respuestas suficientes debe rechazarse de forma determinista.
+
+### Validacion de fallos por CLI y DSL
+
+#### Comandos
+
+```bash
+cargo fmt
+cargo test failure
+cargo test byzantine
+cargo test dsl
+cargo test --test fallos_cli_dsl
+make validate-fast
+git diff --check
+```
+
+#### Criterio
+
+Los fallos recuperables declarados por CLI o DSL deben afectar las metricas de fallos. Los fallos bizantinos deben producir una votacion determinista con mayoria, empate o rechazo por respuestas insuficientes.

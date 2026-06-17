@@ -303,7 +303,12 @@ fn build_supervisor(
     worker_timeout_ticks: u64,
     worker_restart_limit: u32,
 ) -> SupervisorState {
-    let mut supervisor = SupervisorState::new(RestartPolicy::on_timeout(worker_restart_limit));
+    let restart_policy = if worker_restart_limit == 0 {
+        RestartPolicy::never()
+    } else {
+        RestartPolicy::on_timeout(worker_restart_limit)
+    };
+    let mut supervisor = SupervisorState::new(restart_policy);
 
     for agent in agents {
         let worker_id = worker_id_from_agent(agent.id);

@@ -371,6 +371,27 @@ fn nodes_from_command(command_index: usize, command: &OrchestrationCommand) -> V
             command.arguments.join(" "),
             command,
         )],
+        CommandKind::WorkerFailure => vec![node_from_command(
+            command_index,
+            0,
+            "worker_failure",
+            command.arguments.join(" "),
+            command,
+        )],
+        CommandKind::ByzantineFailure => vec![node_from_command(
+            command_index,
+            0,
+            "byzantine_failure",
+            command.arguments.join(" "),
+            command,
+        )],
+        CommandKind::ByzantineVote => vec![node_from_command(
+            command_index,
+            0,
+            "byzantine_vote",
+            command.arguments.join(" "),
+            command,
+        )],
     }
 }
 
