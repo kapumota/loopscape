@@ -648,3 +648,28 @@ cargo test supervisor
 cargo test --test supervisor_multiagente
 make validate-fast
 ```
+
+### Fase 7.2: fallos recuperables de workers
+
+#### Objetivo
+
+Integrar el supervisor al runtime de simulacion para simular workers colgados, timeouts y recuperacion controlada.
+
+#### Entregables
+
+```text
+RecoverableFailurePlan
+WorkerFailureSpec
+SupervisorState dentro de SimulationState
+eventos WorkerTimedOut y WorkerRestarted
+metricas CSV con fallos detectados y recuperados
+```
+
+#### Validacion
+
+```bash
+cargo test failure
+cargo test supervisor
+cargo test --test fallos_recuperables
+make validate-fast
+```

@@ -321,3 +321,20 @@ make validate-fast
 #### Criterio
 
 El supervisor debe detectar timeouts de forma determinista, aplicar la politica de reinicio configurada y reportar metricas de fallos detectados y recuperados sin depender de red ni entorno visual.
+
+### Validacion de fallos recuperables
+
+#### Comandos
+
+```bash
+cargo fmt
+cargo test failure
+cargo test supervisor
+cargo test --test fallos_recuperables
+make validate-fast
+git diff --check
+```
+
+#### Criterio
+
+Una corrida con `RecoverableFailurePlan` debe producir eventos de timeout y reinicio. Las metricas CSV deben reflejar `fallos_detectados` y `fallos_recuperados` con valores mayores que cero cuando corresponde.

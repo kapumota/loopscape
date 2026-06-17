@@ -166,13 +166,15 @@ impl SimulationMetricsCsvRow {
             assigned_duration_total as f32 / assigned_count as f32
         };
 
+        let supervisor_metrics = state.supervisor.metrics();
+
         Self {
             ticks: state.tick,
             completed_tasks: state.metrics.completed_tasks,
             active_loops: state.metrics.active_loops,
             tokens_used: 0,
-            failures_detected: 0,
-            failures_recovered: 0,
+            failures_detected: supervisor_metrics.failures_detected,
+            failures_recovered: supervisor_metrics.failures_recovered,
             average_latency,
         }
     }

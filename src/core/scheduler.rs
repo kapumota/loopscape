@@ -2,9 +2,11 @@ use serde::{Deserialize, Serialize};
 
 use super::agent::{AgentId, CoreAgent};
 use super::event::CoreEvent;
+use super::failure::RecoverableFailurePlan;
 use super::loop_state::CoreLoopState;
 use super::metrics::CoreMetrics;
 use super::rng::DeterministicRng;
+use super::supervisor::{RestartPolicy, SupervisorEvent, SupervisorState, WorkerState};
 use super::task::{CoreTask, TaskId, TaskStatus};
 
 /// Configuración inicial de una simulación determinista.
@@ -13,6 +15,9 @@ pub struct SimulationConfig {
     pub seed: u64,
     pub initial_agents: u32,
     pub initial_tasks: u32,
+    pub worker_timeout_ticks: u64,
+    pub worker_restart_limit: u32,
+    pub recoverable_failures: RecoverableFailurePlan,
 }
 
 impl SimulationConfig {
@@ -21,12 +26,29 @@ impl SimulationConfig {
             seed,
             initial_agents: 5,
             initial_tasks: 12,
+            worker_timeout_ticks: 3,
+            worker_restart_limit: 1,
+            recoverable_failures: RecoverableFailurePlan::none(),
         }
     }
 
     pub fn with_size(mut self, initial_agents: u32, initial_tasks: u32) -> Self {
         self.initial_agents = initial_agents;
         self.initial_tasks = initial_tasks;
+        self
+    }
+
+    pub fn with_supervisor(mut self, worker_timeout_ticks: u64, worker_restart_limit: u32) -> Self {
+        self.worker_timeout_ticks = worker_timeout_ticks.max(1);
+        self.worker_restart_limit = worker_restart_limit;
+        self
+    }
+
+    pub fn with_recoverable_failures(
+        mut self,
+        recoverable_failures: RecoverableFailurePlan,
+    ) -> Self {
+        self.recoverable_failures = recoverable_failures;
         self
     }
 }
@@ -40,6 +62,8 @@ pub struct SimulationState {
     pub tasks: Vec<CoreTask>,
     pub events: Vec<CoreEvent>,
     pub metrics: CoreMetrics,
+    pub supervisor: SupervisorState,
+    pub recoverable_failures: RecoverableFailurePlan,
     rng: DeterministicRng,
 }
 
@@ -52,6 +76,12 @@ impl SimulationState {
         let tasks = (0..config.initial_tasks)
             .map(|index| CoreTask::new(TaskId(u64::from(index)), format!("tarea_{index}")))
             .collect::<Vec<_>>();
+
+        let supervisor = build_supervisor(
+            &agents,
+            config.worker_timeout_ticks,
+            config.worker_restart_limit,
+        );
 
         let mut state = Self {
             tick: 0,
@@ -68,6 +98,8 @@ impl SimulationState {
                 assigned_tasks: 0,
                 throughput: 0.0,
             },
+            supervisor,
+            recoverable_failures: config.recoverable_failures,
             rng: DeterministicRng::new(config.seed),
         };
 
@@ -86,9 +118,72 @@ impl SimulationState {
         self.events
             .push(CoreEvent::TickAdvanced { tick: self.tick });
 
+        self.advance_supervisor();
         self.assign_pending_tasks();
         self.advance_agents();
         self.refresh_metrics();
+    }
+
+    fn advance_supervisor(&mut self) {
+        let agent_ids = self.agents.iter().map(|agent| agent.id).collect::<Vec<_>>();
+
+        for agent_id in agent_ids {
+            let worker_id = worker_id_from_agent(agent_id);
+            if self
+                .recoverable_failures
+                .is_worker_hung(worker_id, self.tick)
+            {
+                continue;
+            }
+
+            if self.supervisor.heartbeat(self.tick, worker_id).is_err() {
+                continue;
+            }
+        }
+
+        let supervisor_events = self
+            .supervisor
+            .advance_to_tick(self.tick)
+            .unwrap_or_else(|_| Vec::new());
+
+        self.record_supervisor_events(&supervisor_events);
+    }
+
+    fn record_supervisor_events(&mut self, supervisor_events: &[SupervisorEvent]) {
+        for event in supervisor_events {
+            match event {
+                SupervisorEvent::WorkerTimedOut(timeout) => {
+                    self.events.push(CoreEvent::WorkerTimedOut {
+                        tick: timeout.tick,
+                        worker_id: timeout.worker_id,
+                        elapsed_ticks: timeout.elapsed_ticks,
+                    });
+                }
+                SupervisorEvent::WorkerRestarted {
+                    tick,
+                    worker_id,
+                    restart_count,
+                } => {
+                    self.events.push(CoreEvent::WorkerRestarted {
+                        tick: *tick,
+                        worker_id: *worker_id,
+                        restart_count: *restart_count,
+                    });
+                }
+                SupervisorEvent::WorkerRestartLimitReached {
+                    tick,
+                    worker_id,
+                    restart_count,
+                } => {
+                    self.events.push(CoreEvent::WorkerRestartLimitReached {
+                        tick: *tick,
+                        worker_id: *worker_id,
+                        restart_count: *restart_count,
+                    });
+                }
+                SupervisorEvent::HeartbeatReceived(_) => {}
+            }
+        }
     }
 
     fn assign_pending_tasks(&mut self) {
@@ -203,10 +298,38 @@ impl SimulationState {
     }
 }
 
+fn build_supervisor(
+    agents: &[CoreAgent],
+    worker_timeout_ticks: u64,
+    worker_restart_limit: u32,
+) -> SupervisorState {
+    let mut supervisor = SupervisorState::new(RestartPolicy::on_timeout(worker_restart_limit));
+
+    for agent in agents {
+        let worker_id = worker_id_from_agent(agent.id);
+        let worker = WorkerState::new(
+            worker_id,
+            format!("worker_{worker_id}"),
+            worker_timeout_ticks,
+        )
+        .expect("worker inicial valido");
+        supervisor
+            .register_worker(worker)
+            .expect("registro inicial de worker valido");
+    }
+
+    supervisor
+}
+
+fn worker_id_from_agent(agent_id: AgentId) -> u32 {
+    u32::try_from(agent_id.0).expect("id de agente fuera de rango de worker")
+}
+
 #[cfg(test)]
 mod tests {
     use super::{SimulationConfig, SimulationState};
     use crate::core::event::CoreEvent;
+    use crate::core::failure::RecoverableFailurePlan;
     use crate::core::task::TaskStatus;
 
     #[test]
@@ -218,6 +341,7 @@ mod tests {
         assert_eq!(state.seed, 55);
         assert_eq!(state.agents.len(), 2);
         assert_eq!(state.tasks.len(), 3);
+        assert_eq!(state.supervisor.workers.len(), 2);
         assert_eq!(state.metrics.active_loops, 2);
         assert_eq!(state.metrics.total_tasks, 3);
     }
@@ -249,5 +373,28 @@ mod tests {
 
         assert_eq!(first, second);
         assert!(first.metrics.completed_tasks > 0);
+    }
+
+    #[test]
+    fn scheduler_records_recoverable_worker_failures() {
+        let plan = RecoverableFailurePlan::worker_hangs(0, 1, 3).expect("plan valido");
+        let config = SimulationConfig::new(44)
+            .with_size(1, 1)
+            .with_supervisor(1, 1)
+            .with_recoverable_failures(plan);
+        let mut state = SimulationState::new(config);
+
+        state.run_ticks(4);
+
+        assert!(state
+            .events
+            .iter()
+            .any(|event| matches!(event, CoreEvent::WorkerTimedOut { .. })));
+        assert!(state
+            .events
+            .iter()
+            .any(|event| matches!(event, CoreEvent::WorkerRestarted { .. })));
+        assert_eq!(state.supervisor.metrics().failures_detected, 1);
+        assert_eq!(state.supervisor.metrics().failures_recovered, 1);
     }
 }

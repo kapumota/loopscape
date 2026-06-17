@@ -135,6 +135,9 @@ pub fn event_tick(event: &CoreEvent) -> u64 {
         | CoreEvent::DelegationRequested { tick, .. }
         | CoreEvent::VerificationRequested { tick, .. }
         | CoreEvent::TerminationPolicySet { tick, .. } => *tick,
+        CoreEvent::WorkerTimedOut { tick, .. }
+        | CoreEvent::WorkerRestarted { tick, .. }
+        | CoreEvent::WorkerRestartLimitReached { tick, .. } => *tick,
     }
 }
 
@@ -150,6 +153,9 @@ pub fn event_kind(event: &CoreEvent) -> &'static str {
         CoreEvent::DelegationRequested { .. } => "DelegationRequested",
         CoreEvent::VerificationRequested { .. } => "VerificationRequested",
         CoreEvent::TerminationPolicySet { .. } => "TerminationPolicySet",
+        CoreEvent::WorkerTimedOut { .. } => "WorkerTimedOut",
+        CoreEvent::WorkerRestarted { .. } => "WorkerRestarted",
+        CoreEvent::WorkerRestartLimitReached { .. } => "WorkerRestartLimitReached",
     }
 }
 

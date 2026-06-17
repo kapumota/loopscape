@@ -27,6 +27,21 @@ pub enum CoreEvent {
         task: TaskId,
         agent: AgentId,
     },
+    WorkerTimedOut {
+        tick: u64,
+        worker_id: u32,
+        elapsed_ticks: u64,
+    },
+    WorkerRestarted {
+        tick: u64,
+        worker_id: u32,
+        restart_count: u32,
+    },
+    WorkerRestartLimitReached {
+        tick: u64,
+        worker_id: u32,
+        restart_count: u32,
+    },
     GoalCreated {
         tick: u64,
         goal: String,

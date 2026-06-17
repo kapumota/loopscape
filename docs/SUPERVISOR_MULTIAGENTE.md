@@ -46,3 +46,13 @@ cargo test supervisor
 cargo test --test supervisor_multiagente
 make validate-fast
 ```
+
+### Integracion con fallos recuperables
+
+#### Fase 7.2
+
+El supervisor se integra con `SimulationState`. Cada agente del core tiene un worker supervisado asociado. Cuando un `RecoverableFailurePlan` marca un worker como colgado, el runtime omite su heartbeat durante los ticks configurados.
+
+#### Resultado
+
+El supervisor detecta el timeout, aplica `RestartPolicy` y expone los conteos de fallos detectados y recuperados para las metricas CSV.
