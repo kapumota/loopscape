@@ -51,3 +51,15 @@ cargo test --test fallos_cli_dsl
 make validate-fast
 git diff --check
 ```
+
+### Validacion endurecida
+
+#### Comando recomendado
+
+```bash
+make validate-multiagent
+```
+
+#### Proposito
+
+Este comando ejecuta pruebas, escenarios CLI y escenarios DSL para asegurar que la exposicion de fallos se mantenga estable antes de avanzar a la Fase 8.

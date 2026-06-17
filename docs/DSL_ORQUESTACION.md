@@ -385,3 +385,22 @@ El fallo bizantino se modela como respuesta falsa controlada. La votacion simple
 #### Alcance
 
 Estos comandos configuran escenarios de fallo. No generan eventos DSL visibles por si mismos, pero alimentan la simulacion y la votacion cuando el script se ejecuta en modo headless.
+
+### Validacion multiagente desde DSL
+
+#### Ejemplos incluidos
+
+La validacion multiagente agrega ejemplos reproducibles:
+
+```text
+examples/fallos_recuperables.loop
+examples/fallo_bizantino.loop
+```
+
+#### Uso recomendado
+
+```bash
+make validate-multiagent
+```
+
+Estos escenarios permiten verificar que los comandos declarativos de fallos se puedan parsear, validar, graficar y convertir en configuracion de simulacion.

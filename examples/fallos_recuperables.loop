@@ -1,0 +1,9 @@
+
+/goal validar_resiliencia
+/plan detectar -> recuperar -> reportar
+/delegate supervisor worker_0
+/delegate busqueda worker_1
+/delegate verificacion worker_2
+/worker-failure 1 3 4
+/verify metricas_de_recuperacion
+/terminate when verified

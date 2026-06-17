@@ -372,3 +372,19 @@ git diff --check
 #### Criterio
 
 Los fallos recuperables declarados por CLI o DSL deben afectar las metricas de fallos. Los fallos bizantinos deben producir una votacion determinista con mayoria, empate o rechazo por respuestas insuficientes.
+
+### Fase 7.5: validacion multiagente endurecida
+
+#### Objetivo
+
+Agregar un gate explicito para validar supervisor, fallos recuperables, fallo bizantino, CLI y DSL como un bloque integrado.
+
+#### Comando
+
+```bash
+make validate-multiagent
+```
+
+#### Criterio
+
+La validacion debe compilar todos los targets, ejecutar pruebas multiagente, correr escenarios CLI y verificar metricas de fallos detectados y recuperados.

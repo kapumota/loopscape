@@ -728,3 +728,22 @@ cargo test dsl
 cargo test --test fallos_cli_dsl
 make validate-fast
 ```
+
+### Fase 7.5: endurece validacion multiagente
+
+#### Objetivo
+
+Cerrar la parte 7 con un gate reproducible para escenarios adversariales multiagente.
+
+#### Entregables
+
+- `make validate-multiagent`;
+- script `scripts/validate_multiagent.sh`;
+- pruebas de CLI multiagente;
+- ejemplos `.loop` de fallos recuperables y fallo bizantino;
+- documentacion de validacion multiagente;
+- limpieza de artefactos de validacion.
+
+#### Resultado esperado
+
+La Fase 8 puede partir de una base con supervisor, recuperacion, votacion simple, DSL, CLI y validacion integrada.
