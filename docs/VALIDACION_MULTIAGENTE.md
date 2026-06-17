@@ -89,3 +89,11 @@ La auditoría de workflows de Fase 8.1 no ejecuta esta validación pesada por de
 La validacion multiagente comprueba comportamiento funcional. La auditoria Rust comprueba avisos de seguridad de dependencias.
 
 Ambas validaciones son manuales o programadas, pero no forman parte obligatoria del CI automatico de cada PR.
+
+### Integracion con validacion profunda manual
+
+#### Uso en Fase 8.4
+
+La validacion multiagente queda integrada en el workflow manual de validacion profunda.
+
+El objetivo es mantener el CI automatico liviano y reservar las pruebas pesadas para ejecuciones manuales.

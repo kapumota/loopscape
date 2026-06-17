@@ -82,3 +82,11 @@ Fase 8.3: escaneo manual de secretos
 ```
 
 La validacion profunda funcional queda separada para no mezclar seguridad de repositorio con pruebas nativas pesadas.
+
+### Relacion con validacion profunda manual
+
+#### Separacion de responsabilidades
+
+El escaneo de secretos y la validacion profunda cumplen objetivos distintos.
+
+El escaneo de secretos revisa credenciales y valores sensibles. La validacion profunda revisa comportamiento funcional, escenarios DSL, metricas y replay.
