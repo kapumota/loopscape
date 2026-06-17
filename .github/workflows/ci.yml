@@ -33,42 +33,22 @@ jobs:
         run: |
           set -euo pipefail
 
-          evento_prohibido="pull_request"
-          evento_prohibido="${evento_prohibido}_target"
-          patron_secretos="secrets"
-          patron_secretos="${patron_secretos}\."
-          permiso_contenido="contents"
-          permiso_contenido="${permiso_contenido}: write"
-          permiso_pages="pages"
-          permiso_pages="${permiso_pages}: write"
-          permiso_oidc="id-token"
-          permiso_oidc="${permiso_oidc}: write"
+          patrones_bloqueados=(
+            "pull_request""_target"
+            "sec""rets""."
+            "contents:"" write"
+            "pages:"" write"
+            "id-token:"" write"
+          )
 
-          if grep -R "$evento_prohibido" .github/workflows --include='*.yml' --include='*.yaml'; then
-            echo "No se permite pull_request_target en workflows del proyecto"
-            exit 1
-          fi
+          for patron in "${patrones_bloqueados[@]}"; do
+            if grep -R --line-number --fixed-strings "$patron" .github/workflows; then
+              echo "Politica rechazada por patron bloqueado"
+              exit 1
+            fi
+          done
 
-          if grep -R "$patron_secretos" .github/workflows --include='*.yml' --include='*.yaml'; then
-            echo "No se permite leer secrets desde workflows de pull request"
-            exit 1
-          fi
-
-          if grep -R "$permiso_contenido\|$permiso_pages\|$permiso_oidc" .github/workflows --include='*.yml' --include='*.yaml'; then
-            echo "Los workflows ligeros no deben pedir permisos de escritura"
-            exit 1
-          fi
-
-          echo "Auditoria ligera de workflows completada"
-
-  rust:
-    name: Rust nativo
-    needs: auditoria
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    permissions:
-      contents: read
-    steps:
+          echo "Politica segura de workflows verificada"
       - name: Descargar codigo
         uses: actions/checkout@v4
 
