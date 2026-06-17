@@ -4,3 +4,4 @@
 //! con motores visuales o interfaces externas.
 
 pub mod bevy_adapter;
+pub mod supervisor;

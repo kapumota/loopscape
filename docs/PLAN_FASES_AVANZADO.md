@@ -624,3 +624,27 @@ timeout obligatorio
 CORS restringido
 sin claves hardcodeadas
 ```
+
+### Fase 7.1: supervisor multiagente real
+
+#### Objetivo
+
+Agregar un supervisor determinista que mantenga estado real de workers, heartbeats, timeouts y politica de reinicio.
+
+#### Entregables
+
+```text
+SupervisorState
+WorkerState
+HeartbeatEvent
+WorkerTimeout
+RestartPolicy
+```
+
+#### Validacion
+
+```bash
+cargo test supervisor
+cargo test --test supervisor_multiagente
+make validate-fast
+```
