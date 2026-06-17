@@ -1,3 +1,32 @@
+### 0.9.0-rc1
+
+#### Estado
+
+Release candidate experimental de Loopscape.
+
+Esta version cierra el ciclo inicial de simulacion determinista, DSL, supervisor multiagente, fallos recuperables, fallo bizantino simplificado, validacion manual profunda, auditoria Rust, escaneo manual de secretos, artefacto web manual y reportes de evidencia.
+
+#### Cambios incluidos
+
+- Consolida el versionado de release candidate.
+- Mantiene publicacion web manual como artefacto, sin GitHub Pages automatico.
+- Mantiene validacion profunda como workflow manual.
+- Mantiene auditoria Rust manual y programada.
+- Mantiene escaneo de secretos manual y programado.
+- Mantiene reportes de evidencia en Markdown y JSON.
+
+#### Validacion esperada antes del tag
+
+- `make validate-full`
+- `make validate-web`
+- `make evidence-report-release`
+- Auditoria Rust manual desde GitHub Actions.
+- Escaneo manual de secretos desde GitHub Actions.
+
+#### Nota de publicacion
+
+El tag `v0.9.0-rc1` debe crearse solo despues de mergear esta fase en `main`.
+
 ### Changelog
 
 #### 0.9.0-dev
