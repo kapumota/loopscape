@@ -476,3 +476,19 @@ Este nivel no reemplaza las validaciones. Su objetivo es hacer que los resultado
 artifacts/evidence/reporte-evidencia.md
 artifacts/evidence/reporte-evidencia.json
 ```
+
+#### Nivel release controlado
+
+El nivel de release controlado agrupa las validaciones que deben revisarse antes de un release candidate.
+
+Incluye:
+
+```text
+version declarada
+changelog actualizado
+validacion profunda manual
+auditoria Rust manual
+escaneo manual de secretos
+reporte de evidencia
+artefacto web manual cuando aplique
+```

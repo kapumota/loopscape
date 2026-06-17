@@ -888,3 +888,33 @@ Resume metricas, replay, auditoria Rust y escaneo de secretos cuando existen.
 #### Siguiente fase
 
 La siguiente fase recomendada es preparar release experimental con versionado, changelog y checklist de publicacion.
+
+### Fase 9: release controlado
+
+#### Fase 9.1: version y changelog
+
+Objetivo: preparar el versionado inicial de releases sin publicar web automaticamente.
+
+Entregables:
+
+```text
+VERSION
+CHANGELOG.md
+docs/RELEASE.md
+```
+
+Criterio de aceptacion:
+
+```text
+la version de desarrollo queda declarada
+el changelog incluye el estado 0.9.0-dev
+el documento de release explica que el tag rc se crea solo desde main
+```
+
+#### Fase 9.2: artefacto web manual
+
+Objetivo: generar artefacto web manual como artifact, no como Pages.
+
+#### Fase 9.3: release candidate
+
+Objetivo: cerrar `v0.9.0-rc1` desde `main` despues de validar y mergear el PR correspondiente.
