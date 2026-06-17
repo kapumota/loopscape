@@ -92,3 +92,17 @@ No debe ejecutarse en cada PR ni en cada push. Tampoco debe usar secretos, permi
 ```
 
 El workflow usa `gitleaks` para detectar valores sensibles versionados por error.
+
+### Fase 8.4: validacion profunda manual
+
+#### Politica
+
+La validacion profunda queda fuera del CI automatico. Se ejecuta manualmente para revisar cambios grandes o preparar release.
+
+No debe ejecutarse en cada PR ni en cada push. Tampoco debe usar secretos, permisos de escritura ni despliegue automatico.
+
+#### Workflow
+
+```text
+.github/workflows/deep-validation.yml
+```

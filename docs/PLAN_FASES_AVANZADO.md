@@ -828,3 +828,33 @@ No usa permisos de escritura.
 #### Siguiente fase
 
 La siguiente fase recomendada es validacion profunda manual para pruebas funcionales mas completas.
+
+### Fase 8.4: validacion profunda manual
+
+#### Objetivo
+
+Agregar una puerta manual para pruebas funcionales pesadas sin ejecutarlas en cada PR.
+
+#### Cambios
+
+```text
+.github/workflows/deep-validation.yml
+docs/VALIDACION_PROFUNDA_MANUAL.md
+```
+
+#### Criterio de aceptacion
+
+```text
+El workflow se ejecuta por workflow_dispatch.
+No se ejecuta por pull request.
+No se ejecuta por push.
+No usa secretos.
+No hace deploy.
+Ejecuta make validate-fast.
+Ejecuta make validate-multiagent.
+Valida escenarios DSL, metricas y replay.
+```
+
+#### Siguiente fase
+
+La siguiente fase recomendada es reportes de evidencia para hacer legibles los resultados de validacion.

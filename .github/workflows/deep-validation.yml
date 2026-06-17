@@ -1,0 +1,136 @@
+name: Validacion profunda manual
+
+on:
+  workflow_dispatch:
+    inputs:
+      motivo:
+        description: "Motivo de ejecucion"
+        required: true
+        default: "revision_manual"
+        type: choice
+        options:
+          - revision_manual
+          - revision_release
+      ejecutar_replay:
+        description: "Ejecutar validacion de replay"
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  CARGO_TERM_COLOR: always
+
+concurrency:
+  group: validacion-profunda-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validacion-profunda:
+    name: Validacion profunda
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Preparar Rust
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup component add rustfmt
+
+      - name: Preparar directorio de evidencia
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/manual-deep-validation
+          echo "Motivo: ${{ inputs.motivo }}" > artifacts/manual-deep-validation/resumen.txt
+
+      - name: Ejecutar validacion rapida
+        shell: bash
+        run: |
+          set -euo pipefail
+          make validate-fast
+
+      - name: Ejecutar validacion multiagente
+        shell: bash
+        run: |
+          set -euo pipefail
+          make validate-multiagent
+
+      - name: Ejecutar escenario DSL con fallos recuperables
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo run --locked -- --script examples/fallos_recuperables.loop             --seed 123             --ticks 12             --metrics artifacts/manual-deep-validation/fallos_recuperables_metrics.csv             --record artifacts/manual-deep-validation/fallos_recuperables_events.jsonl
+
+      - name: Validar metricas de fallos recuperables
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import csv
+
+          path = Path("artifacts/manual-deep-validation/fallos_recuperables_metrics.csv")
+          if not path.exists():
+              raise SystemExit("no se encontro el archivo de metricas de fallos recuperables")
+
+          with path.open(newline="", encoding="utf-8") as handle:
+              rows = list(csv.DictReader(handle))
+
+          if not rows:
+              raise SystemExit("el archivo de metricas no contiene filas")
+
+          row = rows[-1]
+          detected = int(row.get("fallos_detectados", "0"))
+          recovered = int(row.get("fallos_recuperados", "0"))
+
+          if detected < 1:
+              raise SystemExit("se esperaba al menos un fallo detectado")
+          if recovered < 1:
+              raise SystemExit("se esperaba al menos un fallo recuperado")
+          if recovered > detected:
+              raise SystemExit("los fallos recuperados no pueden superar a los detectados")
+
+          print("Metricas de fallos recuperables verificadas")
+          PY
+
+      - name: Ejecutar escenario de fallo bizantino
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo run --locked -- --byzantine-vote verdadero --agents 3 --byzantine-failure 2:falso             > artifacts/manual-deep-validation/fallo_bizantino.txt
+
+          grep -q "Votacion bizantina simplificada" artifacts/manual-deep-validation/fallo_bizantino.txt
+          grep -q "Decision: aceptada" artifacts/manual-deep-validation/fallo_bizantino.txt
+
+      - name: Validar replay determinista
+        if: ${{ inputs.ejecutar_replay }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s artifacts/manual-deep-validation/fallos_recuperables_events.jsonl
+          cargo run --locked -- --replay artifacts/manual-deep-validation/fallos_recuperables_events.jsonl             > artifacts/manual-deep-validation/replay.txt
+          grep -q "Loopscape replay determinista" artifacts/manual-deep-validation/replay.txt
+
+      - name: Resumen de validacion profunda
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo "Validacion profunda completada"
+            echo "Validacion rapida: completada"
+            echo "Validacion multiagente: completada"
+            echo "Escenario de fallos recuperables: completado"
+            echo "Escenario de fallo bizantino: completado"
+            echo "Replay determinista: revisado"
+          } >> artifacts/manual-deep-validation/resumen.txt
+          cat artifacts/manual-deep-validation/resumen.txt

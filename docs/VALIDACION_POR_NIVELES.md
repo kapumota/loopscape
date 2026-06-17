@@ -435,3 +435,29 @@ Este nivel no reemplaza la validacion funcional. Su objetivo es revisar credenci
 #### Comando equivalente
 
 La ejecucion principal se realiza desde GitHub Actions mediante `workflow_dispatch`.
+
+### Nivel de validacion profunda manual
+
+#### Objetivo
+
+La Fase 8.4 agrega una validacion funcional profunda que se ejecuta manualmente.
+
+Este nivel no se ejecuta en cada PR. Se usa para revisar cambios grandes, integraciones delicadas o preparacion de release.
+
+#### Cobertura
+
+```text
+make validate-fast
+make validate-multiagent
+escenarios DSL
+fallos recuperables
+fallo bizantino
+validacion de metricas
+validacion de replay
+```
+
+#### Workflow
+
+```text
+.github/workflows/deep-validation.yml
+```
