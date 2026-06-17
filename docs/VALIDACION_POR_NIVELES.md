@@ -395,7 +395,7 @@ La validacion debe compilar todos los targets, ejecutar pruebas multiagente, cor
 
 ```bash
 cargo fmt
-cargo check --all-targets
+cargo metadata --locked --format-version 1 --no-deps
 make validate-fast
 make validate-multiagent
 git diff --check

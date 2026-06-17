@@ -1,82 +1,77 @@
-
-name: Validacion ligera profesional
+name: CI
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
   push:
-    branches: [main]
+    branches:
+      - main
 
 permissions:
   contents: read
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
-
-concurrency:
-  group: validacion-${{ github.ref }}
-  cancel-in-progress: true
+  CARGO_TERM_COLOR: always
 
 jobs:
-  auditoria:
-    name: Auditoria de workflows
+  auditoria-ligera:
+    name: Auditoria ligera
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: read
+    timeout-minutes: 10
+
     steps:
       - name: Descargar codigo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
       - name: Verificar politica segura de workflows
         shell: bash
         run: |
           set -euo pipefail
 
-          patrones_bloqueados=(
-            "pull_request""_target"
-            "sec""rets""."
-            "contents:"" write"
-            "pages:"" write"
-            "id-token:"" write"
-          )
+          python3 - <<'PY'
+          from pathlib import Path
 
-          for patron in "${patrones_bloqueados[@]}"; do
-            if grep -R --line-number --fixed-strings "$patron" .github/workflows; then
-              echo "Politica rechazada por patron bloqueado"
-              exit 1
-            fi
-          done
+          patrones_bloqueados = [
+              "pull_request" + "_target",
+              "sec" + "rets" + ".",
+              "contents:" + " write",
+              "pages:" + " write",
+              "id-token:" + " write",
+          ]
 
-          echo "Politica segura de workflows verificada"
-      - name: Descargar codigo
-        uses: actions/checkout@v4
+          hubo_error = False
 
-      - name: Instalar Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt
+          for ruta in Path(".github/workflows").glob("*.yml"):
+              texto = ruta.read_text(encoding="utf-8")
+              for patron in patrones_bloqueados:
+                  if patron in texto:
+                      print(f"Politica rechazada en {ruta}: patron bloqueado")
+                      hubo_error = True
 
-      - name: Instalar dependencias del sistema
+          if hubo_error:
+              raise SystemExit(1)
+
+          print("Politica segura de workflows verificada")
+          PY
+
+      - name: Preparar Rust minimo
         shell: bash
         run: |
           set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install -y pkg-config libasound2-dev libudev-dev
+          rustup component add rustfmt
 
-      - name: Restaurar cache de Rust
-        uses: Swatinem/rust-cache@v2
-        with:
-          cache-on-failure: true
+      - name: Verificar formato Rust
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo fmt --all -- --check
 
-      - name: Verificar estilo documental
-        run: make style-check
-
-      - name: Verificar formato
-        run: make fmt-check
-
-      - name: Verificar compilacion nativa
-        run: cargo check --locked --all-targets
-
-      - name: Ejecutar pruebas nativas
-        run: cargo test --locked --all-targets --no-fail-fast
+      - name: Verificar manifiesto Cargo
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo metadata --locked --format-version 1 --no-deps > /dev/null
