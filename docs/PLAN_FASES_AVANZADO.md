@@ -800,3 +800,31 @@ no hay deploy automatico
 #### Siguiente fase
 
 La siguiente fase recomendada es Fase 8.3, validacion profunda manual.
+
+### Fase 8.3: escaneo manual de secretos
+
+#### Objetivo
+
+Detectar secretos versionados sin bloquear todos los PR pequenos.
+
+#### Cambios
+
+```text
+.github/workflows/secrets-scan.yml
+docs/ESCANEO_SECRETOS.md
+```
+
+#### Criterio de aceptacion
+
+```text
+El escaneo se ejecuta manualmente o por schedule semanal.
+No se ejecuta por pull request.
+No se ejecuta por push.
+No usa secretos.
+No hace deploy.
+No usa permisos de escritura.
+```
+
+#### Siguiente fase
+
+La siguiente fase recomendada es validacion profunda manual para pruebas funcionales mas completas.

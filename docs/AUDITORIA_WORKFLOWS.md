@@ -76,3 +76,19 @@ El proyecto usa un workflow separado para auditoria manual y semanal:
 ```
 
 Este flujo mantiene la seguridad de dependencias sin hacer pesado el CI automatico.
+
+### Fase 8.3: escaneo manual de secretos
+
+#### Politica
+
+El escaneo de secretos queda separado del CI automatico. Se ejecuta mediante `workflow_dispatch` y schedule semanal.
+
+No debe ejecutarse en cada PR ni en cada push. Tampoco debe usar secretos, permisos de escritura ni despliegue automatico.
+
+#### Workflow
+
+```text
+.github/workflows/secrets-scan.yml
+```
+
+El workflow usa `gitleaks` para detectar valores sensibles versionados por error.
