@@ -96,3 +96,13 @@ el workflow sube dist como artifact
 no existe publicacion automatica
 la documentacion explica el flujo
 ```
+
+### Uso en release candidate
+
+#### Objetivo
+
+El artefacto web manual debe ejecutarse antes de crear `v0.9.0-rc1` para confirmar que `dist/` puede generarse y descargarse como artifact.
+
+#### Regla
+
+La generacion del artefacto web no publica GitHub Pages y no realiza deploy automatico.

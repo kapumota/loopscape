@@ -98,3 +98,30 @@ La Fase 9.2 agrega un workflow manual para generar `dist` como artifact descarga
 Este flujo no publica GitHub Pages y no ejecuta deploy automatico.
 
 El artefacto web se usa como evidencia previa a release o como revision manual antes de crear un release candidate.
+
+### Fase 9.3: release candidate v0.9.0-rc1
+
+#### Objetivo
+
+Cerrar el primer release candidate experimental de Loopscape sin publicar web automaticamente.
+
+#### Validacion manual
+
+Antes de crear el tag se debe ejecutar:
+
+```bash
+make validate-full
+make validate-web
+make evidence-report-release
+```
+
+#### Creacion del tag
+
+El tag `v0.9.0-rc1` se crea solo desde `main` despues del merge:
+
+```bash
+git checkout main
+git pull --ff-only origin main
+git tag v0.9.0-rc1
+git push origin v0.9.0-rc1
+```

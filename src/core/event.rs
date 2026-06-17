@@ -90,7 +90,7 @@ mod tests {
 
     #[test]
     fn core_event_can_represent_dsl_interpreter_outputs() {
-        let events = vec![
+        let events = [
             CoreEvent::GoalCreated {
                 tick: 0,
                 goal: "rescatar_victimas".to_string(),

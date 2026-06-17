@@ -6,15 +6,9 @@ use super::error::DslError;
 use super::validator::{validate_program, validate_source};
 
 /// Configuracion minima del interprete del DSL.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Default)]
 pub struct InterpreterConfig {
     pub tick: u64,
-}
-
-impl Default for InterpreterConfig {
-    fn default() -> Self {
-        Self { tick: 0 }
-    }
 }
 
 /// Interprete que traduce programas DSL validados a eventos del nucleo.

@@ -507,3 +507,21 @@ grep -R "upload-artifact" .github/workflows/web-build.yml
 ```
 
 El objetivo es comprobar estructura y politica sin ejecutar un build web pesado en cada cambio.
+
+### Nivel release candidate
+
+#### Objetivo
+
+La validacion de release candidate agrupa validaciones funcionales, web y evidencia sin ejecutarlas automaticamente en cada PR.
+
+#### Comandos
+
+```bash
+make validate-full
+make validate-web
+make evidence-report-release
+```
+
+#### Regla
+
+Estos comandos son manuales y se usan antes de crear `v0.9.0-rc1`.

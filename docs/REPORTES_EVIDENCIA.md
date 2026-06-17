@@ -75,3 +75,15 @@ El reporte no reemplaza la revision humana. Su funcion es dejar trazabilidad de 
 El artefacto web manual puede acompañar un reporte de evidencia previo a release.
 
 El reporte de evidencia no versiona `dist`. El directorio `dist` debe tratarse como salida generada o artifact descargable del workflow manual.
+
+### Uso en release candidate
+
+#### Objetivo
+
+Los reportes de evidencia permiten revisar el estado del release candidate antes de crear el tag `v0.9.0-rc1`.
+
+#### Comando
+
+```bash
+make evidence-report-release
+```
