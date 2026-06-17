@@ -52,3 +52,13 @@ cargo test --test fallos_recuperables
 make validate-fast
 git diff --check
 ```
+
+### Relacion con fallo bizantino simplificado
+
+#### Diferencia
+
+Los fallos recuperables modelan workers colgados y recuperacion por timeout. El fallo bizantino simplificado modela workers que responden, pero devuelven valores falsos.
+
+#### Complemento
+
+Ambos modelos son deterministas y sirven para evaluar resiliencia multiagente desde angulos distintos: disponibilidad y veracidad de respuestas.

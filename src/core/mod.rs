@@ -5,6 +5,7 @@
 //! derivadas del estado interno.
 
 pub mod agent;
+pub mod byzantine;
 pub mod compare;
 pub mod event;
 pub mod failure;

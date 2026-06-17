@@ -338,3 +338,19 @@ git diff --check
 #### Criterio
 
 Una corrida con `RecoverableFailurePlan` debe producir eventos de timeout y reinicio. Las metricas CSV deben reflejar `fallos_detectados` y `fallos_recuperados` con valores mayores que cero cuando corresponde.
+
+### Validacion de fallo bizantino simplificado
+
+#### Comandos
+
+```bash
+cargo fmt
+cargo test byzantine
+cargo test --test fallo_bizantino
+make validate-fast
+git diff --check
+```
+
+#### Criterio
+
+Una votacion con mayoria honesta debe aceptar el valor correcto aunque exista un worker con respuesta falsa. Una votacion empatada o sin respuestas suficientes debe rechazarse de forma determinista.
