@@ -73,3 +73,4 @@ mod tests {
         assert_eq!(metrics.total_tasks, state.tasks.len());
     }
 }
+pub mod supervisor;

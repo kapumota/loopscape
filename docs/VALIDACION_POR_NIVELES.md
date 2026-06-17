@@ -307,3 +307,17 @@ cargo check --features llm-proxy
 #### Criterio
 
 La feature `llm-proxy` debe compilar sin activar red por defecto, sin claves hardcodeadas y con limites obligatorios.
+
+### Validacion del supervisor multiagente
+
+#### Comandos
+
+```bash
+cargo test supervisor
+cargo test --test supervisor_multiagente
+make validate-fast
+```
+
+#### Criterio
+
+El supervisor debe detectar timeouts de forma determinista, aplicar la politica de reinicio configurada y reportar metricas de fallos detectados y recuperados sin depender de red ni entorno visual.

@@ -329,3 +329,13 @@ El DSL puede integrarse mas adelante con decisiones tipo LLM usando primero prov
 #### Restriccion
 
 El proxy esta apagado por defecto y no debe introducir claves, red ni comportamiento no determinista en las validaciones normales.
+
+### Supervisor multiagente y DSL
+
+#### Relacion con orquestacion
+
+El DSL describe objetivos, planes, delegaciones y verificaciones. El supervisor multiagente agrega una capa de ejecucion verificable para workers, heartbeats, timeouts y reinicios controlados.
+
+#### Alcance
+
+La Fase 7.1 no cambia la sintaxis del DSL. Agrega infraestructura de nucleo para que futuras fases puedan asociar workers supervisados con delegaciones y tareas.
