@@ -98,3 +98,17 @@ smoke-native:
 run-script-example:
 	@echo "Ejecutando ejemplo DSL de rescate"
 	cargo run -- --script examples/rescate.loop --seed 123 --ticks 50
+
+.PHONY: audit-rust audit-rust-audit audit-rust-deny
+
+audit-rust: audit-rust-audit
+
+audit-rust-audit:
+	@echo "Ejecutando auditoria Rust con cargo audit"
+	@command -v cargo-audit >/dev/null 2>&1 || cargo install cargo-audit --locked
+	@cargo audit --deny warnings
+
+audit-rust-deny:
+	@echo "Ejecutando auditoria Rust con cargo deny"
+	@command -v cargo-deny >/dev/null 2>&1 || cargo install cargo-deny --locked
+	@cargo deny check advisories

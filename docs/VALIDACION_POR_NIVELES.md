@@ -406,3 +406,20 @@ git diff --check
 Los workflows de GitHub Actions deben usar permisos mínimos, no deben leer secretos en pull requests y no deben activar despliegues automáticos.
 
 La validación web queda manual mediante `workflow_dispatch`.
+
+
+### Nivel de auditoria Rust manual
+
+#### Fase 8.2
+
+La auditoria Rust queda fuera del CI automatico de PR.
+
+Se ejecuta mediante:
+
+```text
+workflow_dispatch
+schedule semanal
+revision previa a release
+```
+
+El objetivo es detectar avisos de seguridad de dependencias sin ralentizar cambios normales.

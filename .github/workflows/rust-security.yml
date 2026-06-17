@@ -1,0 +1,102 @@
+
+name: Auditoria Rust
+
+on:
+  workflow_dispatch:
+    inputs:
+      herramienta:
+        description: "Herramienta de auditoria Rust"
+        required: true
+        default: audit
+        type: choice
+        options:
+          - audit
+          - deny
+          - ambas
+  schedule:
+    - cron: "17 5 * * 1"
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  CARGO_TERM_COLOR: always
+
+concurrency:
+  group: auditoria-rust-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  auditoria-rust:
+    name: Auditoria Rust manual y semanal
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Verificar politica segura del workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          patrones_bloqueados = [
+              "pull_request" + "_target",
+              "sec" + "rets" + ".",
+              "contents:" + " write",
+              "pages:" + " write",
+              "id-token:" + " write",
+          ]
+
+          hubo_error = False
+
+          for ruta in Path(".github/workflows").glob("*.yml"):
+              texto = ruta.read_text(encoding="utf-8")
+              for patron in patrones_bloqueados:
+                  if patron in texto:
+                      print(f"Politica rechazada en {ruta}: patron bloqueado")
+                      hubo_error = True
+
+          if hubo_error:
+              raise SystemExit(1)
+
+          print("Politica segura de workflows verificada")
+          PY
+
+      - name: Ejecutar auditoria Rust seleccionada
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            herramienta="audit"
+          else
+            herramienta="${{ inputs.herramienta }}"
+          fi
+
+          echo "Herramienta seleccionada: ${herramienta}"
+
+          case "${herramienta}" in
+            audit|ambas)
+              echo "Instalando cargo audit si es necesario"
+              command -v cargo-audit >/dev/null 2>&1 || cargo install cargo-audit --locked
+              echo "Ejecutando cargo audit"
+              cargo audit --deny warnings
+              ;;
+          esac
+
+          case "${herramienta}" in
+            deny|ambas)
+              echo "Instalando cargo deny si es necesario"
+              command -v cargo-deny >/dev/null 2>&1 || cargo install cargo-deny --locked
+              echo "Ejecutando cargo deny para advisories"
+              cargo deny check advisories
+              ;;
+          esac

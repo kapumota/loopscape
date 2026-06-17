@@ -61,3 +61,18 @@ Estas reglas evitan que un pull request tenga acceso accidental a secretos o per
 Esta fase no agrega despliegue, publicación de releases ni GitHub Pages.
 
 El objetivo es preparar una base segura para las siguientes fases, donde podrán agregarse reportes o artefactos sin abrir permisos innecesarios.
+
+
+### Relacion con auditoria Rust
+
+#### Fase 8.2
+
+La auditoria de dependencias Rust no se ejecuta en cada PR.
+
+El proyecto usa un workflow separado para auditoria manual y semanal:
+
+```text
+.github/workflows/rust-security.yml
+```
+
+Este flujo mantiene la seguridad de dependencias sin hacer pesado el CI automatico.

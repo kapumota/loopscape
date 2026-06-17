@@ -767,3 +767,36 @@ FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true
 #### Resultado
 
 El proyecto queda preparado para reportes y artefactos de Fase 8 sin abrir permisos de escritura ni flujos de despliegue prematuros.
+
+
+### Fase 8.2: auditoria Rust manual
+
+#### Objetivo
+
+Agregar auditoria Rust de dependencias sin ralentizar cada PR.
+
+#### Entregables
+
+```text
+.github/workflows/rust-security.yml
+docs/AUDITORIA_RUST.md
+make audit-rust
+make audit-rust-audit
+make audit-rust-deny
+```
+
+#### Criterio de aceptacion
+
+```text
+la auditoria Rust no corre en pull_request
+la auditoria Rust no corre en push
+la auditoria Rust puede ejecutarse manualmente
+la auditoria Rust corre semanalmente
+los permisos del workflow son de solo lectura
+no se usan secretos
+no hay deploy automatico
+```
+
+#### Siguiente fase
+
+La siguiente fase recomendada es Fase 8.3, validacion profunda manual.
