@@ -72,3 +72,11 @@ La fase se considera valida si:
 #### Preparacion para Fase 8
 
 Esta fase deja el bloque multiagente listo para una siguiente etapa centrada en reportes, dashboards, explicabilidad o suites de escenarios.
+
+### Relación con CI profesional ligero
+
+#### Uso recomendado
+
+La validación multiagente se mantiene disponible mediante `make validate-multiagent`.
+
+La auditoría de workflows de Fase 8.1 no ejecuta esta validación pesada por defecto en cada pull request. Esto conserva un CI ligero y permite ejecutar la validación multiagente cuando se cambia el núcleo, el DSL o los escenarios.

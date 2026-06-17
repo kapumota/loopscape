@@ -747,3 +747,23 @@ Cerrar la parte 7 con un gate reproducible para escenarios adversariales multiag
 #### Resultado esperado
 
 La Fase 8 puede partir de una base con supervisor, recuperacion, votacion simple, DSL, CLI y validacion integrada.
+
+### Fase 8.1: auditoría ligera de workflows
+
+#### Objetivo
+
+Endurecer GitHub Actions sin volver el CI pesado.
+
+#### Cambios
+
+```text
+permissions mínimos
+no deploy automático
+no secrets en PR
+actions actualizadas
+FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true
+```
+
+#### Resultado
+
+El proyecto queda preparado para reportes y artefactos de Fase 8 sin abrir permisos de escritura ni flujos de despliegue prematuros.

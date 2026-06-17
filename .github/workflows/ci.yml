@@ -1,68 +1,102 @@
-name: Validacion ligera
 
-# Fuerza acciones JavaScript a usar Node.js 24 durante la transicion de GitHub Actions.
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+name: Validacion ligera profesional
 
 on:
   pull_request:
     branches: [main]
   push:
     branches: [main]
-  workflow_dispatch:
-    inputs:
-      nivel:
-        description: "Nivel de validacion"
-        required: true
-        default: "rapida"
-        type: choice
-        options:
-          - rapida
-          - media
 
 permissions:
   contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 concurrency:
   group: validacion-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  rust:
-    name: Rust nativo
+  auditoria:
+    name: Auditoria de workflows
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 5
+    permissions:
+      contents: read
     steps:
       - name: Descargar codigo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
-      - name: Instalar Rust estable
+      - name: Verificar politica segura de workflows
+        shell: bash
         run: |
-          rustup toolchain install stable --profile minimal --component rustfmt
-          rustup default stable
+          set -euo pipefail
+
+          evento_prohibido="pull_request"
+          evento_prohibido="${evento_prohibido}_target"
+          patron_secretos="secrets"
+          patron_secretos="${patron_secretos}\."
+          permiso_contenido="contents"
+          permiso_contenido="${permiso_contenido}: write"
+          permiso_pages="pages"
+          permiso_pages="${permiso_pages}: write"
+          permiso_oidc="id-token"
+          permiso_oidc="${permiso_oidc}: write"
+
+          if grep -R "$evento_prohibido" .github/workflows --include='*.yml' --include='*.yaml'; then
+            echo "No se permite pull_request_target en workflows del proyecto"
+            exit 1
+          fi
+
+          if grep -R "$patron_secretos" .github/workflows --include='*.yml' --include='*.yaml'; then
+            echo "No se permite leer secrets desde workflows de pull request"
+            exit 1
+          fi
+
+          if grep -R "$permiso_contenido\|$permiso_pages\|$permiso_oidc" .github/workflows --include='*.yml' --include='*.yaml'; then
+            echo "Los workflows ligeros no deben pedir permisos de escritura"
+            exit 1
+          fi
+
+          echo "Auditoria ligera de workflows completada"
+
+  rust:
+    name: Rust nativo
+    needs: auditoria
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Instalar Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
 
       - name: Instalar dependencias del sistema
+        shell: bash
         run: |
+          set -euo pipefail
           sudo apt-get update
           sudo apt-get install -y pkg-config libasound2-dev libudev-dev
 
-      - name: Restaurar cache de Cargo
-        uses: actions/cache@v5
+      - name: Restaurar cache de Rust
+        uses: Swatinem/rust-cache@v2
         with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
+          cache-on-failure: true
 
-      - name: Determinar nivel de validacion
-        run: |
-          if [ "${{ github.event_name }}" = "push" ]; then
-            make validate
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.nivel }}" = "media" ]; then
-            make validate
-          else
-            make validate-fast
-          fi
+      - name: Verificar estilo documental
+        run: make style-check
+
+      - name: Verificar formato
+        run: make fmt-check
+
+      - name: Verificar compilacion nativa
+        run: cargo check --locked --all-targets
+
+      - name: Ejecutar pruebas nativas
+        run: cargo test --locked --all-targets --no-fail-fast
