@@ -125,3 +125,19 @@ git pull --ff-only origin main
 git tag v0.9.0-rc1
 git push origin v0.9.0-rc1
 ```
+
+### Fase 9.4: revision posterior al release candidate
+
+#### Objetivo
+
+Documentar la revision posterior a `v0.9.0-rc1` antes de decidir si el proyecto avanza a `v0.9.0` estable o necesita otro release candidate.
+
+#### Regla
+
+Esta fase no crea tags, no publica artefactos y no ejecuta deploy. Solo agrega la documentacion de revision.
+
+#### Documento principal
+
+```text
+docs/REVISION_RELEASE_CANDIDATE.md
+```
