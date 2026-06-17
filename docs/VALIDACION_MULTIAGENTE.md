@@ -80,3 +80,12 @@ Esta fase deja el bloque multiagente listo para una siguiente etapa centrada en 
 La validación multiagente se mantiene disponible mediante `make validate-multiagent`.
 
 La auditoría de workflows de Fase 8.1 no ejecuta esta validación pesada por defecto en cada pull request. Esto conserva un CI ligero y permite ejecutar la validación multiagente cuando se cambia el núcleo, el DSL o los escenarios.
+
+
+### Relacion con auditoria Rust
+
+#### Separacion de responsabilidades
+
+La validacion multiagente comprueba comportamiento funcional. La auditoria Rust comprueba avisos de seguridad de dependencias.
+
+Ambas validaciones son manuales o programadas, pero no forman parte obligatoria del CI automatico de cada PR.
