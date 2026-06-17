@@ -525,3 +525,27 @@ make evidence-report-release
 #### Regla
 
 Estos comandos son manuales y se usan antes de crear `v0.9.0-rc1`.
+
+### Fase 9.4: revision posterior al release candidate
+
+#### Validacion esperada
+
+La fase se valida con comprobaciones ligeras de estructura:
+
+```bash
+cargo fmt
+cargo metadata --locked --format-version 1 --no-deps > /dev/null
+git diff --check
+cat VERSION
+grep -n "Revision posterior" docs/REVISION_RELEASE_CANDIDATE.md docs/RELEASE.md docs/RELEASE_CANDIDATE.md
+```
+
+#### Validacion manual recomendada
+
+La revision puede usar resultados previos o ejecutar manualmente:
+
+```bash
+make validate-full
+make validate-web
+make evidence-report-release
+```

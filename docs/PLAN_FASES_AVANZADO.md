@@ -918,3 +918,23 @@ Objetivo: generar artefacto web manual como artifact, no como Pages.
 #### Fase 9.3: release candidate
 
 Objetivo: cerrar `v0.9.0-rc1` desde `main` despues de validar y mergear el PR correspondiente.
+
+### Fase 9.4: revision posterior al release candidate
+
+#### Objetivo
+
+Registrar la evaluacion posterior a `v0.9.0-rc1`.
+
+#### Entregables
+
+- `docs/REVISION_RELEASE_CANDIDATE.md`.
+- Actualizacion de documentacion de release.
+- Criterios para avanzar a `v0.9.0` estable.
+- Criterios para crear `v0.9.0-rc2`.
+
+#### Fuera de alcance
+
+- Crear tag nuevo.
+- Publicar GitHub Release.
+- Publicar web automaticamente.
+- Cambiar funcionalidad del nucleo.

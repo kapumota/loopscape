@@ -87,3 +87,26 @@ Los reportes de evidencia permiten revisar el estado del release candidate antes
 ```bash
 make evidence-report-release
 ```
+
+### Uso en revision posterior al release candidate
+
+#### Objetivo
+
+Los reportes de evidencia sirven como entrada para `docs/REVISION_RELEASE_CANDIDATE.md`.
+
+#### Evidencia esperada
+
+La revision posterior al RC debe revisar:
+
+```text
+reporte-evidencia.md
+reporte-evidencia.json
+resultado de validacion profunda
+resultado de validacion web
+resultado de auditoria Rust
+resultado de escaneo de secretos
+```
+
+#### Decision
+
+El reporte no decide por si solo si se publica `v0.9.0`. La decision queda documentada en la revision posterior al release candidate.

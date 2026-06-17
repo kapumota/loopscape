@@ -79,3 +79,15 @@ La fase queda cerrada cuando:
 - La documentacion de release describe el flujo de tag.
 - `make validate-full` y `make validate-web` existen como targets manuales.
 - El tag se crea desde `main`, no desde una rama temporal.
+
+### Revision posterior al release candidate
+
+#### Objetivo
+
+Despues de crear el tag `v0.9.0-rc1`, la revision posterior se documenta en:
+
+```text
+docs/REVISION_RELEASE_CANDIDATE.md
+```
+
+Esta revision decide si el proyecto pasa a `v0.9.0` estable o si necesita `v0.9.0-rc2`.
