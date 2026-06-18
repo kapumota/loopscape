@@ -956,3 +956,22 @@ Agregar escenarios DSL comparables para pruebas, benchmarks e informe tecnico.
 #### Regla
 
 Los escenarios deben ser pequeños, reproducibles y no deben depender de red, secretos ni servicios externos.
+
+### Fase 10.2: benchmarks reproducibles
+
+#### Objetivo
+
+Agregar benchmarks manuales y reproducibles sobre los escenarios comparables de la Fase 10.1.
+
+#### Entregables
+
+```text
+benchmarks/
+scripts/run_benchmarks.sh
+artifacts/benchmarks/.gitkeep
+docs/BENCHMARKS.md
+```
+
+#### Criterio de aceptacion
+
+Los benchmarks deben generar CSV y resumen Markdown sin incorporarse al CI automatico de PR pequeños.

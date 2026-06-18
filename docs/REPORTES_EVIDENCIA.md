@@ -118,3 +118,16 @@ El reporte no decide por si solo si se publica `v0.9.0`. La decision queda docum
 Los escenarios comparables son entradas estables para reportes de evidencia, benchmarks y resultados tecnicos.
 
 No generan evidencia por si mismos. La evidencia se genera cuando se ejecutan desde validacion profunda, benchmarks o scripts de reporte.
+
+### Fase 10.2: benchmarks reproducibles
+
+#### Relacion con evidencia
+
+Los benchmarks generan salidas que pueden adjuntarse a reportes de evidencia posteriores.
+
+Archivos relevantes:
+
+```text
+artifacts/benchmarks/resultados.csv
+artifacts/benchmarks/resumen.md
+```
