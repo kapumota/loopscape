@@ -30,3 +30,10 @@ package-lock.json
 
 # Artefactos de validacion de Loopscape
 artifacts/
+
+# Fase 10.2: conservar marcador de benchmarks
+!artifacts/
+artifacts/*
+!artifacts/benchmarks/
+artifacts/benchmarks/*
+!artifacts/benchmarks/.gitkeep

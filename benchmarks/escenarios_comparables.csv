@@ -1,0 +1,4 @@
+nombre,ruta,semilla,ticks
+react_basic,scenarios/react_basic.loop,123,12
+dsl_delegation,scenarios/dsl_delegation.loop,123,12
+multiagent_failure,scenarios/multiagent_failure.loop,123,12

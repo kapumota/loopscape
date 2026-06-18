@@ -566,3 +566,22 @@ git diff --check
 Los tres escenarios deben validar, interpretarse como DSL y exportarse como grafo.
 
 El escenario `multiagent_failure.loop` debe exponer fallo recuperable, fallo bizantino simplificado y votacion esperada.
+
+### Fase 10.2: benchmarks reproducibles
+
+#### Validacion recomendada
+
+```bash
+cargo fmt
+cargo metadata --locked --format-version 1 --no-deps > /dev/null
+cargo test --test escenarios_comparables
+bash scripts/run_benchmarks.sh
+git diff --check
+```
+
+#### Salidas esperadas
+
+```text
+artifacts/benchmarks/resultados.csv
+artifacts/benchmarks/resumen.md
+```

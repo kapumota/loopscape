@@ -125,3 +125,11 @@ accion siguiente: preparar v0.9.0 | preparar v0.9.0-rc2 | corregir bloqueantes
 Los escenarios comparables ayudan a revisar `v0.9.0-rc1` con entradas DSL estables.
 
 No modifican la version del proyecto ni crean nuevos tags.
+
+### Fase 10.2: benchmarks reproducibles
+
+#### Uso posterior al release candidate
+
+Los benchmarks reproducibles permiten comparar el comportamiento de `v0.9.0-rc1` en escenarios basicos, delegacion DSL y fallos multiagente.
+
+No son criterio unico de aceptacion, pero aportan evidencia para decidir si se mantiene el release candidate o se prepara un nuevo corte.
