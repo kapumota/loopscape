@@ -26,22 +26,6 @@ La version actual corresponde a `0.9.0-rc1`. Es un release candidate experimenta
 
 ![Pipeline de validacion de Loopscape](docs/assets/loopscape-validacion.svg)
 
-#### Demo visual
-
-![Vista previa de demo visual](docs/assets/loopscape-demo-placeholder.svg)
-
-El GIF real de la interfaz debe agregarse solo cuando exista el archivo:
-
-```text
-docs/assets/loopscape-demo.gif
-```
-
-Cuando la demo este grabada, reemplaza la imagen de vista previa por:
-
-```md
-![Demo visual de Loopscape](docs/assets/loopscape-demo.gif)
-```
-
 #### Demo web en Hugging Face Spaces
 
 La demo web de Loopscape esta publicada y probada en Hugging Face Spaces:
