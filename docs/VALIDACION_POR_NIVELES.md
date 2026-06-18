@@ -617,3 +617,15 @@ cargo fmt
 cargo metadata --locked --format-version 1 --no-deps > /dev/null
 git diff --check
 ```
+
+### Fase 10.4.1: validacion de badges y demo
+
+#### Validacion esperada
+
+```text
+README.md no muestra repo not found
+README.md no muestra no status en workflows manuales usados como badges dinamicos
+README.md no referencia un GIF inexistente
+docs/HF_SPACES_DEMO.md existe
+docs/assets/loopscape-demo-placeholder.svg existe
+```

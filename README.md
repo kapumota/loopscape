@@ -1,19 +1,18 @@
 ### Loopscape
 
-[![CI](https://github.com/kapumota/loopscape/actions/workflows/ci.yml/badge.svg)](https://github.com/kapumota/loopscape/actions/workflows/ci.yml)
-[![Deep validation](https://github.com/kapumota/loopscape/actions/workflows/deep-validation.yml/badge.svg)](https://github.com/kapumota/loopscape/actions/workflows/deep-validation.yml)
-[![Evidence report](https://github.com/kapumota/loopscape/actions/workflows/evidence-report.yml/badge.svg)](https://github.com/kapumota/loopscape/actions/workflows/evidence-report.yml)
-[![Rust security](https://github.com/kapumota/loopscape/actions/workflows/rust-security.yml/badge.svg)](https://github.com/kapumota/loopscape/actions/workflows/rust-security.yml)
-[![Secrets scan](https://github.com/kapumota/loopscape/actions/workflows/secrets-scan.yml/badge.svg)](https://github.com/kapumota/loopscape/actions/workflows/secrets-scan.yml)
-[![Web artifact](https://github.com/kapumota/loopscape/actions/workflows/web-build.yml/badge.svg)](https://github.com/kapumota/loopscape/actions/workflows/web-build.yml)
+[![CI](https://github.com/kapumota/loopscape/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kapumota/loopscape/actions/workflows/ci.yml)
 ![Version](https://img.shields.io/badge/version-0.9.0--rc1-blue)
-![Release](https://img.shields.io/github/v/release/kapumota/loopscape?include_prereleases&label=release)
-![License](https://img.shields.io/github/license/kapumota/loopscape)
+![Release candidate](https://img.shields.io/badge/release-v0.9.0--rc1-blue)
+![License](https://img.shields.io/badge/license-MIT-blue)
 ![Rust](https://img.shields.io/badge/rust-stable-orange)
 ![WebAssembly](https://img.shields.io/badge/target-wasm32--unknown--unknown-blue)
 ![Bevy](https://img.shields.io/badge/engine-Bevy-purple)
 ![Benchmarks](https://img.shields.io/badge/benchmarks-reproducibles-blue)
-![Last commit](https://img.shields.io/github/last-commit/kapumota/loopscape)
+![Validacion profunda](https://img.shields.io/badge/validacion-profunda%20manual-lightgrey)
+![Auditoria Rust](https://img.shields.io/badge/auditoria-rust%20manual-lightgrey)
+![Secretos](https://img.shields.io/badge/secretos-escaneo%20manual-lightgrey)
+![Artefacto web](https://img.shields.io/badge/artefacto-web%20manual-lightgrey)
+![HF Spaces](https://img.shields.io/badge/demo-HF%20Spaces%20pendiente-yellow)
 
 #### Resumen
 
@@ -27,17 +26,27 @@ La version actual corresponde a `0.9.0-rc1`. Es un release candidate experimenta
 
 ![Pipeline de validacion de Loopscape](docs/assets/loopscape-validacion.svg)
 
-Para agregar un GIF real de la interfaz, graba una corrida corta y guardala en:
+#### Demo visual
+
+![Vista previa de demo visual](docs/assets/loopscape-demo-placeholder.svg)
+
+El GIF real de la interfaz debe agregarse solo cuando exista el archivo:
 
 ```text
 docs/assets/loopscape-demo.gif
 ```
 
-Luego agrega esta linea debajo de los graficos:
+Cuando la demo este grabada, reemplaza la imagen de vista previa por:
 
 ```md
 ![Demo visual de Loopscape](docs/assets/loopscape-demo.gif)
 ```
+
+#### Demo web en Hugging Face Spaces
+
+La demo web puede publicarse como Space estatico a partir del directorio `dist/` generado por Trunk.
+
+La URL publica no se fija en el README hasta que el Space exista y haya sido probado. El procedimiento esta documentado en `docs/HF_SPACES_DEMO.md`.
 
 #### Objetivo del proyecto
 
@@ -214,6 +223,7 @@ artifacts/
 - `docs/RELEASE_CANDIDATE.md`: alcance de `v0.9.0-rc1`.
 - `docs/REVISION_RELEASE_CANDIDATE.md`: revision posterior al release candidate.
 - `docs/INDICE_FINAL.md`: indice final del repositorio.
+- `docs/HF_SPACES_DEMO.md`: preparacion de demo web para Hugging Face Spaces.
 
 #### Flujo por rama
 

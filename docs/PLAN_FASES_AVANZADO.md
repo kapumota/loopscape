@@ -1005,3 +1005,13 @@ Mejorar la entrada publica del repositorio con badges, graficos e indice final s
 - `docs/INDICE_FINAL.md`.
 - `docs/assets/loopscape-flujo.svg`.
 - `docs/assets/loopscape-validacion.svg`.
+
+### Fase 10.4.1: correccion de badges y demo HF Spaces
+
+#### Objetivo
+
+Corregir badges que dependen de informacion no disponible en repositorios privados o sin release publico, evitar imagenes rotas en el README y documentar el camino para publicar una demo web en Hugging Face Spaces.
+
+#### Alcance
+
+Esta fase no modifica el nucleo de simulacion. Solo ajusta documentacion, badges seguros y recursos visuales de presentacion.
