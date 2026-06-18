@@ -585,3 +585,21 @@ git diff --check
 artifacts/benchmarks/resultados.csv
 artifacts/benchmarks/resumen.md
 ```
+
+### Fase 10.3: informe tecnico interno
+
+#### Validacion recomendada
+
+```bash
+cargo fmt
+cargo metadata --locked --format-version 1 --no-deps > /dev/null
+cargo test --test escenarios_comparables
+git diff --check
+```
+
+#### Revision documental
+
+```bash
+grep -n "Informe tecnico interno" docs/INFORME_TECNICO.md
+grep -n "Resultados preliminares" docs/RESULTADOS.md
+```

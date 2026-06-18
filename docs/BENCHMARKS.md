@@ -71,3 +71,16 @@ artifacts/benchmarks/.gitkeep
 #### Relacion con el release candidate
 
 Los benchmarks reproducibles ayudan a evaluar `v0.9.0-rc1`, pero no sustituyen la validacion profunda manual ni los reportes de evidencia.
+
+### Fase 10.3: informe tecnico interno
+
+#### Relacion con benchmarks
+
+Los benchmarks reproducibles alimentan los documentos:
+
+```text
+docs/INFORME_TECNICO.md
+docs/RESULTADOS.md
+```
+
+Las mediciones deben copiarse desde `artifacts/benchmarks/resultados.csv` cuando se ejecute el script manual.

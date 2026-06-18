@@ -133,3 +133,11 @@ No modifican la version del proyecto ni crean nuevos tags.
 Los benchmarks reproducibles permiten comparar el comportamiento de `v0.9.0-rc1` en escenarios basicos, delegacion DSL y fallos multiagente.
 
 No son criterio unico de aceptacion, pero aportan evidencia para decidir si se mantiene el release candidate o se prepara un nuevo corte.
+
+### Fase 10.3: informe tecnico interno
+
+#### Uso posterior al release candidate
+
+El informe tecnico interno ayuda a decidir si `v0.9.0-rc1` puede avanzar hacia una version estable o si se necesita un nuevo release candidate.
+
+La decision debe considerar validacion, benchmarks, resultados preliminares y riesgos documentados.

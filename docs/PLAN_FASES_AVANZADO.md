@@ -975,3 +975,20 @@ docs/BENCHMARKS.md
 #### Criterio de aceptacion
 
 Los benchmarks deben generar CSV y resumen Markdown sin incorporarse al CI automatico de PR pequeños.
+
+### Fase 10.3: informe tecnico interno
+
+#### Objetivo
+
+Consolidar arquitectura, alcance, validacion, escenarios comparables, benchmarks reproducibles, riesgos y criterios de cierre experimental.
+
+#### Entregables
+
+```text
+docs/INFORME_TECNICO.md
+docs/RESULTADOS.md
+```
+
+#### Criterio de aceptacion
+
+El informe no debe inventar metricas. Los resultados numericos deben provenir de una corrida local de benchmarks.

@@ -131,3 +131,16 @@ Archivos relevantes:
 artifacts/benchmarks/resultados.csv
 artifacts/benchmarks/resumen.md
 ```
+
+### Fase 10.3: informe tecnico interno
+
+#### Relacion con evidencia
+
+El informe tecnico interno resume evidencia generada por fases previas y prepara una lectura ordenada de resultados.
+
+Documentos principales:
+
+```text
+docs/INFORME_TECNICO.md
+docs/RESULTADOS.md
+```
