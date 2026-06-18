@@ -1044,3 +1044,17 @@ Hacer que Loopscape sea entendible para usuarios externos antes del cierre exper
 - Demo guiada.
 - Lectura rapida.
 - README con instrucciones de uso mas detalladas.
+
+### Fase 11.1: cierre experimental v0.9.0
+
+#### Objetivo
+
+Cerrar Loopscape como version experimental `v0.9.0` sin agregar nuevas funcionalidades grandes.
+
+#### Entregables
+
+- `VERSION` actualizado a `0.9.0`.
+- `CHANGELOG.md` con entrada `0.9.0`.
+- `docs/CIERRE_EXPERIMENTAL.md`.
+- `docs/ROADMAP_POST_V0_9.md`.
+- README actualizado al cierre experimental.
