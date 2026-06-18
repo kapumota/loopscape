@@ -109,3 +109,9 @@ comparacion contra linea base externa
 #### Resultado de cierre
 
 El resultado esperado de la Fase 10.3 es un informe tecnico interno y una plantilla clara para registrar resultados reproducibles sin versionar artefactos generados.
+
+### Fase 10.4: lectura de resultados desde README
+
+#### Relacion con resultados
+
+El README ahora enlaza los documentos de escenarios, benchmarks, informe tecnico y resultados preliminares. Esto permite que la lectura de resultados sea visible desde la entrada principal del repositorio.

@@ -992,3 +992,16 @@ docs/RESULTADOS.md
 #### Criterio de aceptacion
 
 El informe no debe inventar metricas. Los resultados numericos deben provenir de una corrida local de benchmarks.
+
+### Fase 10.4: badges e indice final
+
+#### Objetivo
+
+Mejorar la entrada publica del repositorio con badges, graficos e indice final sin modificar el nucleo de simulacion.
+
+#### Entregables
+
+- `README.md` actualizado.
+- `docs/INDICE_FINAL.md`.
+- `docs/assets/loopscape-flujo.svg`.
+- `docs/assets/loopscape-validacion.svg`.
