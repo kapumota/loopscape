@@ -642,3 +642,18 @@ README.md no referencia un GIF inexistente
 docs/HF_SPACES_DEMO.md registra Git LFS para WebAssembly
 la demo abre desde https://huggingface.co/spaces/kapumota/loopscape
 ```
+
+### Fase 10.5, validacion de uso guiado
+
+#### Criterio
+
+Una persona externa debe poder abrir la demo, entender las cinco eras, ejecutar el smoke nativo, correr escenarios comparables y leer resultados preliminares sin revisar todo el codigo fuente.
+
+#### Validacion manual
+
+```bash
+grep -n "Como usar Loopscape" README.md
+grep -n "Demo guiada" docs/DEMO_GUIADA.md
+grep -n "Guia de uso" docs/GUIA_USO.md
+grep -n "Lectura rapida" docs/LECTURA_RAPIDA.md
+```
