@@ -1015,3 +1015,19 @@ Corregir badges que dependen de informacion no disponible en repositorios privad
 #### Alcance
 
 Esta fase no modifica el nucleo de simulacion. Solo ajusta documentacion, badges seguros y recursos visuales de presentacion.
+
+### Fase 10.4.2: publicacion de demo HF Spaces
+
+#### Objetivo
+
+Actualizar la documentacion publica despues de publicar y probar la demo web en Hugging Face Spaces.
+
+#### Alcance
+
+Esta fase no modifica el nucleo de simulacion. Solo actualiza el README, la documentacion de la demo y el indice final con el enlace publico probado.
+
+#### Enlace
+
+```text
+https://huggingface.co/spaces/kapumota/loopscape
+```

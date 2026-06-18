@@ -629,3 +629,16 @@ README.md no referencia un GIF inexistente
 docs/HF_SPACES_DEMO.md existe
 docs/assets/loopscape-demo-placeholder.svg existe
 ```
+
+### Fase 10.4.2: validacion de demo publicada
+
+#### Validacion esperada
+
+```text
+README.md contiene el enlace publico de Hugging Face Spaces
+README.md no contiene repo not found
+README.md no contiene no status en badges manuales
+README.md no referencia un GIF inexistente
+docs/HF_SPACES_DEMO.md registra Git LFS para WebAssembly
+la demo abre desde https://huggingface.co/spaces/kapumota/loopscape
+```

@@ -1,16 +1,36 @@
 ### Demo web en Hugging Face Spaces
 
+#### Estado de publicacion
+
+La demo web de Loopscape fue publicada y probada en Hugging Face Spaces:
+
+```text
+https://huggingface.co/spaces/kapumota/loopscape
+```
+
+Esta URL se usa como enlace publico estable en el README principal del repositorio.
+
+#### URL directa del runtime
+
+Hugging Face tambien puede exponer una URL directa del runtime:
+
+```text
+https://kapumota-loopscape.hf.space
+```
+
+Esa URL puede tardar en refrescar o responder distinto segun el estado interno del Space. Para documentacion publica se prefiere la pagina estable del Space.
+
 #### Proposito
 
-Este documento define como preparar una demo web publica de Loopscape antes del lanzamiento experimental.
+Este documento define como preparar, publicar y validar una demo web publica de Loopscape antes del lanzamiento experimental.
 
-La demo debe construirse desde el artefacto WebAssembly generado por Trunk. No debe activar despliegues automaticos desde GitHub Pages ni depender de secretos del repositorio principal.
+La demo se construye desde el artefacto WebAssembly generado por Trunk. No activa despliegues automaticos desde GitHub Pages ni depende de secretos del repositorio principal.
 
-#### Estrategia recomendada
+#### Estrategia usada
 
-La primera opcion es usar un Space estatico con el contenido generado en `dist/`.
+La demo fue publicada como Space estatico con el contenido generado en `dist/`.
 
-La alternativa Docker solo debe usarse si el Space estatico no sirve para cargar correctamente los archivos WebAssembly, las rutas o los tipos MIME.
+El archivo WebAssembly se almacena mediante Git LFS porque supera el limite de archivos ordinarios permitido por el repositorio del Space.
 
 #### Preparacion local
 
@@ -26,41 +46,62 @@ El comando genera el directorio:
 dist/
 ```
 
-Ese directorio contiene los archivos que deben copiarse al Space.
+Ese directorio contiene los archivos que se copian al repositorio del Space.
 
-#### Estructura esperada del Space estatico
+#### Estructura publicada
 
 ```text
 README.md
+.gitattributes
 index.html
-assets/
 *.js
 *.wasm
 ```
 
-La estructura exacta puede variar segun lo que genere Trunk. La regla practica es copiar el contenido de `dist/`, no el directorio completo como subcarpeta.
+La regla practica es copiar el contenido de `dist/`, no el directorio completo como subcarpeta.
 
-#### Validacion previa
+#### Configuracion del Space
 
-Antes de enlazar la demo desde el README principal, revisa:
+El `README.md` del Space debe iniciar con:
 
-```text
-la pagina abre sin consola roja critica
-el archivo wasm carga correctamente
-las rutas relativas funcionan
-la vista inicial se muestra
-los controles basicos responden
-el Space no requiere credenciales para verlo
+```yaml
+---
+title: Loopscape
+sdk: static
+app_file: index.html
+pinned: false
+---
 ```
 
-#### Politica de enlace publico
+#### Git LFS para WebAssembly
 
-El README principal no debe apuntar a una URL de Hugging Face Spaces hasta que el Space exista y haya sido probado.
+El archivo `.wasm` debe manejarse con Git LFS:
 
-Mientras tanto, el badge se mantiene como estado pendiente:
+```bash
+git lfs install
+git lfs track "*.wasm"
+git add .gitattributes
+```
+
+Para verificar que el commit guarda un puntero LFS y no el binario completo:
+
+```bash
+git cat-file -s HEAD:nombre_del_archivo_bg.wasm
+git show HEAD:nombre_del_archivo_bg.wasm
+```
+
+El primer comando debe mostrar un tamano pequeno. El segundo debe mostrar un puntero `git-lfs`.
+
+#### Validacion posterior
+
+Antes de enlazar la demo desde el README principal se reviso:
 
 ```text
-demo HF Spaces pendiente
+la pagina del Space abre sin credenciales
+el archivo wasm fue aceptado por Git LFS
+la vista inicial se muestra
+los controles basicos aparecen en pantalla
+la demo se ejecuta desde la pestana App del Space
 ```
 
 #### GIF de demostracion
@@ -82,9 +123,10 @@ docs/assets/loopscape-demo-placeholder.svg
 La fase queda lista cuando:
 
 ```text
-los badges del README no muestran repo not found
-los workflows manuales no aparecen como no status en badges dinamicos
-docs/HF_SPACES_DEMO.md documenta el flujo de demo web
+README.md enlaza la demo publicada
+README.md no muestra repo not found
+README.md no muestra no status en badges manuales
 README.md no referencia un GIF inexistente
-la vista previa local existe en docs/assets/
+la documentacion registra el uso de Git LFS para el wasm
+la demo abre desde la pagina publica de Hugging Face Spaces
 ```

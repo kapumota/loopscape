@@ -49,3 +49,15 @@ docs/assets/loopscape-demo-placeholder.svg
 ```
 
 El archivo `docs/assets/loopscape-demo.gif` debe agregarse solo cuando exista una grabacion real de la interfaz.
+
+### Demo web publicada en Hugging Face Spaces
+
+#### Enlace publico
+
+La demo web de Loopscape esta disponible en:
+
+```text
+https://huggingface.co/spaces/kapumota/loopscape
+```
+
+El procedimiento de publicacion y validacion esta documentado en `docs/HF_SPACES_DEMO.md`.
