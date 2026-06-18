@@ -1,0 +1,8 @@
+
+/goal coordinar_delegacion
+/plan preparar -> asignar -> integrar -> validar
+/delegate planificacion worker_0
+/delegate busqueda worker_1
+/delegate verificacion worker_2
+/verify delegacion_completa
+/terminate when verified

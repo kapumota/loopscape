@@ -1,0 +1,11 @@
+
+/goal comparar_resiliencia
+/plan detectar -> aislar -> recuperar -> votar -> reportar
+/delegate supervisor worker_0
+/delegate ejecucion worker_1
+/delegate auditoria worker_2
+/worker-failure 1 3 4
+/byzantine-failure 2 falso
+/byzantine-vote verdadero
+/verify recuperacion_y_votacion
+/terminate when verified

@@ -1,0 +1,7 @@
+
+/goal reaccion_basica
+/plan observar -> decidir -> actuar -> verificar
+/delegate observacion worker_0
+/delegate accion worker_1
+/verify estado_final
+/terminate when verified
