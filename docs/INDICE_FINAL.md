@@ -61,3 +61,11 @@ https://huggingface.co/spaces/kapumota/loopscape
 ```
 
 El procedimiento de publicacion y validacion esta documentado en `docs/HF_SPACES_DEMO.md`.
+
+### Fase 10.5, guia de uso y demo guiada
+
+#### Documentos agregados
+
+- `docs/GUIA_USO.md`, guia practica para usar Loopscape como demo, simulador y laboratorio.
+- `docs/DEMO_GUIADA.md`, recorrido sugerido para presentar la demo web y local.
+- `docs/LECTURA_RAPIDA.md`, ruta corta para entender el proyecto en pocos minutos.

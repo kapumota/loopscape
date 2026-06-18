@@ -10,10 +10,10 @@ Objetivo: crear repositorio, normalizar estructura y dejar `main` como base limp
 
 Entregables:
 
-- repositorio Git inicial;
-- README minimo;
-- licencia;
-- `.gitignore`;
+- repositorio Git inicial,
+- README minimo,
+- licencia,
+- `.gitignore`,
 - primer tag `v0.0.0` si se desea congelar la base importada.
 
 Rama sugerida:
@@ -28,11 +28,11 @@ Objetivo: dejar el proyecto validable por cualquier persona.
 
 Entregables:
 
-- `Makefile`;
-- scripts de limpieza y validacion;
-- CI basico;
-- documentacion de arquitectura;
-- documentacion de flujo por ramas y patches;
+- `Makefile`,
+- scripts de limpieza y validacion,
+- CI basico,
+- documentacion de arquitectura,
+- documentacion de flujo por ramas y patches,
 - normalizacion de comentarios y cadenas visibles en espanol.
 
 Rama sugerida:
@@ -53,10 +53,10 @@ Objetivo: separar el comportamiento de los loops del renderizado.
 
 Entregables:
 
-- modulo `core` para tareas, tokens, loops y scheduler;
-- simulacion por ticks;
-- pruebas unitarias del ciclo Think, Act y Observe;
-- estado reproducible con semilla fija;
+- modulo `core` para tareas, tokens, loops y scheduler,
+- simulacion por ticks,
+- pruebas unitarias del ciclo Think, Act y Observe,
+- estado reproducible con semilla fija,
 - eventos internos tipados.
 
 Rama sugerida:
@@ -71,11 +71,11 @@ Objetivo: implementar comandos formales como `/goal`, `/plan`, `/delegate` y `/v
 
 Entregables:
 
-- lexer;
-- parser;
-- AST;
-- validador semantico;
-- interprete minimo;
+- lexer,
+- parser,
+- AST,
+- validador semantico,
+- interprete minimo,
 - pruebas de scripts validos e invalidos.
 
 Rama sugerida:
@@ -90,11 +90,11 @@ Objetivo: permitir que el usuario conecte loops, herramientas y rutas de tareas 
 
 Entregables:
 
-- seleccion de entidades;
-- arrastre de nodos;
-- conexiones visuales;
-- panel de propiedades;
-- modo Rayos X;
+- seleccion de entidades,
+- arrastre de nodos,
+- conexiones visuales,
+- panel de propiedades,
+- modo Rayos X,
 - guardado de grafo en JSON.
 
 Rama sugerida:
@@ -109,12 +109,12 @@ Objetivo: integrar LLMs sin exponer claves ni romper reproducibilidad.
 
 Entregables:
 
-- proveedor simulado por defecto;
-- proxy local;
-- abstraccion de proveedor;
-- limites de tokens;
-- timeouts;
-- modo offline;
+- proveedor simulado por defecto,
+- proxy local,
+- abstraccion de proveedor,
+- limites de tokens,
+- timeouts,
+- modo offline,
 - trazas ReAct persistibles.
 
 Rama sugerida:
@@ -129,13 +129,13 @@ Objetivo: convertir los loops en infraestructura gestionada.
 
 Entregables:
 
-- supervisores;
-- trabajadores;
-- especialistas;
-- latidos;
-- deteccion de loops colgados;
-- reinicio de workers;
-- fallos bizantinos simulados;
+- supervisores,
+- trabajadores,
+- especialistas,
+- latidos,
+- deteccion de loops colgados,
+- reinicio de workers,
+- fallos bizantinos simulados,
 - votacion o consenso simplificado.
 
 Rama sugerida:
@@ -150,10 +150,10 @@ Objetivo: hacer que cada ejecucion pueda analizarse y compararse.
 
 Entregables:
 
-- grabacion de runs;
-- replay determinista;
-- metricas de throughput, latencia y uso de tokens;
-- benchmarks reproducibles;
+- grabacion de runs,
+- replay determinista,
+- metricas de throughput, latencia y uso de tokens,
+- benchmarks reproducibles,
 - exportacion de resultados en JSON y CSV.
 
 Rama sugerida:
@@ -168,12 +168,12 @@ Objetivo: endurecer el proyecto para uso publico y colaborativo.
 
 Entregables:
 
-- CI con `cargo fmt`, `cargo clippy` y tests;
-- validacion WASM;
-- escaneo de secretos;
-- politica de seguridad;
-- permisos minimos en GitHub Actions;
-- separacion entre CI ligero y build web manual;
+- CI con `cargo fmt`, `cargo clippy` y tests,
+- validacion WASM,
+- escaneo de secretos,
+- politica de seguridad,
+- permisos minimos en GitHub Actions,
+- separacion entre CI ligero y build web manual,
 - evidencia de validacion.
 
 Rama sugerida:
@@ -188,11 +188,11 @@ Objetivo: entregar versiones instalables o ejecutables.
 
 Entregables:
 
-- build web con Trunk;
-- build web estatico sin publicacion automatica en GitHub Pages;
-- release con artefactos;
-- changelog por version;
-- tag `v0.9.0` o `v1.0.0-rc1`;
+- build web con Trunk,
+- build web estatico sin publicacion automatica en GitHub Pages,
+- release con artefactos,
+- changelog por version,
+- tag `v0.9.0` o `v1.0.0-rc1`,
 - instrucciones para usuarios finales.
 
 Rama sugerida:
@@ -207,12 +207,12 @@ Objetivo: convertir Loopscape en laboratorio de computo cognitivo, no solo en ju
 
 Entregables:
 
-- escenarios comparables entre eras;
-- metricas por paradigma de control;
-- experimentos reproducibles;
-- scripts de evaluacion;
-- informe tecnico;
-- tablero de resultados;
+- escenarios comparables entre eras,
+- metricas por paradigma de control,
+- experimentos reproducibles,
+- scripts de evaluacion,
+- informe tecnico,
+- tablero de resultados,
 - dataset pequeno de tareas y trazas.
 
 Rama sugerida:
@@ -381,9 +381,9 @@ Objetivo: mostrar el programa DSL cargado en pantalla sin implementar todavia un
 
 Entregables:
 
-- panel lateral de comandos DSL;
-- estado por comando: pendiente, activo, completado o error;
-- resaltado del comando actual;
+- panel lateral de comandos DSL,
+- estado por comando: pendiente, activo, completado o error,
+- resaltado del comando actual,
 - documentacion del visor visual.
 
 Validacion:
@@ -737,11 +737,11 @@ Cerrar la parte 7 con un gate reproducible para escenarios adversariales multiag
 
 #### Entregables
 
-- `make validate-multiagent`;
-- script `scripts/validate_multiagent.sh`;
-- pruebas de CLI multiagente;
-- ejemplos `.loop` de fallos recuperables y fallo bizantino;
-- documentacion de validacion multiagente;
+- `make validate-multiagent`,
+- script `scripts/validate_multiagent.sh`,
+- pruebas de CLI multiagente,
+- ejemplos `.loop` de fallos recuperables y fallo bizantino,
+- documentacion de validacion multiagente,
 - limpieza de artefactos de validacion.
 
 #### Resultado esperado
@@ -1031,3 +1031,16 @@ Esta fase no modifica el nucleo de simulacion. Solo actualiza el README, la docu
 ```text
 https://huggingface.co/spaces/kapumota/loopscape
 ```
+
+### Fase 10.5, guia de uso y demo guiada
+
+#### Objetivo
+
+Hacer que Loopscape sea entendible para usuarios externos antes del cierre experimental `v0.9.0`.
+
+#### Entregables
+
+- Guia de uso.
+- Demo guiada.
+- Lectura rapida.
+- README con instrucciones de uso mas detalladas.

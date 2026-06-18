@@ -34,48 +34,107 @@ La demo web de Loopscape esta publicada y probada en Hugging Face Spaces:
 
 La publicacion usa el artefacto web generado por Trunk desde `dist/`. El archivo WebAssembly del Space se almacena con Git LFS porque supera el limite de archivo ordinario.
 
+#### Como usar Loopscape
+
+Loopscape puede usarse de tres formas complementarias:
+
+1. Como demo web publica en Hugging Face Spaces.
+2. Como aplicacion local nativa con `cargo run`.
+3. Como laboratorio reproducible con escenarios, benchmarks, replay y reportes.
+
+Para una primera exploracion se recomienda abrir la demo web, cambiar entre eras con las teclas `1` a `5`, activar el modo Rayos X con `X` y provocar un fallo bizantino con `B` en la Era 5.
+
+#### Ruta rapida de exploracion
+
+1. Abre la demo web publicada en Hugging Face Spaces.
+2. Observa la Era 1 como ciclo ReAct secuencial.
+3. Presiona `2`, `3`, `4` y `5` para comparar la evolucion del sistema.
+4. Usa `WASD` o las flechas para mover la camara.
+5. Presiona `X` para alternar el modo Rayos X.
+6. Presiona `L` para alternar el panel LLM.
+7. En la Era 3, presiona `M` para mutar el ADN de comportamiento.
+8. En la Era 5, presiona `B` para inyectar un fallo bizantino simplificado.
+9. Revisa `docs/GUIA_USO.md` para una lectura guiada.
+10. Revisa `docs/DEMO_GUIADA.md` para una secuencia de demostracion.
+
+#### Que observar en cada era
+
+| Era | Que representa | Que observar |
+|---|---|---|
+| Era 1 | Ciclo ReAct basico | Secuencia Think, Act y Observe |
+| Era 2 | Autoprompting | Aparicion de prompts como mecanismo de adaptacion |
+| Era 3 | Ralph Loop | Mutacion de ADN de comportamiento con `M` |
+| Era 4 | Ralph formalizado | Comandos y estructura de orquestacion mas explicita |
+| Era 5 | Orquestacion multiagente | Supervisores, trabajadores, latidos, fallos y recuperacion |
+
+#### Uso como laboratorio reproducible
+
+Para validar que Loopscape no es solo una animacion, ejecuta la ruta reproducible:
+
+```bash
+cargo run -- --smoke --seed 123 --ticks 10
+cargo test --test escenarios_comparables
+bash scripts/run_benchmarks.sh
+```
+
+Los escenarios comparables estan en:
+
+```text
+scenarios/react_basic.loop
+scenarios/dsl_delegation.loop
+scenarios/multiagent_failure.loop
+```
+
+Los resultados locales de benchmark se generan en:
+
+```text
+artifacts/benchmarks/
+```
+
+Estos resultados no se versionan. La evidencia resumida se documenta en `docs/RESULTADOS.md` y `docs/INFORME_TECNICO.md`.
+
 #### Objetivo del proyecto
 
 El objetivo no es solo mostrar agentes en pantalla. Loopscape busca convertirse en un laboratorio interactivo para estudiar:
 
-- ciclos Think, Act y Observe;
-- descomposicion automatica de tareas;
-- prompts compartidos como ADN de comportamiento;
-- comandos formales de orquestacion;
-- supervision multiagente, consenso, fallos y recuperacion;
+- ciclos Think, Act y Observe,
+- descomposicion automatica de tareas,
+- prompts compartidos como ADN de comportamiento,
+- comandos formales de orquestacion,
+- supervision multiagente, consenso, fallos y recuperacion,
 - replay determinista, metricas comparables y benchmarks reproducibles.
 
 #### Estado actual
 
 Loopscape ya cuenta con una base visual y experimental organizada en cinco eras:
 
-- Era 1: ReAct;
-- Era 2: Autoprompting;
-- Era 3: Ralph Loop;
-- Era 4: Ralph formalizado;
+- Era 1: ReAct,
+- Era 2: Autoprompting,
+- Era 3: Ralph Loop,
+- Era 4: Ralph formalizado,
 - Era 5: Orquestacion multiagente.
 
 Tambien incluye una linea experimental avanzada:
 
-- nucleo determinista separado de Bevy;
-- DSL con lexer, parser, validador e interprete;
-- visor DSL;
-- exportacion e importacion de grafo JSON;
-- eventos JSONL y replay determinista;
-- metricas CSV y comparacion de corridas;
-- proveedor LLM mock y proxy opcional con limites;
-- supervisor real con fallos recuperables y fallo bizantino simplificado;
-- auditoria manual de workflows, Rust, secretos y validacion profunda;
-- reportes de evidencia;
-- escenarios comparables y benchmarks reproducibles;
+- nucleo determinista separado de Bevy,
+- DSL con lexer, parser, validador e interprete,
+- visor DSL,
+- exportacion e importacion de grafo JSON,
+- eventos JSONL y replay determinista,
+- metricas CSV y comparacion de corridas,
+- proveedor LLM mock y proxy opcional con limites,
+- supervisor real con fallos recuperables y fallo bizantino simplificado,
+- auditoria manual de workflows, Rust, secretos y validacion profunda,
+- reportes de evidencia,
+- escenarios comparables y benchmarks reproducibles,
 - informe tecnico interno y resultados preliminares.
 
 #### Requisitos
 
-- Rust estable;
-- target `wasm32-unknown-unknown` para compilacion web;
-- Trunk para ejecutar o compilar la version WebAssembly;
-- Node.js solo si se usa el proxy local de LLM;
+- Rust estable,
+- target `wasm32-unknown-unknown` para compilacion web,
+- Trunk para ejecutar o compilar la version WebAssembly,
+- Node.js solo si se usa el proxy local de LLM,
 - Git para trabajar por ramas y generar patches.
 
 #### Instalacion rapida
@@ -198,6 +257,9 @@ artifacts/
 
 #### Documentacion principal
 
+- `docs/GUIA_USO.md`: guia practica para usar Loopscape como demo, simulador y laboratorio.
+- `docs/DEMO_GUIADA.md`: recorrido sugerido para presentar la demo web y local.
+- `docs/LECTURA_RAPIDA.md`: ruta corta para entender el proyecto en pocos minutos.
 - `docs/ARQUITECTURA.md`: arquitectura base del proyecto.
 - `docs/PLAN_FASES_AVANZADO.md`: plan de fases del proyecto.
 - `docs/VALIDACION_POR_NIVELES.md`: matriz de validacion progresiva.

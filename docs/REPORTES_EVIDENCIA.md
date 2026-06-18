@@ -144,3 +144,14 @@ Documentos principales:
 docs/INFORME_TECNICO.md
 docs/RESULTADOS.md
 ```
+
+### Fase 10.5, evidencia de usabilidad documental
+
+#### Evidencia esperada
+
+- README con ruta de uso.
+- Guia de uso.
+- Demo guiada.
+- Lectura rapida.
+- Enlace a Hugging Face Spaces.
+- Comandos reproducibles de smoke, escenarios y benchmarks.
