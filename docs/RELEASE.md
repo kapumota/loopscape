@@ -141,3 +141,20 @@ Esta fase no crea tags, no publica artefactos y no ejecuta deploy. Solo agrega l
 ```text
 docs/REVISION_RELEASE_CANDIDATE.md
 ```
+
+### Fase 11.1: cierre experimental v0.9.0
+
+#### Alcance
+
+La Fase 11.1 promueve el corte desde `0.9.0-rc1` hacia `0.9.0` como cierre experimental.
+
+#### Regla de tag
+
+El tag `v0.9.0` debe crearse solo desde `main` actualizado despues del merge.
+
+```bash
+git checkout main
+git pull --ff-only origin main
+git tag -a v0.9.0 -m "cierre experimental v0.9.0"
+git push origin v0.9.0
+```

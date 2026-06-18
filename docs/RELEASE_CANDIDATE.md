@@ -91,3 +91,11 @@ docs/REVISION_RELEASE_CANDIDATE.md
 ```
 
 Esta revision decide si el proyecto pasa a `v0.9.0` estable o si necesita `v0.9.0-rc2`.
+
+### Transicion a v0.9.0
+
+#### Decision
+
+El release candidate `0.9.0-rc1` queda promovido a `0.9.0` como cierre experimental.
+
+La promocion no convierte Loopscape en producto industrial. Fija un punto reproducible para docencia avanzada, investigacion aplicada y demostracion tecnica.

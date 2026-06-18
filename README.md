@@ -1,8 +1,8 @@
 ### Loopscape
 
 [![CI](https://github.com/kapumota/loopscape/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kapumota/loopscape/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.9.0--rc1-blue)
-![Release candidate](https://img.shields.io/badge/release-v0.9.0--rc1-blue)
+![Version](https://img.shields.io/badge/version-0.9.0-blue)
+![Release](https://img.shields.io/badge/release-v0.9.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Rust](https://img.shields.io/badge/rust-stable-orange)
 ![WebAssembly](https://img.shields.io/badge/target-wasm32--unknown--unknown-blue)
@@ -18,7 +18,7 @@
 
 Loopscape es un sandbox visual de automatizacion y computo cognitivo construido con Rust, Bevy y WebAssembly. El proyecto modela la evolucion de loops agenticos desde un ciclo ReAct secuencial hasta una red de orquestacion multiagente con supervisores, trabajadores, latidos, replay, metricas y fallos simulados.
 
-La version actual corresponde a `0.9.0-rc1`. Es un release candidate experimental preparado para investigacion, docencia avanzada y evaluacion reproducible.
+La version actual corresponde a `0.9.0`. Es un cierre experimental preparado para investigacion, docencia avanzada, evaluacion reproducible y demostracion publica.
 
 #### Vista rapida
 
@@ -92,6 +92,26 @@ artifacts/benchmarks/
 ```
 
 Estos resultados no se versionan. La evidencia resumida se documenta en `docs/RESULTADOS.md` y `docs/INFORME_TECNICO.md`.
+
+#### Cierre experimental v0.9.0
+
+Loopscape se cierra en `v0.9.0` como laboratorio experimental reproducible. Esta version integra demo web, guia de uso, escenarios comparables, benchmarks reproducibles, informe tecnico y documentacion de release.
+
+El objetivo del cierre no es declarar un producto industrial. El objetivo es fijar una version estable para docencia avanzada, investigacion aplicada, demostracion tecnica y futuras extensiones controladas.
+
+La demo publica esta disponible en Hugging Face Spaces:
+
+[Abrir demo web de Loopscape](https://huggingface.co/spaces/kapumota/loopscape)
+
+La lectura recomendada para usar el proyecto es:
+
+- `docs/LECTURA_RAPIDA.md`, primer recorrido en pocos minutos.
+- `docs/GUIA_USO.md`, uso local, web y reproducible.
+- `docs/DEMO_GUIADA.md`, recorrido por eras y controles.
+- `docs/ESCENARIOS_COMPARABLES.md`, entradas estables para pruebas.
+- `docs/BENCHMARKS.md`, ejecucion de benchmarks.
+- `docs/INFORME_TECNICO.md`, interpretacion tecnica del sistema.
+- `docs/CIERRE_EXPERIMENTAL.md`, alcance exacto de `v0.9.0`.
 
 #### Objetivo del proyecto
 
@@ -192,7 +212,7 @@ make setup-web
 make validate-web
 ```
 
-Para una revision de release candidate:
+Para una revision de cierre experimental:
 
 ```bash
 make validate-full
@@ -268,7 +288,7 @@ artifacts/
 - `docs/INFORME_TECNICO.md`: informe tecnico interno.
 - `docs/RESULTADOS.md`: resultados preliminares.
 - `docs/RELEASE.md`: proceso de release.
-- `docs/RELEASE_CANDIDATE.md`: alcance de `v0.9.0-rc1`.
+- `docs/RELEASE_CANDIDATE.md`: alcance historico de `v0.9.0-rc1`.
 - `docs/REVISION_RELEASE_CANDIDATE.md`: revision posterior al release candidate.
 - `docs/INDICE_FINAL.md`: indice final del repositorio.
 - `docs/HF_SPACES_DEMO.md`: preparacion de demo web para Hugging Face Spaces.
@@ -318,15 +338,15 @@ sin GitHub Pages automatico
 sube dist como artifact
 ```
 
-#### Release candidate
+#### Cierre experimental
 
-El release candidate actual es `0.9.0-rc1`. El tag debe crearse solo desde `main` actualizado despues de fusionar el PR correspondiente.
+La version de cierre experimental es `0.9.0`. El tag debe crearse solo desde `main` actualizado despues de fusionar el PR correspondiente.
 
 ```bash
 git checkout main
 git pull --ff-only origin main
-git tag -a v0.9.0-rc1 -m "release candidate v0.9.0-rc1"
-git push origin v0.9.0-rc1
+git tag -a v0.9.0 -m "cierre experimental v0.9.0"
+git push origin v0.9.0
 ```
 
 #### Licencia

@@ -155,3 +155,17 @@ docs/RESULTADOS.md
 - Lectura rapida.
 - Enlace a Hugging Face Spaces.
 - Comandos reproducibles de smoke, escenarios y benchmarks.
+
+### Evidencia de cierre v0.9.0
+
+#### Evidencia esperada
+
+La evidencia de cierre debe conservar:
+
+- Validacion local.
+- Validacion web.
+- Demo publicada.
+- Benchmarks reproducibles.
+- Informe tecnico.
+- Resultados preliminares.
+- Documentacion de cierre.
