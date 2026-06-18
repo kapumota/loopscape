@@ -938,3 +938,21 @@ Registrar la evaluacion posterior a `v0.9.0-rc1`.
 - Publicar GitHub Release.
 - Publicar web automaticamente.
 - Cambiar funcionalidad del nucleo.
+
+### Fase 10.1: escenarios comparables
+
+#### Objetivo
+
+Agregar escenarios DSL comparables para pruebas, benchmarks e informe tecnico.
+
+#### Entregables
+
+- `scenarios/react_basic.loop`.
+- `scenarios/dsl_delegation.loop`.
+- `scenarios/multiagent_failure.loop`.
+- `docs/ESCENARIOS_COMPARABLES.md`.
+- `tests/escenarios_comparables.rs`.
+
+#### Regla
+
+Los escenarios deben ser pequeños, reproducibles y no deben depender de red, secretos ni servicios externos.

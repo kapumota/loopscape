@@ -110,3 +110,11 @@ resultado de escaneo de secretos
 #### Decision
 
 El reporte no decide por si solo si se publica `v0.9.0`. La decision queda documentada en la revision posterior al release candidate.
+
+### Fase 10.1: escenarios comparables
+
+#### Relacion con evidencia
+
+Los escenarios comparables son entradas estables para reportes de evidencia, benchmarks y resultados tecnicos.
+
+No generan evidencia por si mismos. La evidencia se genera cuando se ejecutan desde validacion profunda, benchmarks o scripts de reporte.

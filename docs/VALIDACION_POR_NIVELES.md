@@ -549,3 +549,20 @@ make validate-full
 make validate-web
 make evidence-report-release
 ```
+
+### Fase 10.1: escenarios comparables
+
+#### Validacion esperada
+
+```bash
+cargo fmt
+cargo metadata --locked --format-version 1 --no-deps > /dev/null
+cargo test --test escenarios_comparables
+git diff --check
+```
+
+#### Criterio de aceptacion
+
+Los tres escenarios deben validar, interpretarse como DSL y exportarse como grafo.
+
+El escenario `multiagent_failure.loop` debe exponer fallo recuperable, fallo bizantino simplificado y votacion esperada.

@@ -117,3 +117,11 @@ escaneo de secretos: aprobado | revisar
 evidencia: aprobado | revisar
 accion siguiente: preparar v0.9.0 | preparar v0.9.0-rc2 | corregir bloqueantes
 ```
+
+### Fase 10.1: escenarios comparables
+
+#### Relacion con release candidate
+
+Los escenarios comparables ayudan a revisar `v0.9.0-rc1` con entradas DSL estables.
+
+No modifican la version del proyecto ni crean nuevos tags.
