@@ -219,3 +219,9 @@ README final con badges e indice actualizado
 Loopscape ya es una base experimental seria para investigacion y docencia avanzada en sistemas multiagente reproducibles.
 
 Todavia no debe presentarse como producto industrial. Su nivel actual es preindustrial experimental con release candidate y soporte inicial para investigacion reproducible.
+
+### Fase 10.4: presentacion final del repositorio
+
+#### Alcance
+
+La presentacion final del repositorio consolida la lectura publica del proyecto. No cambia los resultados tecnicos, pero facilita revisar la arquitectura, la validacion, los benchmarks y el release candidate.

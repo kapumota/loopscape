@@ -603,3 +603,17 @@ git diff --check
 grep -n "Informe tecnico interno" docs/INFORME_TECNICO.md
 grep -n "Resultados preliminares" docs/RESULTADOS.md
 ```
+
+### Fase 10.4: validacion de cierre visual
+
+#### Criterio
+
+La Fase 10.4 se valida revisando que el README tenga badges, enlaces a documentos principales, graficos locales y referencias coherentes a escenarios, benchmarks e informe tecnico.
+
+#### Comandos sugeridos
+
+```bash
+cargo fmt
+cargo metadata --locked --format-version 1 --no-deps > /dev/null
+git diff --check
+```

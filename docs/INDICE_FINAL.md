@@ -1,0 +1,40 @@
+### Indice final de Loopscape
+
+#### Proposito
+
+Este documento organiza la documentacion principal del proyecto antes del cierre experimental posterior a `v0.9.0-rc1`.
+
+#### Lectura recomendada
+
+1. `README.md`: entrada publica del repositorio.
+2. `docs/ARQUITECTURA.md`: arquitectura general.
+3. `docs/PLAN_FASES_AVANZADO.md`: evolucion por fases.
+4. `docs/VALIDACION_POR_NIVELES.md`: niveles de validacion.
+5. `docs/ESCENARIOS_COMPARABLES.md`: escenarios estables de investigacion.
+6. `docs/BENCHMARKS.md`: benchmarks reproducibles.
+7. `docs/INFORME_TECNICO.md`: informe tecnico interno.
+8. `docs/RESULTADOS.md`: resultados preliminares.
+9. `docs/RELEASE.md`: proceso de release.
+10. `docs/REVISION_RELEASE_CANDIDATE.md`: revision posterior al release candidate.
+
+#### Entradas de investigacion
+
+```text
+scenarios/react_basic.loop
+scenarios/dsl_delegation.loop
+scenarios/multiagent_failure.loop
+benchmarks/escenarios_comparables.csv
+```
+
+#### Salidas generadas
+
+```text
+artifacts/benchmarks/
+artifacts/reports/
+```
+
+Las salidas generadas se conservan fuera del control de versiones, salvo archivos `.gitkeep` necesarios para mantener directorios vacios.
+
+#### Cierre visual del repositorio
+
+La Fase 10.4 agrega badges, graficos e indice final. No cambia el nucleo de simulacion ni altera los resultados experimentales.
