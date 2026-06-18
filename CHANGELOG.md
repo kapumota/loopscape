@@ -1,3 +1,16 @@
+### 0.9.0
+
+Fecha: 2026-06-17
+
+#### Cierre experimental
+
+- Promueve el proyecto desde `0.9.0-rc1` hacia `0.9.0` como cierre experimental.
+- Mantiene el alcance como plataforma experimental reproducible, no como producto industrial.
+- Conserva la demo web publicada en Hugging Face Spaces.
+- Conserva escenarios comparables, benchmarks reproducibles, informe tecnico y resultados preliminares.
+- Agrega documentacion de cierre experimental y roadmap posterior a `v0.9.0`.
+- Deja preparado el tag `v0.9.0` para crearse solo desde `main` despues del merge.
+
 ### 0.9.0-rc1
 
 #### Estado

@@ -69,3 +69,6 @@ El procedimiento de publicacion y validacion esta documentado en `docs/HF_SPACES
 - `docs/GUIA_USO.md`, guia practica para usar Loopscape como demo, simulador y laboratorio.
 - `docs/DEMO_GUIADA.md`, recorrido sugerido para presentar la demo web y local.
 - `docs/LECTURA_RAPIDA.md`, ruta corta para entender el proyecto en pocos minutos.
+
+- `docs/CIERRE_EXPERIMENTAL.md`: alcance del cierre experimental `v0.9.0`.
+- `docs/ROADMAP_POST_V0_9.md`: roadmap posterior a `v0.9.0`.

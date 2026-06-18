@@ -115,3 +115,11 @@ El resultado esperado de la Fase 10.3 es un informe tecnico interno y una planti
 #### Relacion con resultados
 
 El README ahora enlaza los documentos de escenarios, benchmarks, informe tecnico y resultados preliminares. Esto permite que la lectura de resultados sea visible desde la entrada principal del repositorio.
+
+### Resultado de cierre v0.9.0
+
+#### Lectura
+
+Los resultados de `v0.9.0` deben interpretarse como resultados preliminares de laboratorio. No representan rendimiento industrial ni validacion operativa prolongada.
+
+El valor principal esta en la reproducibilidad, la trazabilidad y la posibilidad de comparar escenarios bajo condiciones controladas.

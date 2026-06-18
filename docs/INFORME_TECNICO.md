@@ -225,3 +225,11 @@ Todavia no debe presentarse como producto industrial. Su nivel actual es preindu
 #### Alcance
 
 La presentacion final del repositorio consolida la lectura publica del proyecto. No cambia los resultados tecnicos, pero facilita revisar la arquitectura, la validacion, los benchmarks y el release candidate.
+
+### Cierre experimental v0.9.0
+
+#### Interpretacion tecnica
+
+Loopscape queda como una plataforma experimental reproducible. El valor tecnico principal esta en conectar simulacion visual, nucleo determinista, DSL, replay, metricas, fallos y benchmarks dentro de un mismo repositorio.
+
+La version `v0.9.0` fija ese estado para revision externa.

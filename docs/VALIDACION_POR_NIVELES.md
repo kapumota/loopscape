@@ -657,3 +657,15 @@ grep -n "Demo guiada" docs/DEMO_GUIADA.md
 grep -n "Guia de uso" docs/GUIA_USO.md
 grep -n "Lectura rapida" docs/LECTURA_RAPIDA.md
 ```
+
+### Fase 11.1: cierre experimental
+
+#### Validacion esperada
+
+- `VERSION` contiene `0.9.0`.
+- `CHANGELOG.md` contiene entrada `0.9.0`.
+- README apunta a la demo publicada.
+- README explica como usar el proyecto.
+- Documentacion de cierre existe.
+- Roadmap posterior existe.
+- No quedan textos pendientes de release candidate en la portada principal.
