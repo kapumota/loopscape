@@ -12,7 +12,7 @@
 ![Auditoria Rust](https://img.shields.io/badge/auditoria-rust%20manual-lightgrey)
 ![Secretos](https://img.shields.io/badge/secretos-escaneo%20manual-lightgrey)
 ![Artefacto web](https://img.shields.io/badge/artefacto-web%20manual-lightgrey)
-![HF Spaces](https://img.shields.io/badge/demo-HF%20Spaces%20pendiente-yellow)
+![HF Spaces](https://img.shields.io/badge/HF%20Spaces-demo%20publicada-blue)
 
 #### Resumen
 
@@ -44,9 +44,11 @@ Cuando la demo este grabada, reemplaza la imagen de vista previa por:
 
 #### Demo web en Hugging Face Spaces
 
-La demo web puede publicarse como Space estatico a partir del directorio `dist/` generado por Trunk.
+La demo web de Loopscape esta publicada y probada en Hugging Face Spaces:
 
-La URL publica no se fija en el README hasta que el Space exista y haya sido probado. El procedimiento esta documentado en `docs/HF_SPACES_DEMO.md`.
+[Abrir demo web de Loopscape](https://huggingface.co/spaces/kapumota/loopscape)
+
+La publicacion usa el artefacto web generado por Trunk desde `dist/`. El archivo WebAssembly del Space se almacena con Git LFS porque supera el limite de archivo ordinario.
 
 #### Objetivo del proyecto
 
