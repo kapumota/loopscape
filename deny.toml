@@ -1,0 +1,8 @@
+# Configuracion minima para cargo-deny.
+# Mantiene fallas por vulnerabilidades reales y evita romper por avisos informativos transitivos.
+
+[advisories]
+yanked = "warn"
+unmaintained = "workspace"
+unsound = "workspace"
+ignore = []

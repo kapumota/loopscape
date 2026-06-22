@@ -46,6 +46,17 @@ La herramienta usada es `gitleaks`.
 
 El workflow instala la herramienta durante la ejecucion manual o programada y ejecuta un escaneo sobre el repositorio.
 
+
+#### Instalacion reproducible
+
+El binario se instala con la ruta de modulo Go declarada por el proyecto:
+
+```bash
+go install github.com/zricethezav/gitleaks/v8@v8.30.1
+```
+
+No debe usarse `github.com/gitleaks/gitleaks/v8@latest` con `go install`, porque el modulo declara otra ruta interna y Go rechaza la instalacion por conflicto de modulo.
+
 #### Uso manual
 
 Desde GitHub Actions:

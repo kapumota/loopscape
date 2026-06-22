@@ -88,7 +88,7 @@ jobs:
               echo "Instalando cargo audit si es necesario"
               command -v cargo-audit >/dev/null 2>&1 || cargo install cargo-audit --locked
               echo "Ejecutando cargo audit"
-              cargo audit --deny warnings
+              cargo audit
               ;;
           esac
 
