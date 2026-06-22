@@ -106,7 +106,7 @@ audit-rust: audit-rust-audit
 audit-rust-audit:
 	@echo "Ejecutando auditoria Rust con cargo audit"
 	@command -v cargo-audit >/dev/null 2>&1 || cargo install cargo-audit --locked
-	@cargo audit --deny warnings
+	@cargo audit
 
 audit-rust-deny:
 	@echo "Ejecutando auditoria Rust con cargo deny"

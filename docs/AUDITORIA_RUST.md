@@ -38,6 +38,15 @@ sin secretos en PR
 sin permisos de escritura
 ```
 
+
+#### Politica frente a avisos informativos
+
+`cargo audit` debe fallar ante vulnerabilidades reales reportadas por RustSec. No debe fallar por todos los avisos informativos de dependencias transitivas, porque eso vuelve inestable la auditoria semanal cuando un crate de terceros cambia de estado.
+
+El aviso `RUSTSEC-2024-0436` afecta a `paste 1.0.15` como crate no mantenido. En esta version aparece por dependencias transitivas asociadas al ecosistema grafico usado por Bevy, no por una dependencia directa del proyecto. Por eso se evita `cargo audit --deny warnings` y se deja `cargo audit` como compuerta principal.
+
+Para `cargo deny`, la politica queda documentada en `deny.toml`: los avisos `unmaintained` fallan si afectan dependencias directas del workspace, pero no bloquean la ejecucion por dependencias transitivas.
+
 #### Herramientas disponibles
 
 La entrada manual `herramienta` permite seleccionar:
